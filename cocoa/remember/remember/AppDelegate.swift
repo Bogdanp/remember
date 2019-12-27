@@ -9,6 +9,8 @@
 import Cocoa
 import Combine
 import SwiftUI
+import UserNotifications
+import os
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -22,8 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             rpc = try ComsCenter()
             client = Client(rpc)
         } catch {
-            // FIXME
-            print("error: \(error)")
+            os_log("failed to set up rpc", type: .error)
         }
 
         // Create the SwiftUI view that provides the window contents.
@@ -45,9 +46,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.makeKeyAndOrderFront(nil)
+
+        requestNotificationsAccess()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         rpc.shutdown()
+    }
+
+    private func requestNotificationsAccess() {
+        let notificationCenter = UNUserNotificationCenter.current()
+        notificationCenter.requestAuthorization(options: [.alert, .sound], completionHandler: { granted, err in
+            if !granted {
+                os_log("alert acess not granted", type: .error)
+            }
+        })
     }
 }

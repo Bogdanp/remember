@@ -10,6 +10,9 @@ import Foundation
 import SwiftUI
 import SwiftyAttributes
 
+fileprivate let BG_RELATIVE_DATE = hexColor(rgb: "21262d")!
+fileprivate let BG_TAG = hexColor(rgb: "4c88f2")!
+
 struct CommandField: NSViewRepresentable {
     typealias NSViewType = NSTextField
 
@@ -42,11 +45,11 @@ struct CommandField: NSViewRepresentable {
                     .withFont(systemFont)
             case .relativeDate(let r):
                 attributedText += r.text.withFont(systemFont)
-                    .withBackgroundColor(hexColor("21262d"))
+                    .withBackgroundColor(BG_RELATIVE_DATE)
                     .withTextColor(Color.white)
             case .tag(let t):
                 attributedText += t.text.withFont(systemFont)
-                    .withBackgroundColor(hexColor("4c88f2"))
+                    .withBackgroundColor(BG_TAG)
                     .withTextColor(Color.white)
             }
         }
@@ -57,17 +60,6 @@ struct CommandField: NSViewRepresentable {
         } else {
             nsView.attributedStringValue = text
         }
-    }
-
-    private func hexColor(_ rgba: String) -> NSColor {
-        guard let n = UInt32(rgba, radix: 16) else {
-            return Color.black
-        }
-
-        let r = CGFloat((n & 0xFF0000) >> 16) / 255.0
-        let g = CGFloat((n & 0x00FF00) >>  8) / 255.0
-        let b = CGFloat((n & 0x0000FF))       / 255.0
-        return NSColor(red: r, green: g, blue: b, alpha: 1.0)
     }
 
     func makeCoordinator() -> Coordinator {
@@ -89,4 +81,15 @@ struct CommandField: NSViewRepresentable {
             }
         }
     }
+}
+
+fileprivate func hexColor(rgb: String) -> NSColor? {
+    guard let n = UInt32(rgb, radix: 16) else {
+        return nil
+    }
+
+    let r = CGFloat((n & 0xFF0000) >> 16) / 255.0
+    let g = CGFloat((n & 0x00FF00) >>  8) / 255.0
+    let b = CGFloat((n & 0x0000FF))       / 255.0
+    return NSColor(red: r, green: g, blue: b, alpha: 1.0)
 }
