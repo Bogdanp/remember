@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Client: Parser {
+class Client: Parser & EntryDB {
     private let rpc: ComsCenter
 
     init(_ rpc: ComsCenter) {
@@ -20,6 +20,17 @@ class Client: Parser {
             switch res {
             case .ok(let tokens):
                 action(.ok(tokens))
+            case .error(let error):
+                action(.error(error))
+            }
+        }
+    }
+
+    func commit(command: String, action: @escaping (CommitResult) -> Void) {
+        return rpc.call("commit-entry!", [command]) { (res: RPCResult<Entry>) in
+            switch res {
+            case .ok(let entry):
+                action(.ok(entry))
             case .error(let error):
                 action(.error(error))
             }

@@ -23,6 +23,7 @@
 		4385BC5A23B4F1DF0086A98F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5923B4F1DF0086A98F /* Parser.swift */; };
 		43E6B94023B547A000F7ACE1 /* SwiftyAttributes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */; };
 		43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */; };
+		43E6B94523B6660200F7ACE1 /* EntryDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94423B6660200F7ACE1 /* EntryDB.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 		4385BC5923B4F1DF0086A98F /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyAttributes.framework; path = Carthage/Build/Mac/SwiftyAttributes.framework; sourceTree = SOURCE_ROOT; };
 		43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStore.swift; sourceTree = "<group>"; };
+		43E6B94423B6660200F7ACE1 /* EntryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDB.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 				43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */,
 				43713C4123B397C400E20E48 /* ComsCenter.swift */,
 				436BE29623B10D4E00717375 /* ContentView.swift */,
+				43E6B94423B6660200F7ACE1 /* EntryDB.swift */,
 				4385BC5323B4CAEA0086A98F /* JSONChunker.swift */,
 				4385BC5923B4F1DF0086A98F /* Parser.swift */,
 				433DB90E23B134B40027268A /* VisualEffectBackground.swift */,
@@ -323,6 +326,7 @@
 				4385BC5423B4CAEA0086A98F /* JSONChunker.swift in Sources */,
 				4385BC5A23B4F1DF0086A98F /* Parser.swift in Sources */,
 				436BE29723B10D4E00717375 /* ContentView.swift in Sources */,
+				43E6B94523B6660200F7ACE1 /* EntryDB.swift in Sources */,
 				43713C4223B397C400E20E48 /* ComsCenter.swift in Sources */,
 				436BE29523B10D4E00717375 /* AppDelegate.swift in Sources */,
 				43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */,

@@ -11,21 +11,27 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var store: CommandStore
+    @State var isEditable = true
 
-    init(parser: Parser) {
-        store = CommandStore(parser: parser)
+    init(entryDB: EntryDB, parser: Parser) {
+        store = CommandStore(
+            entryDB: entryDB,
+            parser: parser)
         store.setup()
     }
 
     var body: some View {
         VStack {
-            CommandField($store.command, tokens: $store.tokens) {
+            CommandField($store.command,
+                         tokens: $store.tokens,
+                         isEditable: $isEditable) {
                 switch $0 {
                 case .cancel(_):
                     self.store.clear()
                 case .commit(let c):
-                    self.store.commit(command: c) { 
-
+                    self.isEditable = false
+                    self.store.commit(command: c) {
+                        self.isEditable = false
                     }
                 }
             }

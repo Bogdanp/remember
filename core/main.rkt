@@ -2,20 +2,15 @@
 
 (require racket/cmdline
          "command.rkt"
+         "entry.rkt"
          "rpc.rkt"
          "server.rkt")
 
-(define command-mode (make-parameter #f))
-
 (register-rpc
- parse-command)
+ parse-command
+ commit-entry!)
 
 (module+ main
-  (command-line
-   #:once-each
-   [("--command" "-c") "Run a single command."
-                       (command-mode #t)])
-
   (define in (current-input-port))
   (define out (current-output-port))
   (file-stream-buffer-mode in 'none)

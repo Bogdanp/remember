@@ -10,15 +10,18 @@ import Combine
 import Foundation
 
 class CommandStore: ObservableObject {
+    private let entryDB: EntryDB
+
     private let parser: Parser
     private var parseCancellable: AnyCancellable?
 
     @Published var command = NSAttributedString(string: "")
     @Published var tokens = [Token]()
 
-    init(parser theParser: Parser) {
-        parser = theParser
-        parseCancellable = nil
+    init(entryDB: EntryDB, parser: Parser) {
+        self.entryDB = entryDB
+        self.parser = parser
+        self.parseCancellable = nil
     }
 
     func setup() {
@@ -47,7 +50,17 @@ class CommandStore: ObservableObject {
         self.tokens = []
     }
 
-    func commit(command: String, action: () -> Void) {
-        
+    func commit(command: String, action: @escaping () -> Void) {
+        self.entryDB.commit(command: command) { res in
+            RunLoop.main.schedule {
+                switch res {
+                case .ok:
+                    self.clear()
+                    action()
+                case .error:
+                    action()
+                }
+            }
+        }
     }
 }

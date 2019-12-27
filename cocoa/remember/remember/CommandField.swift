@@ -23,12 +23,17 @@ struct CommandField: NSViewRepresentable {
 
     @Binding var text: NSAttributedString
     @Binding var tokens: [Token]
+    @Binding var isEditable: Bool
 
     private let action: (CommandAction) -> Void
 
-    init(_ text: Binding<NSAttributedString>, tokens: Binding<[Token]>, action theAction: @escaping (CommandAction) -> Void) {
+    init(_ text: Binding<NSAttributedString>,
+         tokens: Binding<[Token]>,
+         isEditable: Binding<Bool>,
+         action theAction: @escaping (CommandAction) -> Void) {
         _text = text
         _tokens = tokens
+        _isEditable = isEditable
         action = theAction
     }
 
@@ -63,6 +68,7 @@ struct CommandField: NSViewRepresentable {
         }
 
         nsView.font = systemFont
+        nsView.isEditable = isEditable
         if attributedText.string == text.string {
             nsView.attributedStringValue = attributedText
         } else {
