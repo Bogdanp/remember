@@ -13,15 +13,23 @@ import SwiftyAttributes
 fileprivate let BG_RELATIVE_DATE = hexColor(rgb: "21262d")!
 fileprivate let BG_TAG = hexColor(rgb: "4c88f2")!
 
+enum CommandAction {
+    case cancel(String)
+    case commit(String)
+}
+
 struct CommandField: NSViewRepresentable {
     typealias NSViewType = NSTextField
 
     @Binding var text: NSAttributedString
     @Binding var tokens: [Token]
 
-    init(_ text: Binding<NSAttributedString>, tokens: Binding<[Token]>) {
+    private let action: (CommandAction) -> Void
+
+    init(_ text: Binding<NSAttributedString>, tokens: Binding<[Token]>, action theAction: @escaping (CommandAction) -> Void) {
         _text = text
         _tokens = tokens
+        action = theAction
     }
 
     func makeNSView(context: NSViewRepresentableContext<CommandField>) -> NSViewType {
@@ -63,16 +71,34 @@ struct CommandField: NSViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator() {
+        return Coordinator(action: {
+            self.action($0)
+        }, setter: {
             self.text = $0
-        }
+        })
     }
 
     final class Coordinator: NSObject, NSTextFieldDelegate {
+        private var action: (CommandAction) -> Void
         private var setter: (NSAttributedString) -> Void
 
-        init(_ setter: @escaping (NSAttributedString) -> Void) {
-            self.setter = setter
+        init(action theAction: @escaping (CommandAction) -> Void,
+             setter theSetter: @escaping (NSAttributedString) -> Void) {
+
+            action = theAction
+            setter = theSetter
+        }
+
+        func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+            if commandSelector == #selector(NSResponder.insertNewline(_:)) {
+                action(.commit(control.stringValue))
+                return true
+            } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
+                action(.cancel(control.stringValue))
+                return true
+            }
+
+            return false
         }
 
         func controlTextDidChange(_ aNotification: Notification) {

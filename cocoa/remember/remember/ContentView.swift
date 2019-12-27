@@ -19,7 +19,14 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            CommandField($store.command, tokens: $store.tokens)
+            CommandField($store.command, tokens: $store.tokens) {
+                switch $0 {
+                case .cancel(_):
+                    self.store.clear()
+                case .commit(let c):
+                    self.store.save(command: c)
+                }
+            }
                 .padding(15)
                 .padding(.leading, 25)
         }

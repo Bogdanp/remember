@@ -33,4 +33,13 @@ class CommandStore: ObservableObject {
             .receive(on: RunLoop.main)
             .assign(to: \.tokens, on: self)
     }
+
+    func clear() {
+        self.command = NSAttributedString(string: "")
+        self.tokens = []
+    }
+
+    func save(command: String) {
+        
+    }
 }
