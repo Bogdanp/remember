@@ -47,7 +47,7 @@ class CommandStore: ObservableObject {
 
     func clear() {
         if command.string.isEmpty {
-            NotificationCenter.default.post(name: NSNotification.Name("hideWindow"), object: nil)
+            NotificationCenter.default.post(name: .commandFieldDidCancel, object: nil)
         }
 
         command = NSAttributedString(string: "")

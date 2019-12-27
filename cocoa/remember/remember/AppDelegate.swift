@@ -59,7 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupHidingListener() {
         NotificationCenter.default.addObserver(
-            forName: NSNotification.Name("hideWindow"),
+            forName: .commandFieldDidCancel,
             object: nil,
             queue: nil) { _ in
 
@@ -75,4 +75,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         })
     }
+}
+
+extension Notification.Name {
+    static let commandFieldDidCancel = Notification.Name("commandFieldDidCancel")
 }
