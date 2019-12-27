@@ -2,7 +2,8 @@
 
 (require db)
 
-(provide conn)
+(provide
+ conn)
 
 (define conn
   (sqlite3-connect #:database "/tmp/remember.sqlite3"

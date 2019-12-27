@@ -30,6 +30,7 @@
 		43E6B95A23B6775B00F7ACE1 /* DDHotKeyTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */; };
 		43E6B95C23B6878600F7ACE1 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95B23B6878600F7ACE1 /* Notifications.swift */; };
 		43E6B95E23B68F4A00F7ACE1 /* Keycode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */; };
+		43E6B96023B6A33600F7ACE1 /* AsyncNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95F23B6A33600F7ACE1 /* AsyncNotification.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyTextField.m; path = vendor/DDHotKey/DDHotKeyTextField.m; sourceTree = "<group>"; };
 		43E6B95B23B6878600F7ACE1 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keycode.swift; sourceTree = "<group>"; };
+		43E6B95F23B6A33600F7ACE1 /* AsyncNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncNotification.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +143,7 @@
 				43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */,
 				436BE2A023B10D5000717375 /* Info.plist */,
 				436BE29423B10D4E00717375 /* AppDelegate.swift */,
+				43E6B95F23B6A33600F7ACE1 /* AsyncNotification.swift */,
 				4385BC5723B4E4590086A98F /* Client.swift */,
 				43713C3D23B21CB000E20E48 /* CommandField.swift */,
 				43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */,
@@ -362,6 +365,7 @@
 				433DB90F23B134B40027268A /* VisualEffectBackground.swift in Sources */,
 				43E6B95823B6775B00F7ACE1 /* DDHotKeyUtilities.m in Sources */,
 				43E6B95923B6775B00F7ACE1 /* DDHotKeyCenter.m in Sources */,
+				43E6B96023B6A33600F7ACE1 /* AsyncNotification.swift in Sources */,
 				4385BC5423B4CAEA0086A98F /* JSONChunker.swift in Sources */,
 				4385BC5A23B4F1DF0086A98F /* Parser.swift in Sources */,
 				43E6B95C23B6878600F7ACE1 /* Notifications.swift in Sources */,

@@ -7,12 +7,20 @@
 //
 
 import Foundation
+import UserNotifications
 
 class Client: Parser & EntryDB {
     private let rpc: ComsCenter
 
     init(_ rpc: ComsCenter) {
         self.rpc = rpc
+
+        rpc.asyncNotificationHandler = { notification in
+            switch notification {
+            case .entriesDue(let notification):
+                self.handleEntriesDueNotification(notification)
+            }
+        }
     }
 
     func parse(command: String, action: @escaping (ParseResult) -> Void) {
@@ -33,6 +41,24 @@ class Client: Parser & EntryDB {
                 action(.ok(entry))
             case .error(let error):
                 action(.error(error))
+            }
+        }
+    }
+
+    private func handleEntriesDueNotification(_ notification: EntriesDueNotification) {
+        let center = UNUserNotificationCenter.current()
+        for entry in notification.entries {
+            let content = UNMutableNotificationContent()
+            content.body = entry.title
+            content.sound = .defaultCritical
+
+            let request = UNNotificationRequest(
+                identifier: "remember:\(entry.id)",
+                content: content,
+                trigger: nil)
+
+            center.add(request) { error in
+                print(error)
             }
         }
     }

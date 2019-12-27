@@ -31,6 +31,8 @@ class ComsCenter {
     private var seq: UInt32 = 0
     private var pending: [UInt32: Handler] = [:]
 
+    var asyncNotificationHandler: (AsyncNotification) -> Void = { _ in }
+
     init() throws {
         process.executableURL = URL(fileURLWithPath: "/Users/bogdan/work/remember/bin/remember")
         process.standardInput = wEnd
@@ -85,20 +87,27 @@ class ComsCenter {
     private func onDataReceived(_ data: Data) {
         do {
             let result = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
-            guard let id = result?["id"] as? UInt32,
-                let handler = popHandler(forId: id) else {
-                return
-            }
 
-            if result?["result"] != nil {
-                handler.resolve(data)
-            } else if let error = result?["error"] as? String {
-                handler.reject(.runtime(error))
-            } else {
-                handler.reject(.runtime("invalid response JSON: \(String(decoding: data, as: UTF8.self))"))
+            if let id = result?["id"] as? UInt32,
+                let handler = popHandler(forId: id) {
+
+                if result?["result"] != nil {
+                    handler.resolve(data)
+                } else if let error = result?["error"] as? String {
+                    handler.reject(.runtime(error))
+                } else {
+                    handler.reject(.runtime("invalid JSON: \(String(decoding: data, as: UTF8.self))"))
+                }
+            } else if result?["notification"] != nil {
+                do {
+                    let notification = try self.decoder.decode(AsyncNotification.self, from: data)
+                    asyncNotificationHandler(notification)
+                } catch {
+                    os_log("failed to decode notification: %s", type: .error, "\(error)")
+                }
             }
-        } catch  {
-            os_log("failed to deserialize JSON", type: .error)
+        } catch {
+            os_log("failed to deserialize JSON: %s", type: .error, "\(error)")
         }
     }
 

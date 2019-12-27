@@ -9,7 +9,7 @@
 
 (define-logger server)
 
-(define (serve in out)
+(define (serve in out [notifications (make-channel)])
   (define sem (make-semaphore))
   (define _
     (thread
@@ -22,6 +22,11 @@
              (close-input-port in)
              (close-output-port out)))
           (handle-evt
+           notifications
+           (lambda (data)
+             (write-json (hash-set data 'notification #t) out)
+             (loop)))
+          (handle-evt
            in
            (lambda _
              (define req (read-json in))
@@ -31,7 +36,7 @@
                   (with-handlers ([exn:fail:read?
                                    (lambda (e)
                                      (write-json (hasheq 'error (format "invalid JSON:\n  ~.a" (exn-message e))) out))]
-                                  [exn:fail?
+                                  [exn:misc:match?
                                    (lambda (e)
                                      (write-json (hasheq 'error (format "malformed request:\n   ~.a" (exn-message e))) out))])
                     (match-define (hash-table ['id   id]

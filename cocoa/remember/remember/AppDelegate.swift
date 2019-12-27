@@ -27,12 +27,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             os_log("failed to set up rpc", type: .error)
         }
 
-        // Create the SwiftUI view that provides the window contents.
         let contentView = ContentView(
             entryDB: client,
             parser: client)
 
-        // Create the window and set the content view. 
         window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 700, height: 64),
             styleMask: [.titled, .fullSizeContentView],
