@@ -49,6 +49,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.titlebarAppearsTransparent = true
         window.makeKeyAndOrderFront(nil)
 
+        setupHotKey()
         setupHidingListener()
         requestNotificationsAccess()
     }
@@ -57,13 +58,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         rpc.shutdown()
     }
 
+    private func setupHotKey() {
+        DDHotKeyCenter.shared()?.registerHotKey(
+            withKeyCode: 0x31,  // space
+            modifierFlags: NSEvent.ModifierFlags.option.rawValue,
+            task: { _ in
+
+                if NSApp.isActive {
+                    NSApp.hide(nil)
+                } else {
+                    NSApp.activate(ignoringOtherApps: true)
+                }
+        })
+    }
+
     private func setupHidingListener() {
         NotificationCenter.default.addObserver(
-            forName: .commandFieldDidCancel,
+            forName: .commandDidComplete,
             object: nil,
             queue: nil) { _ in
 
-            self.window.setIsVisible(false)
+                NSApp.hide(nil)
         }
     }
 
@@ -75,8 +90,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         })
     }
-}
-
-extension Notification.Name {
-    static let commandFieldDidCancel = Notification.Name("commandFieldDidCancel")
 }

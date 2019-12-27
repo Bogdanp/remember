@@ -31,7 +31,8 @@ struct ContentView: View {
                 case .commit(let c):
                     self.isEditable = false
                     self.store.commit(command: c) {
-                        self.isEditable = false
+                        self.isEditable = true
+                        Notifications.commandDidComplete()
                     }
                 }
             }

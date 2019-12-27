@@ -24,6 +24,11 @@
 		43E6B94023B547A000F7ACE1 /* SwiftyAttributes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */; };
 		43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */; };
 		43E6B94523B6660200F7ACE1 /* EntryDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94423B6660200F7ACE1 /* EntryDB.swift */; };
+		43E6B94823B6722B00F7ACE1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B94723B6722B00F7ACE1 /* Carbon.framework */; };
+		43E6B95823B6775B00F7ACE1 /* DDHotKeyUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95623B6775A00F7ACE1 /* DDHotKeyUtilities.m */; };
+		43E6B95923B6775B00F7ACE1 /* DDHotKeyCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95523B6775A00F7ACE1 /* DDHotKeyCenter.m */; };
+		43E6B95A23B6775B00F7ACE1 /* DDHotKeyTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */; };
+		43E6B95C23B6878600F7ACE1 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95B23B6878600F7ACE1 /* Notifications.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +73,15 @@
 		43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyAttributes.framework; path = Carthage/Build/Mac/SwiftyAttributes.framework; sourceTree = SOURCE_ROOT; };
 		43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStore.swift; sourceTree = "<group>"; };
 		43E6B94423B6660200F7ACE1 /* EntryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDB.swift; sourceTree = "<group>"; };
+		43E6B94723B6722B00F7ACE1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		43E6B94B23B673EF00F7ACE1 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
+		43E6B95223B6775A00F7ACE1 /* DDHotKeyCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DDHotKeyCenter.h; path = vendor/DDHotKey/DDHotKeyCenter.h; sourceTree = "<group>"; };
+		43E6B95323B6775A00F7ACE1 /* DDHotKeyUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DDHotKeyUtilities.h; path = vendor/DDHotKey/DDHotKeyUtilities.h; sourceTree = "<group>"; };
+		43E6B95423B6775A00F7ACE1 /* DDHotKeyTextField.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DDHotKeyTextField.h; path = vendor/DDHotKey/DDHotKeyTextField.h; sourceTree = "<group>"; };
+		43E6B95523B6775A00F7ACE1 /* DDHotKeyCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyCenter.m; path = vendor/DDHotKey/DDHotKeyCenter.m; sourceTree = "<group>"; };
+		43E6B95623B6775A00F7ACE1 /* DDHotKeyUtilities.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyUtilities.m; path = vendor/DDHotKey/DDHotKeyUtilities.m; sourceTree = "<group>"; };
+		43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyTextField.m; path = vendor/DDHotKey/DDHotKeyTextField.m; sourceTree = "<group>"; };
+		43E6B95B23B6878600F7ACE1 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43E6B94823B6722B00F7ACE1 /* Carbon.framework in Frameworks */,
 				43E6B94023B547A000F7ACE1 /* SwiftyAttributes.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -103,6 +118,7 @@
 				436BE2A923B10D5000717375 /* rememberTests */,
 				436BE2B423B10D5000717375 /* rememberUITests */,
 				436BE29223B10D4E00717375 /* Products */,
+				43E6B94623B6722B00F7ACE1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -128,8 +144,16 @@
 				43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */,
 				43713C4123B397C400E20E48 /* ComsCenter.swift */,
 				436BE29623B10D4E00717375 /* ContentView.swift */,
+				43E6B94B23B673EF00F7ACE1 /* BridgingHeader.h */,
+				43E6B95223B6775A00F7ACE1 /* DDHotKeyCenter.h */,
+				43E6B95523B6775A00F7ACE1 /* DDHotKeyCenter.m */,
+				43E6B95423B6775A00F7ACE1 /* DDHotKeyTextField.h */,
+				43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */,
+				43E6B95323B6775A00F7ACE1 /* DDHotKeyUtilities.h */,
+				43E6B95623B6775A00F7ACE1 /* DDHotKeyUtilities.m */,
 				43E6B94423B6660200F7ACE1 /* EntryDB.swift */,
 				4385BC5323B4CAEA0086A98F /* JSONChunker.swift */,
+				43E6B95B23B6878600F7ACE1 /* Notifications.swift */,
 				4385BC5923B4F1DF0086A98F /* Parser.swift */,
 				433DB90E23B134B40027268A /* VisualEffectBackground.swift */,
 				436BE29823B10D5000717375 /* Assets.xcassets */,
@@ -164,6 +188,14 @@
 				436BE2B723B10D5000717375 /* Info.plist */,
 			);
 			path = rememberUITests;
+			sourceTree = "<group>";
+		};
+		43E6B94623B6722B00F7ACE1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43E6B94723B6722B00F7ACE1 /* Carbon.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -322,9 +354,13 @@
 			files = (
 				43713C3E23B21CB000E20E48 /* CommandField.swift in Sources */,
 				4385BC5823B4E4590086A98F /* Client.swift in Sources */,
+				43E6B95A23B6775B00F7ACE1 /* DDHotKeyTextField.m in Sources */,
 				433DB90F23B134B40027268A /* VisualEffectBackground.swift in Sources */,
+				43E6B95823B6775B00F7ACE1 /* DDHotKeyUtilities.m in Sources */,
+				43E6B95923B6775B00F7ACE1 /* DDHotKeyCenter.m in Sources */,
 				4385BC5423B4CAEA0086A98F /* JSONChunker.swift in Sources */,
 				4385BC5A23B4F1DF0086A98F /* Parser.swift in Sources */,
+				43E6B95C23B6878600F7ACE1 /* Notifications.swift in Sources */,
 				436BE29723B10D4E00717375 /* ContentView.swift in Sources */,
 				43E6B94523B6660200F7ACE1 /* EntryDB.swift in Sources */,
 				43713C4223B397C400E20E48 /* ComsCenter.swift in Sources */,
@@ -497,6 +533,7 @@
 				CODE_SIGN_ENTITLEMENTS = remember/remember.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_ASSET_PATHS = "\"remember/Preview Content\"";
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -513,6 +550,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.defn.remember;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/remember/BridgingHeader.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -524,6 +562,7 @@
 				CODE_SIGN_ENTITLEMENTS = remember/remember.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = NO;
 				DEVELOPMENT_ASSET_PATHS = "\"remember/Preview Content\"";
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -540,6 +579,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.defn.remember;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/remember/BridgingHeader.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

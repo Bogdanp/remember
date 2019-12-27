@@ -47,7 +47,7 @@ class CommandStore: ObservableObject {
 
     func clear() {
         if command.string.isEmpty {
-            NotificationCenter.default.post(name: .commandFieldDidCancel, object: nil)
+            Notifications.commandDidComplete()
         }
 
         command = NSAttributedString(string: "")
