@@ -8,6 +8,13 @@
 
 import Foundation
 
+fileprivate let BACKSLASH = UInt8(ascii: "\\")
+fileprivate let QUOTE = UInt8(ascii: "\"")
+fileprivate let OSB = UInt8(ascii: "[")
+fileprivate let CSB = UInt8(ascii: "]")
+fileprivate let OCB = UInt8(ascii: "{")
+fileprivate let CCB = UInt8(ascii: "}")
+
 class JSONChunker {
     private let handler: (Data) -> Void
     private var buf = Data()
@@ -15,13 +22,6 @@ class JSONChunker {
     init(chunkHandler: @escaping (Data) -> Void) {
         handler = chunkHandler
     }
-
-    private let BACKSLASH = ("\\" as Character).asciiValue!
-    private let QUOTE = ("\"" as Character).asciiValue!
-    private let OSB = ("[" as Character).asciiValue!
-    private let CSB = ("]" as Character).asciiValue!
-    private let OCB = ("{" as Character).asciiValue!
-    private let CCB = ("}" as Character).asciiValue!
 
     /// Write some data into the chunker.  If the data completes a pending
     /// JSON object, then the handler is called.

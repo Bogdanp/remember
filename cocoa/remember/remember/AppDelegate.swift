@@ -27,11 +27,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         // Create the SwiftUI view that provides the window contents.
-        let contentView = ContentView(viewModel: ContentViewModel(parser: client))
+        let contentView = ContentView(parser: client)
 
         // Create the window and set the content view. 
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 720, height: 64),
+            contentRect: NSRect(x: 0, y: 0, width: 700, height: 64),
             styleMask: [.titled, .fullSizeContentView],
             backing: .buffered,
             defer: false

@@ -10,13 +10,16 @@ import Combine
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var viewModel: ContentViewModel
+    @ObservedObject var store: CommandStore
+
+    init(parser: Parser) {
+        store = CommandStore(parser: parser)
+        store.setup()
+    }
 
     var body: some View {
         VStack {
-            CommandField(tokens: viewModel.tokens) {
-                self.viewModel.parse(command: $0)
-            }
+            CommandField($store.command, tokens: $store.tokens)
                 .padding(15)
                 .padding(.leading, 25)
         }

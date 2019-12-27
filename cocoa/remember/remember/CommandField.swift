@@ -13,14 +13,12 @@ import SwiftyAttributes
 struct CommandField: NSViewRepresentable {
     typealias NSViewType = NSTextField
 
-    @State var text: NSAttributedString = NSAttributedString(string: "")
+    @Binding var text: NSAttributedString
+    @Binding var tokens: [Token]
 
-    private var tokens: [Token]
-    private var action: ((String) -> Void)? = nil
-
-    init(tokens theTokens: [Token], action theAction: @escaping (String) -> Void) {
-        tokens = theTokens
-        action = theAction
+    init(_ text: Binding<NSAttributedString>, tokens: Binding<[Token]>) {
+        _text = text
+        _tokens = tokens
     }
 
     func makeNSView(context: NSViewRepresentableContext<CommandField>) -> NSViewType {
@@ -35,20 +33,25 @@ struct CommandField: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: NSViewType, context: NSViewRepresentableContext<CommandField>) {
-        let font = NSFont.systemFont(ofSize: 24)
-        var attributedText = "".withFont(font)
+        let systemFont = NSFont.systemFont(ofSize: 24)
+        var attributedText = "".withFont(systemFont)
         for token in tokens {
             switch token {
             case .chunk(let c):
-                attributedText += c.text.withFont(font)
+                attributedText += c.text
+                    .withFont(systemFont)
             case .relativeDate(let r):
-                attributedText += r.text.withFont(font).withBackgroundColor(Color.blue).withTextColor(Color.white)
+                attributedText += r.text.withFont(systemFont)
+                    .withBackgroundColor(hexColor("21262d"))
+                    .withTextColor(Color.white)
             case .tag(let t):
-                attributedText += t.text.withFont(font).withBackgroundColor(Color.red).withTextColor(Color.white)
+                attributedText += t.text.withFont(systemFont)
+                    .withBackgroundColor(hexColor("4c88f2"))
+                    .withTextColor(Color.white)
             }
         }
 
-        nsView.font = font
+        nsView.font = systemFont
         if attributedText.string == text.string {
             nsView.attributedStringValue = attributedText
         } else {
@@ -56,13 +59,20 @@ struct CommandField: NSViewRepresentable {
         }
     }
 
+    private func hexColor(_ rgba: String) -> NSColor {
+        guard let n = UInt32(rgba, radix: 16) else {
+            return Color.black
+        }
+
+        let r = CGFloat((n & 0xFF0000) >> 16) / 255.0
+        let g = CGFloat((n & 0x00FF00) >>  8) / 255.0
+        let b = CGFloat((n & 0x0000FF))       / 255.0
+        return NSColor(red: r, green: g, blue: b, alpha: 1.0)
+    }
+
     func makeCoordinator() -> Coordinator {
         return Coordinator() {
             self.text = $0
-
-            if let action = self.action {
-                action($0.string)
-            }
         }
     }
 

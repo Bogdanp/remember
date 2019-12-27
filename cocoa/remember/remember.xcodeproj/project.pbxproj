@@ -17,12 +17,12 @@
 		436BE2B623B10D5000717375 /* rememberUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE2B523B10D5000717375 /* rememberUITests.swift */; };
 		43713C3E23B21CB000E20E48 /* CommandField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43713C3D23B21CB000E20E48 /* CommandField.swift */; };
 		43713C4223B397C400E20E48 /* ComsCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43713C4123B397C400E20E48 /* ComsCenter.swift */; };
-		43812CBC23B532220021C4CF /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43812CBB23B532220021C4CF /* ContentViewModel.swift */; };
 		4385BC5423B4CAEA0086A98F /* JSONChunker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5323B4CAEA0086A98F /* JSONChunker.swift */; };
 		4385BC5623B4CCB20086A98F /* JSONChunkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */; };
 		4385BC5823B4E4590086A98F /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5723B4E4590086A98F /* Client.swift */; };
 		4385BC5A23B4F1DF0086A98F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5923B4F1DF0086A98F /* Parser.swift */; };
 		43E6B94023B547A000F7ACE1 /* SwiftyAttributes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */; };
+		43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,12 +60,12 @@
 		436BE2B723B10D5000717375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43713C3D23B21CB000E20E48 /* CommandField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandField.swift; sourceTree = "<group>"; };
 		43713C4123B397C400E20E48 /* ComsCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComsCenter.swift; sourceTree = "<group>"; };
-		43812CBB23B532220021C4CF /* ContentViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
 		4385BC5323B4CAEA0086A98F /* JSONChunker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONChunker.swift; sourceTree = "<group>"; };
 		4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONChunkerTests.swift; sourceTree = "<group>"; };
 		4385BC5723B4E4590086A98F /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		4385BC5923B4F1DF0086A98F /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyAttributes.framework; path = Carthage/Build/Mac/SwiftyAttributes.framework; sourceTree = SOURCE_ROOT; };
+		43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,15 +117,15 @@
 		436BE29323B10D4E00717375 /* remember */ = {
 			isa = PBXGroup;
 			children = (
-				43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */,
 				436BE2A123B10D5000717375 /* remember.entitlements */,
+				43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */,
 				436BE2A023B10D5000717375 /* Info.plist */,
 				436BE29423B10D4E00717375 /* AppDelegate.swift */,
 				4385BC5723B4E4590086A98F /* Client.swift */,
 				43713C3D23B21CB000E20E48 /* CommandField.swift */,
+				43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */,
 				43713C4123B397C400E20E48 /* ComsCenter.swift */,
 				436BE29623B10D4E00717375 /* ContentView.swift */,
-				43812CBB23B532220021C4CF /* ContentViewModel.swift */,
 				4385BC5323B4CAEA0086A98F /* JSONChunker.swift */,
 				4385BC5923B4F1DF0086A98F /* Parser.swift */,
 				433DB90E23B134B40027268A /* VisualEffectBackground.swift */,
@@ -325,7 +325,7 @@
 				436BE29723B10D4E00717375 /* ContentView.swift in Sources */,
 				43713C4223B397C400E20E48 /* ComsCenter.swift in Sources */,
 				436BE29523B10D4E00717375 /* AppDelegate.swift in Sources */,
-				43812CBC23B532220021C4CF /* ContentViewModel.swift in Sources */,
+				43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
