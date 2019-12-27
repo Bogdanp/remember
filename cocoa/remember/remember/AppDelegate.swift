@@ -60,7 +60,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupHotKey() {
         DDHotKeyCenter.shared()?.registerHotKey(
-            withKeyCode: 0x31,  // space
+            withKeyCode: Keycode.space,
             modifierFlags: NSEvent.ModifierFlags.option.rawValue,
             task: { _ in
 

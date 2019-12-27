@@ -29,6 +29,7 @@
 		43E6B95923B6775B00F7ACE1 /* DDHotKeyCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95523B6775A00F7ACE1 /* DDHotKeyCenter.m */; };
 		43E6B95A23B6775B00F7ACE1 /* DDHotKeyTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */; };
 		43E6B95C23B6878600F7ACE1 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95B23B6878600F7ACE1 /* Notifications.swift */; };
+		43E6B95E23B68F4A00F7ACE1 /* Keycode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +83,7 @@
 		43E6B95623B6775A00F7ACE1 /* DDHotKeyUtilities.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyUtilities.m; path = vendor/DDHotKey/DDHotKeyUtilities.m; sourceTree = "<group>"; };
 		43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = DDHotKeyTextField.m; path = vendor/DDHotKey/DDHotKeyTextField.m; sourceTree = "<group>"; };
 		43E6B95B23B6878600F7ACE1 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
+		43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keycode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +155,7 @@
 				43E6B95623B6775A00F7ACE1 /* DDHotKeyUtilities.m */,
 				43E6B94423B6660200F7ACE1 /* EntryDB.swift */,
 				4385BC5323B4CAEA0086A98F /* JSONChunker.swift */,
+				43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */,
 				43E6B95B23B6878600F7ACE1 /* Notifications.swift */,
 				4385BC5923B4F1DF0086A98F /* Parser.swift */,
 				433DB90E23B134B40027268A /* VisualEffectBackground.swift */,
@@ -353,6 +356,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43713C3E23B21CB000E20E48 /* CommandField.swift in Sources */,
+				43E6B95E23B68F4A00F7ACE1 /* Keycode.swift in Sources */,
 				4385BC5823B4E4590086A98F /* Client.swift in Sources */,
 				43E6B95A23B6775B00F7ACE1 /* DDHotKeyTextField.m in Sources */,
 				433DB90F23B134B40027268A /* VisualEffectBackground.swift in Sources */,
