@@ -24,7 +24,9 @@ struct ContentView: View {
                 case .cancel(_):
                     self.store.clear()
                 case .commit(let c):
-                    self.store.save(command: c)
+                    self.store.commit(command: c) { 
+
+                    }
                 }
             }
                 .padding(15)

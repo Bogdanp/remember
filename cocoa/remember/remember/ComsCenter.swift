@@ -6,9 +6,13 @@
 //  Copyright © 2019 CLEARTYPE SRL. All rights reserved.
 //
 
-import Combine
 import Foundation
 import os
+
+enum RPCResult<R> {
+    case ok(R)
+    case error(RPCError)
+}
 
 enum RPCError: Error {
     case encoding(Error)
@@ -33,7 +37,7 @@ class ComsCenter {
         process.standardOutput = rEnd
 
         let chunker = JSONChunker {
-            self.handleResult($0)
+            self.onDataReceived($0)
         }
 
         rEnd.fileHandleForReading.readabilityHandler = {
@@ -48,27 +52,25 @@ class ComsCenter {
         process.waitUntilExit()
     }
 
-    /// Calls the RPC `name` with `args`, returning a future representing its async result.
-    func call<R: Decodable>(_ name: String, _ args: [Any]) -> Future<R, RPCError> {
+    /// Calls the RPC `name` with `args`.  If an asynchronous response is ever returned, then `action` is called.
+    func call<R: Decodable>(_ name: String, _ args: [Any], action: @escaping (RPCResult<R>) -> Void) {
         let id = nextId()
         let request: [String: Any] = [
             "id": id,
             "name": name,
             "args": args
         ]
-        let future = Future<R, RPCError> { promise in
-            self.queue.sync {
-                self.pending[id] = Handler(resolve: {
-                    do {
-                        let response = try self.decoder.decode(Response<R>.self, from: $0)
-                        promise(.success(response.result))
-                    } catch {
-                        promise(.failure(.decoding(error)))
-                    }
-                }, reject: {
-                    promise(.failure($0))
-                })
-            }
+        self.queue.sync {
+            self.pending[id] = Handler(resolve: {
+                do {
+                    let response = try self.decoder.decode(Response<R>.self, from: $0)
+                    action(.ok(response.result))
+                } catch {
+                    action(.error(.decoding(error)))
+                }
+            }, reject: {
+                action(.error($0))
+            })
         }
 
         do {
@@ -78,11 +80,9 @@ class ComsCenter {
                 handler.reject(.encoding(error))
             }
         }
-
-        return future
     }
 
-    private func handleResult(_ data: Data) {
+    private func onDataReceived(_ data: Data) {
         do {
             let result = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
             guard let id = result?["id"] as? UInt32,

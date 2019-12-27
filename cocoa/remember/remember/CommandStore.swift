@@ -26,9 +26,17 @@ class CommandStore: ObservableObject {
             .map(\.string)
             .debounce(for: 0.1, scheduler: RunLoop.main)
             .removeDuplicates()
-            .flatMap {
-                self.parser.parse(command: $0)
-                    .replaceError(with: [])
+            .flatMap { text in
+                return Future { promise in
+                    self.parser.parse(command: text) {
+                        switch $0 {
+                        case .ok(let tokens):
+                            promise(.success(tokens))
+                        case .error:
+                            promise(.success([]))
+                        }
+                    }
+                }
             }
             .receive(on: RunLoop.main)
             .assign(to: \.tokens, on: self)
@@ -39,7 +47,7 @@ class CommandStore: ObservableObject {
         self.tokens = []
     }
 
-    func save(command: String) {
+    func commit(command: String, action: () -> Void) {
         
     }
 }

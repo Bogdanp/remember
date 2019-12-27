@@ -6,7 +6,6 @@
 //  Copyright © 2019 CLEARTYPE SRL. All rights reserved.
 //
 
-import Combine
 import Foundation
 
 class Client: Parser {
@@ -16,9 +15,14 @@ class Client: Parser {
         self.rpc = rpc
     }
 
-    func parse(command: String) -> AnyPublisher<[Token], ParseError> {
-        return rpc.call("parse-command", [command])
-            .mapError { .error($0) }
-            .eraseToAnyPublisher()
+    func parse(command: String, action: @escaping (ParseResult) -> Void) {
+        return rpc.call("parse-command", [command]) { (res: RPCResult<[Token]>) in
+            switch res {
+            case .ok(let tokens):
+                action(.ok(tokens))
+            case .error(let error):
+                action(.error(error))
+            }
+        }
     }
 }

@@ -9,12 +9,13 @@
 import Combine
 import Foundation
 
-enum ParseError: Error {
+enum ParseResult {
+    case ok([Token])
     case error(Error)
 }
 
 protocol Parser {
-    func parse(command: String) -> AnyPublisher<[Token], ParseError>
+    func parse(command: String, action: @escaping (ParseResult) -> Void)
 }
 
 enum Token: Decodable {
