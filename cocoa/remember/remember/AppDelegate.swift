@@ -49,11 +49,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.titlebarAppearsTransparent = true
         window.makeKeyAndOrderFront(nil)
 
+        setupHidingListener()
         requestNotificationsAccess()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         rpc.shutdown()
+    }
+
+    private func setupHidingListener() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("hideWindow"),
+            object: nil,
+            queue: nil) { _ in
+
+            self.window.setIsVisible(false)
+        }
     }
 
     private func requestNotificationsAccess() {

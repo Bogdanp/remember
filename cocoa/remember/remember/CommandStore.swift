@@ -46,8 +46,12 @@ class CommandStore: ObservableObject {
     }
 
     func clear() {
-        self.command = NSAttributedString(string: "")
-        self.tokens = []
+        if command.string.isEmpty {
+            NotificationCenter.default.post(name: NSNotification.Name("hideWindow"), object: nil)
+        }
+
+        command = NSAttributedString(string: "")
+        tokens = []
     }
 
     func commit(command: String, action: @escaping () -> Void) {
