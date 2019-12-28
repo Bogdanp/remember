@@ -40,12 +40,12 @@
   #:pre-persist-hook
   (lambda (e)
     (begin0 e
-      (notify 'on-entries-will-change)))
+      (notify 'entries-will-change)))
 
   #:pre-delete-hook
   (lambda (e)
     (begin0 e
-      (notify 'on-entries-will-change))))
+      (notify 'entries-will-change))))
 
 (create-table! (current-db) entry-schema)
 
@@ -84,7 +84,8 @@
   (query-exec (current-db)
               (~> (from entry #:as e)
                   (update [status "archived"])
-                  (where (= e.id ,id)))))
+                  (where (= e.id ,id))))
+  (notify 'entries-will-change))
 
 (define/contract (snooze-entry! id)
   (-> id/c void?)
