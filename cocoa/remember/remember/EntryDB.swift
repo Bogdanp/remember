@@ -21,5 +21,6 @@ enum CommitResult {
 protocol EntryDB {
     func commit(command: String, withCompletionHandler: @escaping (CommitResult) -> Void)
     func archiveEntry(byId: UInt32, withCompletionHandler: @escaping () -> Void)
+    func snoozeEntry(byId: UInt32, withCompletionHandler: @escaping () -> Void)
     func findPendingEntries(withCompletionHandler: @escaping ([Entry]) -> Void)
 }

@@ -29,14 +29,16 @@ class UserNotificationsHandler: NSObject, UNUserNotificationCenterDelegate {
         }
 
         let userInfo = response.notification.request.content.userInfo
+        let entryId = userInfo[UserNotificationInfo.entryId.rawValue] as? UInt32
 
         switch action {
         case .dismiss:
-            // TODO: snooze
-            break
+            if let id = entryId {
+                Notifications.userDidSnooze(entryId: id)
+            }
         case .archive:
-            if let entryId = userInfo[UserNotificationInfo.entryId.rawValue] as? UInt32 {
-                Notifications.userDidArchive(entryId: entryId)
+            if let id = entryId {
+                Notifications.userDidArchive(entryId: id)
             }
         }
 

@@ -52,6 +52,12 @@ class Client: Parser & EntryDB {
         }
     }
 
+    func snoozeEntry(byId id: UInt32, withCompletionHandler handler: @escaping () -> Void) {
+        return rpc.call("snooze-entry!", [id]) { (res: RPCResult<RPCUnit>) in
+            handler()
+        }
+    }
+
     func findPendingEntries(withCompletionHandler handler: @escaping ([Entry]) -> Void) {
         return rpc.call("find-pending-entries", []) { (res: RPCResult<[Entry]>) in
             switch res {

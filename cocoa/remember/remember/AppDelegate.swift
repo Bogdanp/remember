@@ -55,6 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         setupHotKey()
         setupArchivingListener()
+        setupSnoozingListener()
         setupHidingListener()
         setupUserNotifications()
     }
@@ -87,6 +88,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
                 if let entryId = notification.object as? UInt32 {
                     self.client.archiveEntry(byId: entryId) { }
+                }
+        }
+    }
+
+    /// Sets up the global listener for snooze events.  This is triggered whenever a user hits "Close" on a due entry notification.
+    private func setupSnoozingListener() {
+        NotificationCenter.default.addObserver(
+            forName: .userDidSnooze,
+            object: nil,
+            queue:  nil) { notification in
+
+                if let entryId = notification.object as? UInt32 {
+                    self.client.snoozeEntry(byId: entryId) { }
                 }
         }
     }

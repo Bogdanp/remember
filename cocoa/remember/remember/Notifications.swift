@@ -20,9 +20,16 @@ struct Notifications {
             name: .userDidArchive,
             object: entryId)
     }
+
+    static func userDidSnooze(entryId: UInt32) {
+        NotificationCenter.default.post(
+            name: .userDidSnooze,
+            object: entryId)
+    }
 }
 
 extension Notification.Name {
     static let commandDidComplete = Notification.Name("io.defn.remember.commandDidComplete")
     static let userDidArchive = Notification.Name("io.defn.remember.userDidArchive")
+    static let userDidSnooze = Notification.Name("io.defn.remember.userDidSnooze")
 }
