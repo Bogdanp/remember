@@ -19,7 +19,7 @@
        (let loop ()
          (define deadline (+ (current-inexact-milliseconds) 60000))
          (define entries (find-due-entries))
-         (when entries
+         (unless (null? entries)
            (channel-put notifications (hasheq 'type "entries-due"
                                               'entries (map entry->jsexpr entries))))
          (sync (alarm-evt deadline))
