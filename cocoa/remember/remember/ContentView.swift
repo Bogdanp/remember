@@ -12,6 +12,7 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var store: CommandStore
     @State var isEditable = true
+    @State var entriesRequested = false
 
     init(entryDB: EntryDB, parser: Parser) {
         store = CommandStore(
@@ -21,7 +22,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: nil) {
             HStack {
                 Image("Icon")
                     .resizable()
@@ -39,11 +40,25 @@ struct ContentView: View {
                             self.isEditable = true
                             Notifications.commandDidComplete()
                         }
+                    case .next where !self.entriesRequested:
+                        self.entriesRequested = true
+                        self.store.loadEntries()
+                    default:
+                        break
                     }
                 }
             }
-            .padding(15)
+
+            if !store.entries.isEmpty {
+                Divider()
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(store.entries) { entry in
+                        Text(entry.title)
+                    }
+                }
+            }
         }
+        .padding(15)
         .visualEffect()
         .cornerRadius(8)
     }

@@ -16,6 +16,8 @@ fileprivate let BG_TAG = hexColor(rgb: "4c88f2")!
 enum CommandAction {
     case cancel(String)
     case commit(String)
+    case previous
+    case next
 }
 
 struct CommandField: NSViewRepresentable {
@@ -101,6 +103,12 @@ struct CommandField: NSViewRepresentable {
                 return true
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
                 action(.cancel(control.stringValue))
+                return true
+            } else if commandSelector == #selector(NSResponder.moveUp(_:)) {
+                action(.previous)
+                return true
+            } else if commandSelector == #selector(NSResponder.moveDown(_:)) {
+                action(.next)
                 return true
             }
 

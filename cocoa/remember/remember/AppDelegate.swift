@@ -37,7 +37,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             parser: client)
 
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 680, height: 64),
+            contentRect: NSRect(x: 0, y: 0, width: 680, height: 0),
             styleMask: [.titled, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -104,7 +104,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupUserNotifications() {
         let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.requestAuthorization(options: [.alert, .sound], completionHandler: { granted, err in
+        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { granted, err in
             if !granted {
                 os_log("alert acess not granted", type: .error)
                 return

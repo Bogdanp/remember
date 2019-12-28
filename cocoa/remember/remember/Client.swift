@@ -52,6 +52,17 @@ class Client: Parser & EntryDB {
         }
     }
 
+    func findPendingEntries(withCompletionHandler handler: @escaping ([Entry]) -> Void) {
+        return rpc.call("find-pending-entries", []) { (res: RPCResult<[Entry]>) in
+            switch res {
+            case .ok(let entries):
+                handler(entries)
+            case .error:
+                handler([])
+            }
+        }
+    }
+
     private func handleEntriesDueNotification(_ notification: EntriesDueNotification) {
         let center = UNUserNotificationCenter.current()
         for entry in notification.entries {

@@ -17,6 +17,7 @@ class CommandStore: ObservableObject {
 
     @Published var command = NSAttributedString(string: "")
     @Published var tokens = [Token]()
+    @Published var entries = [Entry]()
 
     init(entryDB: EntryDB, parser: Parser) {
         self.entryDB = entryDB
@@ -64,6 +65,14 @@ class CommandStore: ObservableObject {
                 case .error:
                     action()
                 }
+            }
+        }
+    }
+
+    func loadEntries() {
+        self.entryDB.findPendingEntries { entries in
+            RunLoop.main.schedule {
+                self.entries = entries
             }
         }
     }
