@@ -64,7 +64,11 @@
              (display (hash-ref token 'text)))]
 
           [("relative-date")
-           (values (relative-date->moment token) tags)]))))
+           (values (relative-date->moment token) tags)]
+
+          ;; TODO: handle tags
+          [else
+           (values due tags)]))))
 
   (insert-one! (current-db)
                (make-entry #:title (string-trim (get-output-string title-out))
