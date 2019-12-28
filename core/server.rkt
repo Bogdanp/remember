@@ -9,8 +9,9 @@
 
 (define-logger server)
 
-(define (serve in out [notifications (make-channel)])
+(define (serve in out [notifications-ch (make-channel)])
   (define sem (make-semaphore))
+  (define writes-ch (make-channel))
   (define _
     (thread
      (lambda _
@@ -22,9 +23,14 @@
              (close-input-port in)
              (close-output-port out)))
           (handle-evt
-           notifications
+           writes-ch
            (lambda (data)
-             (write-json (hash-set data 'notification #t) out)
+             (write-json data out)
+             (loop)))
+          (handle-evt
+           notifications-ch
+           (lambda (data)
+             (channel-put writes-ch (hash-set data 'notification #t))
              (loop)))
           (handle-evt
            in
@@ -35,10 +41,10 @@
                 (lambda _
                   (with-handlers ([exn:fail:read?
                                    (lambda (e)
-                                     (write-json (hasheq 'error (format "invalid JSON:\n  ~.a" (exn-message e))) out))]
+                                     (channel-put writes-ch (hasheq 'error (format "invalid JSON:\n  ~.a" (exn-message e)))))]
                                   [exn:misc:match?
                                    (lambda (e)
-                                     (write-json (hasheq 'error (format "malformed request:\n   ~.a" (exn-message e))) out))])
+                                     (channel-put writes-ch (hasheq 'error (format "malformed request:\n   ~.a" (exn-message e)))))])
                     (match-define (hash-table ['id   id]
                                               ['name name]
                                               ['args args]) req)
@@ -48,7 +54,7 @@
                                                    (hasheq 'error (exn-message e)))])
                         (hasheq 'result (dispatch name args))))
 
-                    (write-json (hash-set res 'id id) out))))
+                    (channel-put writes-ch (hash-set res 'id id)))))
 
                (loop)))))))))
 
