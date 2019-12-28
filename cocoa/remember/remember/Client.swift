@@ -8,6 +8,7 @@
 
 import Foundation
 import UserNotifications
+import os
 
 class Client: Parser & EntryDB {
     private let rpc: ComsCenter
@@ -58,7 +59,9 @@ class Client: Parser & EntryDB {
                 trigger: nil)
 
             center.add(request) { error in
-                print(error)
+                if let err = error {
+                    os_log("failed to add notification: %s", type: .error, "\(err)")
+                }
             }
         }
     }

@@ -27,7 +27,7 @@ class CommandStore: ObservableObject {
     func setup() {
         parseCancellable = $command
             .map(\.string)
-            .debounce(for: 0.1, scheduler: RunLoop.main)
+            .filter { !$0.isEmpty }
             .removeDuplicates()
             .flatMap { text in
                 return Future { promise in

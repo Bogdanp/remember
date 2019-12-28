@@ -30,7 +30,9 @@
              'tag (bytes->string/utf-8 tag))]
 
     [_
-     (read-chunk in)]))
+     (hasheq 'type "chunk"
+             'text (read-string 1 in)
+             'span (list start-loc (port-location in)))]))
 
 (define (read-relative-date [in (current-input-port)])
   (define start-loc (port-location in))
@@ -43,7 +45,9 @@
              'modifier (or (and modifier (bytes->string/utf-8 modifier)) "d"))]
 
     [_
-     (read-chunk in)]))
+     (hasheq 'type "chunk"
+             'text (read-string 1 in)
+             'span (list start-loc (port-location in)))]))
 
 (define (read-chunk [in (current-input-port)])
   (define out (open-output-string))

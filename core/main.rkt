@@ -3,6 +3,7 @@
 (require racket/cmdline
          "command.rkt"
          "entry.rkt"
+         "logging.rkt"
          "rpc.rkt"
          "server.rkt")
 
@@ -24,12 +25,16 @@
          (sync (alarm-evt deadline))
          (loop)))))
 
+  (define stop-logger
+    (start-logger #:levels '((server . debug))))
+
   (define in (current-input-port))
   (define out (current-output-port))
   (file-stream-buffer-mode in 'none)
   (file-stream-buffer-mode out 'none)
-  (define stop (serve in out notifications))
+  (define stop-server (serve in out notifications))
   (with-handlers ([exn:break?
                    (lambda _
-                     (stop))])
+                     (stop-server)
+                     (stop-logger))])
     (sync/enable-break never-evt)))

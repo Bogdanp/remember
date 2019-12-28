@@ -100,8 +100,8 @@ class ComsCenter {
                 }
             } else if result?["notification"] != nil {
                 do {
-                    let notification = try self.decoder.decode(AsyncNotification.self, from: data)
-                    asyncNotificationHandler(notification)
+                    let data = try self.decoder.decode(AsyncNotificationData.self, from: data)
+                    asyncNotificationHandler(data.notification)
                 } catch {
                     os_log("failed to decode notification: %s", type: .error, "\(error)")
                 }
@@ -131,6 +131,12 @@ fileprivate struct Handler {
     let reject: (RPCError) -> Void
 }
 
+/// Represents an async RPC response containing a result of type `R`.
 fileprivate struct Response<R: Decodable>: Decodable {
     let result: R
+}
+
+/// Represents an async notification received from the core.
+fileprivate struct AsyncNotificationData: Decodable {
+    let notification: AsyncNotification
 }

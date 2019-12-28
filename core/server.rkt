@@ -1,7 +1,9 @@
 #lang racket/base
 
 (require json
+         racket/async-channel
          racket/match
+         racket/port
          "rpc.rkt")
 
 (provide
@@ -10,56 +12,77 @@
 (define-logger server)
 
 (define (serve in out [notifications-ch (make-channel)])
-  (define sem (make-semaphore))
-  (define writes-ch (make-channel))
-  (define _
+  (define stopped (make-semaphore))
+
+  (define writes-ch (make-async-channel 128))
+  (define (send response)
+    (async-channel-put writes-ch response))
+
+  (define thd
     (thread
      (lambda _
        (let loop ()
+         (log-server-debug "waiting for events")
          (sync
           (handle-evt
-           sem
+           stopped
            (lambda _
-             (close-input-port in)
-             (close-output-port out)))
+             (log-server-debug "received stop event")))
+
           (handle-evt
            writes-ch
            (lambda (data)
+             (log-server-debug "received write event: ~.s" data)
              (write-json data out)
              (loop)))
+
           (handle-evt
            notifications-ch
            (lambda (data)
-             (channel-put writes-ch (hash-set data 'notification #t))
+             (log-server-debug "received notification: ~.s" data)
+             (send (hash 'notification data))
              (loop)))
+
           (handle-evt
            in
            (lambda _
+             (log-server-debug "received read event")
              (define req (read-json in))
              (unless (eof-object? req)
                (thread
                 (lambda _
+                  (log-server-debug "handling request: ~.s" req)
                   (with-handlers ([exn:fail:read?
                                    (lambda (e)
-                                     (channel-put writes-ch (hasheq 'error (format "invalid JSON:\n  ~.a" (exn-message e)))))]
+                                     (define message (format "invalid JSON:\n  ~.a" (exn-message e)))
+                                     (log-server-warning message)
+                                     (send (hasheq 'error message)))]
                                   [exn:misc:match?
                                    (lambda (e)
-                                     (channel-put writes-ch (hasheq 'error (format "malformed request:\n   ~.a" (exn-message e)))))])
+                                     (define message (format "malformed request:\n   ~.a" (exn-message e)))
+                                     (log-server-warning message)
+                                     (send (hasheq 'error message)))]
+                                  [exn:fail?
+                                   (lambda (e)
+                                     (log-server-error (exn-message e))
+                                     (raise e))])
                     (match-define (hash-table ['id   id]
                                               ['name name]
                                               ['args args]) req)
 
                     (define res
                       (with-handlers ([exn:fail? (lambda (e)
+                                                   (log-server-warning "error: ~.s" (exn-message e))
                                                    (hasheq 'error (exn-message e)))])
                         (hasheq 'result (dispatch name args))))
 
-                    (channel-put writes-ch (hash-set res 'id id)))))
+                    (send (hash-set res 'id id)))))
 
                (loop)))))))))
 
   (lambda _
-    (semaphore-post sem)))
+    (semaphore-post stopped)
+    (sync thd)))
 
 (module+ test
   (require rackunit)
