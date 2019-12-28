@@ -84,7 +84,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.addObserver(
             forName: .userDidArchive,
             object: nil,
-            queue:  nil) { notification in
+            queue: nil) { notification in
 
                 if let entryId = notification.object as? UInt32 {
                     self.client.archiveEntry(byId: entryId) { }
@@ -97,7 +97,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.addObserver(
             forName: .userDidSnooze,
             object: nil,
-            queue:  nil) { notification in
+            queue: nil) { notification in
 
                 if let entryId = notification.object as? UInt32 {
                     self.client.snoozeEntry(byId: entryId) { }
@@ -116,9 +116,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    /// Sets up access to the notification center and installs an async notification listener to handle `entries-due` events.
     private func setupUserNotifications() {
-        let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { granted, err in
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { granted, err in
             if !granted {
                 os_log("alert acess not granted", type: .error)
                 return
@@ -135,8 +136,39 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 intentIdentifiers: [],
                 options: .customDismissAction)
 
-            notificationCenter.setNotificationCategories([entryCategory])
-            notificationCenter.delegate = self.userNotificationsHandler
+            center.setNotificationCategories([entryCategory])
+            center.delegate = self.userNotificationsHandler
+
+            self.client.addListener(withHandler: self.handleEntriesDueNotification(_:))
         })
+    }
+
+    private func handleEntriesDueNotification(_ notification: AsyncNotification) {
+        switch notification {
+        case .entriesDue(let notification):
+            let center = UNUserNotificationCenter.current()
+            for entry in notification.entries {
+                let content = UNMutableNotificationContent()
+                content.title = "Remember"
+                content.subtitle = entry.title
+                content.sound = .default
+                content.userInfo = [UserNotificationInfo.entryId.rawValue: entry.id]
+                content.categoryIdentifier = UserNotificationCategory.entry.rawValue
+
+                let request = UNNotificationRequest(
+                    identifier: "remember:\(entry.id)",
+                    content: content,
+                    trigger: nil)
+
+                center.add(request) { error in
+                    if let err = error {
+                        os_log("failed to add notification: %s", type: .error, "\(err)")
+                    }
+                }
+            }
+
+        default:
+            break
+        }
     }
 }

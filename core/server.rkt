@@ -90,7 +90,7 @@
 (module+ test
   (require rackunit)
 
-  (parameterize ([current-registry (make-hasheq)])
+  (parameterize ([current-rpc-registry (make-hasheq)])
     (define-values (c-in c-out) (make-pipe))
     (define-values (s-in s-out) (make-pipe))
 

@@ -5,6 +5,7 @@
          "common.rkt"
          "entry.rkt"
          "logging.rkt"
+         "notification.rkt"
          "rpc.rkt"
          "server.rkt")
 
@@ -18,6 +19,13 @@
 
 (module+ main
   (define notifications (make-channel))
+
+  (define/listener (on-entries-changed)
+    (define entries (find-pending-entries))
+    (unless (null? entries)
+      (channel-put notifications (hasheq 'type "entries-changed"
+                                         'entries (map entry->jsexpr entries)))))
+
   (define scheduler
     (thread
      (lambda _
@@ -31,7 +39,8 @@
          (loop)))))
 
   (define stop-logger
-    (start-logger #:levels '((server . debug))))
+    (start-logger #:levels '((notifications . debug)
+                             (server . debug))))
 
   (define in (current-input-port))
   (define out (current-output-port))

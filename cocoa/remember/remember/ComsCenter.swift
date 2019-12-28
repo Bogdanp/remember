@@ -34,8 +34,7 @@ class ComsCenter {
     private let queue = DispatchQueue(label: "io.defn.remember.ComsCenter")
     private var seq: UInt32 = 0
     private var pending: [UInt32: Handler] = [:]
-
-    var asyncNotificationHandler: (AsyncNotification) -> Void = { _ in }
+    private var asyncNotificationListeners = [(AsyncNotification) -> Void]()
 
     init(withCoreURL coreURL: URL) throws {
         process.executableURL = coreURL
@@ -88,6 +87,12 @@ class ComsCenter {
         }
     }
 
+    func addListener(withHandler handler: @escaping (AsyncNotification) -> Void) {
+        queue.sync {
+            self.asyncNotificationListeners.append(handler)
+        }
+    }
+
     private func onDataReceived(_ data: Data) {
         do {
             let result = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
@@ -105,7 +110,9 @@ class ComsCenter {
             } else if result?["notification"] != nil {
                 do {
                     let data = try self.decoder.decode(AsyncNotificationData.self, from: data)
-                    asyncNotificationHandler(data.notification)
+                    for listener in self.asyncNotificationListeners {
+                        listener(data.notification)
+                    }
                 } catch {
                     os_log("failed to decode notification: %s", type: .error, "\(error)")
                 }

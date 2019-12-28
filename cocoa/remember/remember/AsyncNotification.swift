@@ -8,11 +8,20 @@
 
 import Foundation
 
+protocol AsyncNotifier {
+    func addListener(withHandler: @escaping (AsyncNotification) -> Void)
+}
+
+struct EntriesChangedNotification: Decodable {
+    let entries: [Entry]
+}
+
 struct EntriesDueNotification: Decodable {
     let entries: [Entry]
 }
 
 enum AsyncNotification: Decodable {
+    case entriesChanged(EntriesChangedNotification)
     case entriesDue(EntriesDueNotification)
 
     enum AsyncNotificationError: Error {
@@ -26,9 +35,10 @@ enum AsyncNotification: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(String.self, forKey: .type)
+        let svc = try decoder.singleValueContainer()
         switch type {
-        case "entries-due":
-            self = .entriesDue(try decoder.singleValueContainer().decode(EntriesDueNotification.self))
+        case "entries-changed": self = .entriesChanged(try svc.decode(EntriesChangedNotification.self))
+        case "entries-due": self = .entriesDue(try svc.decode(EntriesDueNotification.self))
         default:
             throw AsyncNotificationError.unknownType(type)
         }

@@ -10,7 +10,8 @@
          racket/string
          threading
          "command.rkt"
-         "db.rkt")
+         "db.rkt"
+         "notification.rkt")
 
 (provide
  (schema-out entry)
@@ -34,7 +35,17 @@
    [(body "") string/f]
    [(status 'pending) symbol/f #:contract entry-status/c]
    [(due-at (now/moment)) datetime/f]
-   [(created-at (now/moment)) datetime/f]))
+   [(created-at (now/moment)) datetime/f])
+
+  #:pre-persist-hook
+  (lambda (e)
+    (begin0 e
+      (notify 'on-entries-changed)))
+
+  #:pre-delete-hook
+  (lambda (e)
+    (begin0 e
+      (notify 'on-entries-changed))))
 
 (create-table! (current-db) entry-schema)
 

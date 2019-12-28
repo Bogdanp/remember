@@ -5,17 +5,17 @@
          racket/contract)
 
 (provide
- current-registry
+ current-rpc-registry
  register-rpc
  dispatch)
 
-(define/contract current-registry
+(define/contract current-rpc-registry
   (parameter/c (and/c hash-eq? (not/c immutable?)))
   (make-parameter (make-hasheq)))
 
 (define/contract (register! name fn)
   (-> symbol? procedure? void?)
-  (hash-set! (current-registry) name fn))
+  (hash-set! (current-rpc-registry) name fn))
 
 (define-syntax (register-rpc stx)
   (define-syntax-class command
@@ -29,7 +29,7 @@
 
 (define/contract (dispatch name args)
   (-> symbol? (listof any/c) any/c)
-  (apply (hash-ref (current-registry)
+  (apply (hash-ref (current-rpc-registry)
                    name
                    (lambda _
                      (error 'dispatch "procedure ~.s not found" name)))
@@ -38,7 +38,7 @@
 (module+ test
   (require rackunit)
 
-  (parameterize ([current-registry (make-hasheq)])
+  (parameterize ([current-rpc-registry (make-hasheq)])
     (register-rpc add1
                   [ping (lambda _
                           "PONG")])
