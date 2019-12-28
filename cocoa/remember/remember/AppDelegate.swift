@@ -38,6 +38,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             defer: false
         )
         window.center()
+        window.collectionBehavior = .canJoinAllSpaces
         window.setFrameAutosaveName("Remember")
         window.backgroundColor = .clear
         window.isMovableByWindowBackground = true
