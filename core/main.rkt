@@ -2,6 +2,7 @@
 
 (require racket/cmdline
          "command.rkt"
+         "common.rkt"
          "entry.rkt"
          "logging.rkt"
          "rpc.rkt"
@@ -10,9 +11,7 @@
 (register-rpc
  parse-command
  [commit-entry! (compose1 entry->jsexpr commit-entry!)]
- [archive-entry! (lambda (id)
-                   (begin0 (hasheq)
-                     (archive-entry! id)))])
+ [archive-entry! (compose1 unit archive-entry!)])
 
 (module+ main
   (define notifications (make-channel))
