@@ -5,7 +5,7 @@
          racket/contract)
 
 (provide
- define/listener
+ define-listener
  notify)
 
 (define-logger notifications)
@@ -42,7 +42,7 @@
 
   (for-each sync threads))
 
-(define-syntax (define/listener stx)
+(define-syntax (define-listener stx)
   (syntax-parse stx
     [(_ (notification:id . args) e ...+)
      #'(add-listener! 'notification (lambda args
@@ -56,16 +56,16 @@
     (define listener-2-notified? #f)
     (define listener-3-notified? #f)
 
-    (define/listener (on-entries-changed)
+    (define-listener (on-entries-changed)
       (set! listener-1-notified? #t))
 
-    (define/listener (on-entries-changed)
+    (define-listener (on-entries-changed)
       (error 'on-entries-changed "this failure should not impact anything else"))
 
-    (define/listener (on-entries-changed)
+    (define-listener (on-entries-changed)
       (set! listener-2-notified? #t))
 
-    (define/listener (on-entry-deleted e)
+    (define-listener (on-entry-deleted e)
       (set! listener-3-notified? #t))
 
     (notify 'on-entries-changed)

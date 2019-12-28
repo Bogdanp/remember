@@ -20,7 +20,7 @@
 (module+ main
   (define notifications (make-channel))
 
-  (define/listener (on-entries-changed)
+  (define-listener (on-entries-changed)
     (define entries (find-pending-entries))
     (unless (null? entries)
       (channel-put notifications (hasheq 'type "entries-changed"
