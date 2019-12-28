@@ -17,6 +17,7 @@
  entry->jsexpr
  commit-entry!
  archive-entry!
+ find-pending-entries
  find-due-entries)
 
 (define id/c
@@ -66,16 +67,22 @@
       (where (< (datetime e.due-at)
                 (datetime "now" "localtime")))))
 
-(define/contract (find-due-entries)
-  (-> (listof entry?))
-  (sequence->list (in-entities (current-db) due-entries)))
-
 (define/contract (archive-entry! id)
   (-> id/c void?)
   (query-exec (current-db)
               (~> (from entry #:as e)
                   (update [status "archived"])
                   (where (= e.id ,id)))))
+
+(define/contract (find-pending-entries)
+  (-> (listof entry?))
+  (sequence->list (in-entities (current-db)
+                               (~> pending-entries
+                                   (order-by ([(datetime e.due-at)]))))))
+
+(define/contract (find-due-entries)
+  (-> (listof entry?))
+  (sequence->list (in-entities (current-db) due-entries)))
 
 (define/match (relative-date->moment token)
   [((hash-table ['delta d]

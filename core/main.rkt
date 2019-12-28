@@ -11,7 +11,9 @@
 (register-rpc
  parse-command
  [commit-entry! (compose1 entry->jsexpr commit-entry!)]
- [archive-entry! (compose1 unit archive-entry!)])
+ [archive-entry! (compose1 unit archive-entry!)]
+ [find-pending-entries (lambda ()
+                         (map entry->jsexpr (find-pending-entries)))])
 
 (module+ main
   (define notifications (make-channel))
