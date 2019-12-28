@@ -33,6 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         client = Client(rpc)
 
         let contentView = ContentView(
+            asyncNotifier: client,
             entryDB: client,
             parser: client)
 

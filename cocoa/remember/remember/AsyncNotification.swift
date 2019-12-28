@@ -12,8 +12,8 @@ protocol AsyncNotifier {
     func addListener(withHandler: @escaping (AsyncNotification) -> Void)
 }
 
-struct EntriesChangedNotification: Decodable {
-    let entries: [Entry]
+struct EntriesWillChangeNotification: Decodable {
+
 }
 
 struct EntriesDueNotification: Decodable {
@@ -21,8 +21,8 @@ struct EntriesDueNotification: Decodable {
 }
 
 enum AsyncNotification: Decodable {
-    case entriesChanged(EntriesChangedNotification)
     case entriesDue(EntriesDueNotification)
+    case entriesWillChange
 
     enum AsyncNotificationError: Error {
         case unknownType(String)
@@ -37,8 +37,8 @@ enum AsyncNotification: Decodable {
         let type = try container.decode(String.self, forKey: .type)
         let svc = try decoder.singleValueContainer()
         switch type {
-        case "entries-changed": self = .entriesChanged(try svc.decode(EntriesChangedNotification.self))
         case "entries-due": self = .entriesDue(try svc.decode(EntriesDueNotification.self))
+        case "entries-will-change": self = .entriesWillChange
         default:
             throw AsyncNotificationError.unknownType(type)
         }

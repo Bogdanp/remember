@@ -40,12 +40,12 @@
   #:pre-persist-hook
   (lambda (e)
     (begin0 e
-      (notify 'on-entries-changed)))
+      (notify 'on-entries-will-change)))
 
   #:pre-delete-hook
   (lambda (e)
     (begin0 e
-      (notify 'on-entries-changed))))
+      (notify 'on-entries-will-change))))
 
 (create-table! (current-db) entry-schema)
 

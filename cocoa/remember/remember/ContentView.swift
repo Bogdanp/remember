@@ -14,12 +14,14 @@ struct ContentView: View {
     @State var isEditable = true
     @State var showingPendingEntries = false
 
-    init(entryDB: EntryDB, parser: Parser) {
+    init(asyncNotifier: AsyncNotifier,
+         entryDB: EntryDB,
+         parser: Parser) {
         store = CommandStore(
+            asyncNotifier: asyncNotifier,
             entryDB: entryDB,
             parser: parser)
         store.setup()
-        store.loadEntries()
     }
 
     var body: some View {
@@ -39,7 +41,6 @@ struct ContentView: View {
                     case .commit(let c):
                         self.store.commit(command: c) {
                             self.showingPendingEntries = false
-                            self.store.loadEntries()
                             Notifications.commandDidComplete()
                         }
                     case .previous, .next:
@@ -50,11 +51,12 @@ struct ContentView: View {
 
             if showingPendingEntries && !store.entries.isEmpty {
                 Divider()
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 12) {
                     ForEach(store.entries) { entry in
                         Text(entry.title)
                     }
                 }
+                .padding(.top, 6)
             }
         }
         .padding(15)

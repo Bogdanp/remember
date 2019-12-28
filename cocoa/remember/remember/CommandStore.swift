@@ -10,8 +10,8 @@ import Combine
 import Foundation
 
 class CommandStore: ObservableObject {
+    private let asyncNotifier: AsyncNotifier
     private let entryDB: EntryDB
-
     private let parser: Parser
     private var parseCancellable: AnyCancellable?
 
@@ -19,7 +19,8 @@ class CommandStore: ObservableObject {
     @Published var tokens = [Token]()
     @Published var entries = [Entry]()
 
-    init(entryDB: EntryDB, parser: Parser) {
+    init(asyncNotifier: AsyncNotifier, entryDB: EntryDB, parser: Parser) {
+        self.asyncNotifier = asyncNotifier
         self.entryDB = entryDB
         self.parser = parser
         self.parseCancellable = nil
@@ -44,6 +45,16 @@ class CommandStore: ObservableObject {
             }
             .receive(on: RunLoop.main)
             .assign(to: \.tokens, on: self)
+
+        self.updatePendingEntries()
+        self.asyncNotifier.addListener {
+            switch $0 {
+            case .entriesWillChange:
+                self.updatePendingEntries()
+            default:
+                break
+            }
+        }
     }
 
     func clear() {
@@ -69,7 +80,7 @@ class CommandStore: ObservableObject {
         }
     }
 
-    func loadEntries() {
+    func updatePendingEntries() {
         self.entryDB.findPendingEntries { entries in
             RunLoop.main.schedule {
                 self.entries = entries

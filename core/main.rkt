@@ -20,11 +20,8 @@
 (module+ main
   (define notifications (make-channel))
 
-  (define-listener (on-entries-changed)
-    (define entries (find-pending-entries))
-    (unless (null? entries)
-      (channel-put notifications (hasheq 'type "entries-changed"
-                                         'entries (map entry->jsexpr entries)))))
+  (define-listener (on-entries-will-change)
+    (channel-put notifications (hasheq 'type "entries-will-change")))
 
   (define scheduler
     (thread
