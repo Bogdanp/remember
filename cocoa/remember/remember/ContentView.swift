@@ -13,6 +13,7 @@ struct ContentView: View {
     @ObservedObject var store: CommandStore
     @State var isEditable = true
     @State var entriesRequested = false
+    @State var showingPendingEntries = false
 
     init(entryDB: EntryDB, parser: Parser) {
         store = CommandStore(
@@ -33,23 +34,28 @@ struct ContentView: View {
                              isEditable: $isEditable) {
                     switch $0 {
                     case .cancel(_):
+                        self.showingPendingEntries = false
                         self.store.clear()
                     case .commit(let c):
+                        self.showingPendingEntries = false
                         self.isEditable = false
                         self.store.commit(command: c) {
                             self.isEditable = true
                             Notifications.commandDidComplete()
                         }
-                    case .next where !self.entriesRequested:
-                        self.entriesRequested = true
-                        self.store.loadEntries()
+                    case .next:
+                        self.showingPendingEntries = true
+                        if !self.entriesRequested {
+                            self.entriesRequested = true
+                            self.store.loadEntries()
+                        }
                     default:
                         break
                     }
                 }
             }
 
-            if !store.entries.isEmpty {
+            if showingPendingEntries && !store.entries.isEmpty {
                 Divider()
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(store.entries) { entry in
