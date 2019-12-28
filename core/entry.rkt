@@ -1,6 +1,7 @@
 #lang racket/base
 
-(require deta
+(require db
+         deta
          gregor
          json
          racket/contract
@@ -15,7 +16,11 @@
  (schema-out entry)
  entry->jsexpr
  commit-entry!
+ archive-entry!
  find-due-entries)
+
+(define id/c
+  exact-nonnegative-integer?)
 
 (define entry-status/c
   (or/c 'pending 'archived))
@@ -64,6 +69,13 @@
 (define/contract (find-due-entries)
   (-> (listof entry?))
   (sequence->list (in-entities (current-db) due-entries)))
+
+(define/contract (archive-entry! id)
+  (-> id/c void?)
+  (query-exec (current-db)
+              (~> (from entry #:as e)
+                  (update [status "archived"])
+                  (where (= e.id ,id)))))
 
 (define/match (relative-date->moment token)
   [((hash-table ['delta d]
