@@ -86,7 +86,7 @@
 
       (when entry
         (define updated-entry
-          (set-entry-due-at entry (+minutes (entry-due-at entry) 15)))
+          (set-entry-due-at entry (+minutes (now/moment) 15)))
         (void
          (update-one! conn updated-entry))))))
 
