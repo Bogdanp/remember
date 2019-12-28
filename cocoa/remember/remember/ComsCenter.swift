@@ -33,8 +33,8 @@ class ComsCenter {
 
     var asyncNotificationHandler: (AsyncNotification) -> Void = { _ in }
 
-    init() throws {
-        process.executableURL = URL(fileURLWithPath: "/Users/bogdan/work/remember/bin/remember")
+    init(withCoreURL coreURL: URL) throws {
+        process.executableURL = coreURL
         process.standardInput = wEnd
         process.standardOutput = rEnd
 

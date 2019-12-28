@@ -59,7 +59,7 @@
 (define due-entries
   (~> pending-entries
       (where (< (datetime e.due-at)
-                (datetime "now")))))
+                (datetime "now" "localtime")))))
 
 (define/contract (find-due-entries)
   (-> (listof entry?))

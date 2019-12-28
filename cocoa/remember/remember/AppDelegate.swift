@@ -20,12 +20,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var client: Client!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        do {
-            rpc = try ComsCenter()
-            client = Client(rpc)
-        } catch {
-            os_log("failed to set up rpc", type: .error)
+        guard let coreURL = Bundle.main.url(forResource: "core/bin/remember-core", withExtension: nil) else {
+            fatalError("failed to find core executable")
         }
+
+        guard let rpc = try? ComsCenter(withCoreURL: coreURL) else {
+            fatalError("failed to start core process")
+        }
+
+        self.rpc = rpc
+        client = Client(rpc)
 
         let contentView = ContentView(
             entryDB: client,

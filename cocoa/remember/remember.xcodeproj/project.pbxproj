@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43310AF823B77DAD000B913B /* core in Resources */ = {isa = PBXBuildFile; fileRef = 43310AF723B77DAD000B913B /* core */; };
 		433DB90F23B134B40027268A /* VisualEffectBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433DB90E23B134B40027268A /* VisualEffectBackground.swift */; };
 		436BE29523B10D4E00717375 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE29423B10D4E00717375 /* AppDelegate.swift */; };
 		436BE29723B10D4E00717375 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE29623B10D4E00717375 /* ContentView.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		43310AF723B77DAD000B913B /* core */ = {isa = PBXFileReference; lastKnownFileType = folder; path = core; sourceTree = "<group>"; };
 		433DB90E23B134B40027268A /* VisualEffectBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectBackground.swift; sourceTree = "<group>"; };
 		436BE29123B10D4E00717375 /* remember.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = remember.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		436BE29423B10D4E00717375 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -115,12 +117,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		43310AF423B7793F000B913B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				43310AF723B77DAD000B913B /* core */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		436BE28823B10D4E00717375 = {
 			isa = PBXGroup;
 			children = (
 				436BE29323B10D4E00717375 /* remember */,
 				436BE2A923B10D5000717375 /* rememberTests */,
 				436BE2B423B10D5000717375 /* rememberUITests */,
+				43310AF423B7793F000B913B /* Resources */,
 				436BE29223B10D4E00717375 /* Products */,
 				43E6B94623B6722B00F7ACE1 /* Frameworks */,
 			);
@@ -310,6 +321,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				436BE29F23B10D5000717375 /* Main.storyboard in Resources */,
+				43310AF823B77DAD000B913B /* core in Resources */,
 				436BE29C23B10D5000717375 /* Preview Assets.xcassets in Resources */,
 				436BE29923B10D5000717375 /* Assets.xcassets in Resources */,
 			);
