@@ -12,7 +12,6 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var store: CommandStore
     @State var isEditable = true
-    @State var entriesRequested = false
     @State var showingPendingEntries = false
 
     init(entryDB: EntryDB, parser: Parser) {
@@ -20,6 +19,7 @@ struct ContentView: View {
             entryDB: entryDB,
             parser: parser)
         store.setup()
+        store.loadEntries()
     }
 
     var body: some View {
@@ -37,20 +37,13 @@ struct ContentView: View {
                         self.showingPendingEntries = false
                         self.store.clear()
                     case .commit(let c):
-                        self.showingPendingEntries = false
-                        self.isEditable = false
                         self.store.commit(command: c) {
-                            self.isEditable = true
+                            self.showingPendingEntries = false
+                            self.store.loadEntries()
                             Notifications.commandDidComplete()
                         }
-                    case .next:
+                    case .previous, .next:
                         self.showingPendingEntries = true
-                        if !self.entriesRequested {
-                            self.entriesRequested = true
-                            self.store.loadEntries()
-                        }
-                    default:
-                        break
                     }
                 }
             }
