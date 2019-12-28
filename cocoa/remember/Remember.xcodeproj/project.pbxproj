@@ -22,7 +22,7 @@
 		4385BC5623B4CCB20086A98F /* JSONChunkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */; };
 		4385BC5823B4E4590086A98F /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5723B4E4590086A98F /* Client.swift */; };
 		4385BC5A23B4F1DF0086A98F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5923B4F1DF0086A98F /* Parser.swift */; };
-		43E6B94023B547A000F7ACE1 /* SwiftyAttributes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */; };
+		43983BDC23B78DD90064C527 /* SwiftyAttributes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43983BDB23B78DD90064C527 /* SwiftyAttributes.framework */; };
 		43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */; };
 		43E6B94523B6660200F7ACE1 /* EntryDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94423B6660200F7ACE1 /* EntryDB.swift */; };
 		43E6B94823B6722B00F7ACE1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B94723B6722B00F7ACE1 /* Carbon.framework */; };
@@ -74,7 +74,7 @@
 		4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONChunkerTests.swift; sourceTree = "<group>"; };
 		4385BC5723B4E4590086A98F /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		4385BC5923B4F1DF0086A98F /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
-		43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyAttributes.framework; path = Carthage/Build/Mac/SwiftyAttributes.framework; sourceTree = SOURCE_ROOT; };
+		43983BDB23B78DD90064C527 /* SwiftyAttributes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyAttributes.framework; path = Carthage/Build/Mac/SwiftyAttributes.framework; sourceTree = "<group>"; };
 		43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStore.swift; sourceTree = "<group>"; };
 		43E6B94423B6660200F7ACE1 /* EntryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDB.swift; sourceTree = "<group>"; };
 		43E6B94723B6722B00F7ACE1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -96,7 +96,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				43E6B94823B6722B00F7ACE1 /* Carbon.framework in Frameworks */,
-				43E6B94023B547A000F7ACE1 /* SwiftyAttributes.framework in Frameworks */,
+				43983BDC23B78DD90064C527 /* SwiftyAttributes.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,7 +151,6 @@
 			isa = PBXGroup;
 			children = (
 				436BE2A123B10D5000717375 /* remember.entitlements */,
-				43E6B93F23B547A000F7ACE1 /* SwiftyAttributes.framework */,
 				436BE2A023B10D5000717375 /* Info.plist */,
 				436BE29423B10D4E00717375 /* AppDelegate.swift */,
 				43E6B95F23B6A33600F7ACE1 /* AsyncNotification.swift */,
@@ -211,6 +210,7 @@
 			isa = PBXGroup;
 			children = (
 				43E6B94723B6722B00F7ACE1 /* Carbon.framework */,
+				43983BDB23B78DD90064C527 /* SwiftyAttributes.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
