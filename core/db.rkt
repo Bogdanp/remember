@@ -3,9 +3,10 @@
 (require db)
 
 (provide
- conn)
+ current-db)
 
-(define conn
-  (sqlite3-connect #:database "/tmp/remember.sqlite3"
-                   #:mode 'create
-                   #:use-place #t))
+(define current-db
+  (make-parameter
+   (sqlite3-connect #:database "/tmp/remember.sqlite3"
+                    #:mode 'create
+                    #:use-place #t)))

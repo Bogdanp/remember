@@ -9,7 +9,7 @@
 
 (register-rpc
  parse-command
- commit-entry!)
+ [commit-entry! (compose1 entry->jsexpr commit-entry!)])
 
 (module+ main
   (define notifications (make-channel))

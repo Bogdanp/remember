@@ -2,8 +2,10 @@
 
 (require deta
          gregor
+         json
          racket/contract
          racket/match
+         racket/sequence
          racket/string
          threading
          "command.rkt"
@@ -27,14 +29,15 @@
    [(due-at (now/moment)) datetime/f]
    [(created-at (now/moment)) datetime/f]))
 
-(create-table! conn entry-schema)
+(create-table! (current-db) entry-schema)
 
-(define (commit-entry! command)
+(define/contract (commit-entry! command)
+  (-> string? entry?)
   (define tokens (parse-command command))
   (define title-out (open-output-string))
   (define-values (due tags)
     (parameterize ([current-output-port title-out])
-      (for/fold ([due (+hours (now/moment) 1)]
+      (for/fold ([due (+minutes (now/moment) 15)]
                  [tags null])
                 ([token (in-list tokens)])
         (case (hash-ref token 'type)
@@ -45,20 +48,22 @@
           [("relative-date")
            (values (relative-date->moment token) tags)]))))
 
-  (define the-entry
-    (insert-one! conn (make-entry #:title (string-trim (get-output-string title-out))
-                                  #:due-at due)))
+  (insert-one! (current-db)
+               (make-entry #:title (string-trim (get-output-string title-out))
+                           #:due-at due)))
 
-  (entry->jsexpr the-entry))
+(define pending-entries
+  (~> (from entry #:as e)
+      (where (= e.status "pending"))))
 
-(define (find-due-entries)
-  (for/list ([entry (in-entities conn
-                                 (~> (from entry #:as e)
-                                     (where (and
-                                             (= e.status "pending")
-                                             (< (datetime e.due-at)
-                                                (datetime "now"))))))])
-    entry))
+(define due-entries
+  (~> pending-entries
+      (where (< (datetime e.due-at)
+                (datetime "now")))))
+
+(define/contract (find-due-entries)
+  (-> (listof entry?))
+  (sequence->list (in-entities (current-db) due-entries)))
 
 (define/match (relative-date->moment token)
   [((hash-table ['delta d]
@@ -72,6 +77,7 @@
 
    (adder (now/moment) d)])
 
-(define (entry->jsexpr e)
+(define/contract (entry->jsexpr e)
+  (-> entry? jsexpr?)
   (hasheq 'id (entry-id e)
           'title (entry-title e)))
