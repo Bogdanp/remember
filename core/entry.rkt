@@ -17,6 +17,7 @@
  entry->jsexpr
  commit-entry!
  archive-entry!
+ snooze-entry!
  find-pending-entries
  find-due-entries)
 
@@ -73,6 +74,21 @@
               (~> (from entry #:as e)
                   (update [status "archived"])
                   (where (= e.id ,id)))))
+
+(define/contract (snooze-entry! id)
+  (-> id/c void?)
+  (define conn (current-db))
+  (call-with-transaction conn
+    (lambda ()
+      (define entry
+        (lookup conn (~> (from entry #:as e)
+                         (where (= e.id ,id)))))
+
+      (when entry
+        (define updated-entry
+          (set-entry-due-at entry (+minutes (entry-due-at entry) 15)))
+        (void
+         (update-one! conn updated-entry))))))
 
 (define/contract (find-pending-entries)
   (-> (listof entry?))
