@@ -9,7 +9,7 @@
 import Foundation
 
 struct Entry: Identifiable & Decodable {
-    let id: Int
+    let id: UInt32
     let title: String
 }
 
@@ -19,5 +19,6 @@ enum CommitResult {
 }
 
 protocol EntryDB {
-    func commit(command: String, action: @escaping (CommitResult) -> Void)
+    func commit(command: String, withCompletionHandler: @escaping (CommitResult) -> Void)
+    func archiveEntry(byId: UInt32, withCompletionHandler: @escaping () -> Void)
 }

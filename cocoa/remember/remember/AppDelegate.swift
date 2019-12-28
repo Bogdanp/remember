@@ -16,8 +16,9 @@ import os
 class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow!
 
-    var rpc: ComsCenter!
-    var client: Client!
+    private var rpc: ComsCenter!
+    private var client: Client!
+    private var userNotificationsHandler = UserNotificationsHandler()
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard let coreURL = Bundle.main.url(forResource: "core/bin/remember-core", withExtension: nil) else {
@@ -53,8 +54,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.makeKeyAndOrderFront(nil)
 
         setupHotKey()
+        setupArchivingListener()
         setupHidingListener()
-        requestNotificationsAccess()
+        setupUserNotifications()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -76,6 +78,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
     }
 
+    /// Sets up the global listener for archive events.  This is triggered whenever a user hits "Archive" on a due entry notification.
+    private func setupArchivingListener() {
+        NotificationCenter.default.addObserver(
+            forName: .userDidArchive,
+            object: nil,
+            queue:  nil) { notification in
+
+                if let entryId = notification.object as? UInt32 {
+                    self.client.archiveEntry(byId: entryId) { }
+                }
+        }
+    }
+
+    /// Sets up the global hiding listener.  This is triggered whenever the user intends to hide the window.
     private func setupHidingListener() {
         NotificationCenter.default.addObserver(
             forName: .commandDidComplete,
@@ -86,12 +102,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func requestNotificationsAccess() {
+    private func setupUserNotifications() {
         let notificationCenter = UNUserNotificationCenter.current()
         notificationCenter.requestAuthorization(options: [.alert, .sound], completionHandler: { granted, err in
             if !granted {
                 os_log("alert acess not granted", type: .error)
+                return
             }
+
+            let archiveAction = UNNotificationAction(
+                identifier: UserNotificationAction.archive.rawValue,
+                title: "Archive",
+                options: UNNotificationActionOptions(rawValue: 0))
+
+            let entryCategory = UNNotificationCategory(
+                identifier: UserNotificationCategory.entry.rawValue,
+                actions: [archiveAction],
+                intentIdentifiers: [],
+                options: .customDismissAction)
+
+            notificationCenter.setNotificationCategories([entryCategory])
+            notificationCenter.delegate = self.userNotificationsHandler
         })
     }
 }

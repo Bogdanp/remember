@@ -24,25 +24,31 @@ class Client: Parser & EntryDB {
         }
     }
 
-    func parse(command: String, action: @escaping (ParseResult) -> Void) {
+    func parse(command: String, withCompletionHandler handler: @escaping (ParseResult) -> Void) {
         return rpc.call("parse-command", [command]) { (res: RPCResult<[Token]>) in
             switch res {
             case .ok(let tokens):
-                action(.ok(tokens))
+                handler(.ok(tokens))
             case .error(let error):
-                action(.error(error))
+                handler(.error(error))
             }
         }
     }
 
-    func commit(command: String, action: @escaping (CommitResult) -> Void) {
+    func commit(command: String, withCompletionHandler handler: @escaping (CommitResult) -> Void) {
         return rpc.call("commit-entry!", [command]) { (res: RPCResult<Entry>) in
             switch res {
             case .ok(let entry):
-                action(.ok(entry))
+                handler(.ok(entry))
             case .error(let error):
-                action(.error(error))
+                handler(.error(error))
             }
+        }
+    }
+
+    func archiveEntry(byId id: UInt32, withCompletionHandler handler: @escaping () -> Void) {
+        return rpc.call("archive-entry!", [id]) { (res: RPCResult<RPCUnit>) in
+            handler()
         }
     }
 
@@ -50,8 +56,11 @@ class Client: Parser & EntryDB {
         let center = UNUserNotificationCenter.current()
         for entry in notification.entries {
             let content = UNMutableNotificationContent()
-            content.body = entry.title
-            content.sound = .defaultCritical
+            content.title = "Remember"
+            content.subtitle = entry.title
+            content.sound = .default
+            content.userInfo = [UserNotificationInfo.entryId.rawValue: entry.id]
+            content.categoryIdentifier = UserNotificationCategory.entry.rawValue
 
             let request = UNNotificationRequest(
                 identifier: "remember:\(entry.id)",

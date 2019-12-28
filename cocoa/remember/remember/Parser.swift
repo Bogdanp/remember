@@ -15,7 +15,7 @@ enum ParseResult {
 }
 
 protocol Parser {
-    func parse(command: String, action: @escaping (ParseResult) -> Void)
+    func parse(command: String, withCompletionHandler: @escaping (ParseResult) -> Void)
 }
 
 enum Token: Decodable {

@@ -14,8 +14,15 @@ struct Notifications {
             name: .commandDidComplete,
             object: nil)
     }
+
+    static func userDidArchive(entryId: UInt32) {
+        NotificationCenter.default.post(
+            name: .userDidArchive,
+            object: entryId)
+    }
 }
 
 extension Notification.Name {
-    static let commandDidComplete = Notification.Name("commandDidComplete")
+    static let commandDidComplete = Notification.Name("io.defn.remember.commandDidComplete")
+    static let userDidArchive = Notification.Name("io.defn.remember.userDidArchive")
 }

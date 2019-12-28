@@ -20,6 +20,10 @@ enum RPCError: Error {
     case runtime(String)
 }
 
+struct RPCUnit: Decodable {
+
+}
+
 class ComsCenter {
     private let process = Process()
     private let decoder = JSONDecoder()
