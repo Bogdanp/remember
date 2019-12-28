@@ -1,11 +1,15 @@
 #lang racket/base
 
-(require racket/generic
+(require json
+         racket/contract
+         racket/generic
          racket/match
-         racket/port)
+         racket/port
+         racket/string)
 
 (provide
- parse-command)
+ parse-command
+ parse-command/jsexpr)
 
 (define PREFIX-CHARS '(#\+ #\#))
 (define RELATIVE-DATE-RE #px"^\\+(0|[1-9][0-9]*)([hdmw])?")
@@ -82,5 +86,76 @@
          (loop (cons token tokens)
                (peek-char))]))))
 
-(define (parse-command s)
+(define/contract (parse-command s)
+  (-> non-empty-string? (listof (and/c hash-eq? immutable?)))
   (call-with-input-string s read-command))
+
+(define/contract (parse-command/jsexpr s)
+  (-> non-empty-string? (non-empty-listof jsexpr?))
+  (map token->jsexpr (parse-command s)))
+
+(define token->jsexpr values)
+
+(module+ test
+  (require rackunit)
+
+  (check-equal?
+   (parse-command/jsexpr "hello")
+   (list (hasheq 'type "chunk"
+                 'text "hello"
+                 'span '((1 0 0)
+                         (1 5 5)))))
+
+  (check-equal?
+   (parse-command/jsexpr "hello +1d there")
+   (list (hasheq 'type "chunk"
+                 'text "hello "
+                 'span '((1 0 0)
+                         (1 6 6)))
+         (hasheq 'type "relative-date"
+                 'text "+1d"
+                 'span '((1 6 6)
+                         (1 9 9))
+                 'delta 1
+                 'modifier "d")
+         (hasheq 'type "chunk"
+                 'text " there"
+                 'span '((1 9 9)
+                         (1 15 15)))))
+
+  (check-equal?
+   (parse-command/jsexpr "hello + there")
+   (list (hasheq 'type "chunk"
+                 'text "hello "
+                 'span '((1 0 0)
+                         (1 6 6)))
+         (hasheq 'type "chunk"
+                 'text "+"
+                 'span '((1 6 6)
+                         (1 7 7)))
+         (hasheq 'type "chunk"
+                 'text " there"
+                 'span '((1 7 7)
+                         (1 13 13)))))
+
+  (check-equal?
+   (parse-command/jsexpr "buy milk +1d #groceries")
+   '(#hasheq((type . "chunk")
+             (text . "buy milk ")
+             (span . ((1 0 0)
+                      (1 9 9))))
+     #hasheq((type . "relative-date")
+             (text . "+1d")
+             (span . ((1 9 9)
+                      (1 12 12)))
+             (delta . 1)
+             (modifier . "d"))
+     #hasheq((type . "chunk")
+             (text . " ")
+             (span . ((1 12 12)
+                      (1 13 13))) )
+     #hasheq((type . "tag")
+             (text . "#groceries")
+             (span . ((1 13 13)
+                      (1 23 23)))
+             (tag . "groceries")))))

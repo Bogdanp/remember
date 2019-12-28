@@ -9,7 +9,7 @@
          "server.rkt")
 
 (register-rpc
- parse-command
+ [parse-command parse-command/jsexpr]
  [commit-entry! (compose1 entry->jsexpr commit-entry!)]
  [archive-entry! (compose1 unit archive-entry!)]
  [find-pending-entries (lambda ()
