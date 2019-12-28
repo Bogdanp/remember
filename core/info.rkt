@@ -2,5 +2,9 @@
 
 (define version "0.0.0")
 (define collection "remember")
-(define deps  '("base"))
+(define deps  '("base"
+                "db-lib"
+                "deta-lib"
+                "gregor-lib"
+                "threading-lib"))
 (define build-deps '("rackunit-lib"))
