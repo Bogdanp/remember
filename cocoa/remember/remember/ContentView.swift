@@ -22,22 +22,27 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            CommandField($store.command,
-                         tokens: $store.tokens,
-                         isEditable: $isEditable) {
-                switch $0 {
-                case .cancel(_):
-                    self.store.clear()
-                case .commit(let c):
-                    self.isEditable = false
-                    self.store.commit(command: c) {
-                        self.isEditable = true
-                        Notifications.commandDidComplete()
+            HStack {
+                Image("Icon")
+                    .resizable()
+                    .frame(width: 32, height: 32, alignment: .leading)
+
+                CommandField($store.command,
+                             tokens: $store.tokens,
+                             isEditable: $isEditable) {
+                    switch $0 {
+                    case .cancel(_):
+                        self.store.clear()
+                    case .commit(let c):
+                        self.isEditable = false
+                        self.store.commit(command: c) {
+                            self.isEditable = true
+                            Notifications.commandDidComplete()
+                        }
                     }
                 }
             }
-                .padding(15)
-                .padding(.leading, 25)
+            .padding(15)
         }
         .visualEffect()
         .cornerRadius(8)
