@@ -36,7 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             parser: client)
 
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 700, height: 64),
+            contentRect: NSRect(x: 0, y: 0, width: 680, height: 64),
             styleMask: [.titled, .fullSizeContentView],
             backing: .buffered,
             defer: false
@@ -71,6 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     NSApp.hide(nil)
                 } else {
                     NSApp.activate(ignoringOtherApps: true)
+                    self.window.center()
                 }
         })
     }
