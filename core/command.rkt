@@ -12,7 +12,7 @@
  parse-command/jsexpr)
 
 (define PREFIX-CHARS '(#\+ #\#))
-(define RELATIVE-DATE-RE #px"^\\+(0|[1-9][0-9]*)([hdmw])?")
+(define RELATIVE-DATE-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
 (define TAG-RE #px"^#([^ ]+)")
 
 (define bytes->number (compose1 string->number bytes->string/utf-8))

@@ -121,10 +121,11 @@
                 ['modifier m]))
    (define adder
      (case m
+       [("m") +minutes]
        [("h") +hours]
        [("d") +days]
        [("w") +weeks]
-       [("m") +months]))
+       [("M") +months]))
 
    (adder (now/moment) d)])
 
