@@ -51,17 +51,29 @@ struct ContentView: View {
 
             if showingPendingEntries && !store.entries.isEmpty {
                 Divider()
-                VStack(alignment: .leading, spacing: 12) {
-                    ForEach(store.entries) { entry in
-                        Text(entry.title)
-                    }
-                }
-                .padding(.top, 6)
+                EntryList($store.entries)
             }
         }
         .padding(15)
         .visualEffect()
         .cornerRadius(8)
+    }
+}
+
+struct EntryList: View {
+    @Binding var entries: [Entry]
+
+    init(_ entries: Binding<[Entry]>) {
+        _entries = entries
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(entries) { entry in
+                Text(entry.title)
+            }
+            .padding(.top, 6)
+        }
     }
 }
 

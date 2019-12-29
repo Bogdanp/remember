@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Entry: Identifiable & Decodable {
+struct Entry: Equatable &  Identifiable & Decodable {
     let id: UInt32
     let title: String
 }
