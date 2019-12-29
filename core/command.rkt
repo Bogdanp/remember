@@ -5,53 +5,106 @@
          racket/generic
          racket/match
          racket/port
-         racket/string)
+         racket/string
+         threading
+         "json.rkt")
 
 (provide
+ (struct-out location)
+ (struct-out span)
+ (struct-out token)
+ (struct-out chunk)
+ (struct-out relative-date)
+ (struct-out tag)
  parse-command
  parse-command/jsexpr)
+
+(struct location (line column offset)
+  #:transparent
+  #:methods gen:to-jsexpr
+  [(define (->jsexpr loc)
+     (list (location-line loc)
+           (location-column loc)
+           (location-offset loc)))])
+
+(struct span (lo hi)
+  #:transparent
+  #:methods gen:to-jsexpr
+  [(define/generic ->jsexpr/super ->jsexpr)
+   (define (->jsexpr s)
+     (list (->jsexpr/super (span-lo s))
+           (->jsexpr/super (span-hi s))))])
+
+(struct token (text span)
+  #:transparent
+  #:methods gen:to-jsexpr
+  [(define (->jsexpr _)
+     (error '->jsexpr "not implemented for token"))])
+
+(define (token->jsexpr t type)
+  (hasheq 'type type
+          'text (token-text t)
+          'span (->jsexpr (token-span t))))
+
+(struct chunk token ()
+  #:transparent
+  #:methods gen:to-jsexpr
+  [(define (->jsexpr c)
+     (token->jsexpr c "chunk"))])
+
+(struct relative-date token (delta modifier)
+  #:transparent
+  #:methods gen:to-jsexpr
+  [(define (->jsexpr rd)
+     (~> (token->jsexpr rd "relative-date")
+         (hash-set 'delta (relative-date-delta rd))
+         (hash-set 'modifier (symbol->string (relative-date-modifier rd)))))])
+
+(struct tag token (name)
+  #:transparent
+  #:methods gen:to-jsexpr
+  [(define (->jsexpr t)
+     (~> (token->jsexpr t "tag")
+         (hash-set 'name (tag-name t))))])
 
 (define PREFIX-CHARS '(#\+ #\#))
 (define RELATIVE-DATE-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
 (define TAG-RE #px"^#([^ ]+)")
 
 (define bytes->number (compose1 string->number bytes->string/utf-8))
+(define bytes->symbol (compose1 string->symbol bytes->string/utf-8))
 
 (define (port-location in)
   (call-with-values
    (lambda _
      (port-next-location in))
-   (lambda (line col next-pos)
-     (list line col (sub1 next-pos)))))
+   (lambda (line col next-offset)
+     (location line col (sub1 next-offset)))))
 
 (define (read-tag [in (current-input-port)])
   (define start-loc (port-location in))
   (match (regexp-try-match TAG-RE in)
-    [(list text tag)
-     (hasheq 'type "tag"
-             'text (bytes->string/utf-8 text)
-             'span (list start-loc (port-location in))
-             'tag (bytes->string/utf-8 tag))]
+    [(list text name)
+     (tag (bytes->string/utf-8 text)
+          (span start-loc (port-location in))
+          (bytes->string/utf-8 name))]
 
     [_
-     (hasheq 'type "chunk"
-             'text (read-string 1 in)
-             'span (list start-loc (port-location in)))]))
+     (chunk (read-string 1 in)
+            (span start-loc (port-location in)))]))
 
 (define (read-relative-date [in (current-input-port)])
   (define start-loc (port-location in))
   (match (regexp-try-match RELATIVE-DATE-RE in)
     [(list text delta modifier)
-     (hasheq 'type "relative-date"
-             'text (bytes->string/utf-8 text)
-             'span (list start-loc (port-location in))
-             'delta (bytes->number delta)
-             'modifier (or (and modifier (bytes->string/utf-8 modifier)) "d"))]
+     (relative-date (bytes->string/utf-8 text)
+                    (span start-loc (port-location in))
+                    (bytes->number delta)
+                    (or (and modifier (bytes->symbol modifier)) 'd))]
 
     [_
-     (hasheq 'type "chunk"
-             'text (read-string 1 in)
-             'span (list start-loc (port-location in)))]))
+     (chunk (read-string 1 in)
+            (span start-loc (port-location in)))]))
 
 (define (read-chunk [in (current-input-port)])
   (define out (open-output-string))
@@ -60,9 +113,8 @@
     (cond
       [(or (eof-object? c)
            (member c PREFIX-CHARS))
-       (hasheq 'type "chunk"
-               'text (get-output-string out)
-               'span (list start-loc (port-location in)))]
+       (chunk  (get-output-string out)
+               (span start-loc (port-location in)))]
 
       [else
        (write-char (read-char in) out)
@@ -87,56 +139,54 @@
                (peek-char))]))))
 
 (define/contract (parse-command s)
-  (-> non-empty-string? (listof (and/c hash-eq? immutable?)))
+  (-> non-empty-string? (listof token?))
   (call-with-input-string s read-command))
 
 (define/contract (parse-command/jsexpr s)
   (-> non-empty-string? (non-empty-listof jsexpr?))
-  (map token->jsexpr (parse-command s)))
-
-(define token->jsexpr values)
+  (->jsexpr (parse-command s)))
 
 (module+ test
   (require rackunit)
 
   (check-equal?
    (parse-command/jsexpr "hello")
-   (list (hasheq 'type "chunk"
-                 'text "hello"
-                 'span '((1 0 0)
-                         (1 5 5)))))
+   '(#hasheq((type . "chunk")
+             (text . "hello")
+             (span . ((1 0 0)
+                      (1 5 5))))))
 
   (check-equal?
    (parse-command/jsexpr "hello +1d there")
-   (list (hasheq 'type "chunk"
-                 'text "hello "
-                 'span '((1 0 0)
-                         (1 6 6)))
-         (hasheq 'type "relative-date"
-                 'text "+1d"
-                 'span '((1 6 6)
-                         (1 9 9))
-                 'delta 1
-                 'modifier "d")
-         (hasheq 'type "chunk"
-                 'text " there"
-                 'span '((1 9 9)
-                         (1 15 15)))))
+   '(#hasheq((type . "chunk")
+             (text . "hello ")
+             (span . ((1 0 0)
+                      (1 6 6))))
+     #hasheq((type . "relative-date")
+             (text . "+1d")
+             (span . ((1 6 6)
+                      (1 9 9)))
+             (delta . 1)
+             (modifier . "d"))
+     #hasheq((type . "chunk")
+             (text . " there")
+             (span . ((1 9 9)
+                      (1 15 15))))))
 
   (check-equal?
    (parse-command/jsexpr "hello + there")
-   (list (hasheq 'type "chunk"
-                 'text "hello "
-                 'span '((1 0 0)
-                         (1 6 6)))
-         (hasheq 'type "chunk"
-                 'text "+"
-                 'span '((1 6 6)
-                         (1 7 7)))
-         (hasheq 'type "chunk"
-                 'text " there"
-                 'span '((1 7 7)
-                         (1 13 13)))))
+   '(#hasheq((type . "chunk")
+             (text . "hello ")
+             (span . ((1 0 0)
+                      (1 6 6))))
+     #hasheq((type . "chunk")
+             (text . "+")
+             (span . ((1 6 6)
+                      (1 7 7))))
+     #hasheq((type . "chunk")
+             (text . " there")
+             (span . ((1 7 7)
+                      (1 13 13))))))
 
   (check-equal?
    (parse-command/jsexpr "buy milk +1d #groceries")
@@ -158,4 +208,4 @@
              (text . "#groceries")
              (span . ((1 13 13)
                       (1 23 23)))
-             (tag . "groceries")))))
+             (name . "groceries")))))

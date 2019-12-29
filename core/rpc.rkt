@@ -27,8 +27,8 @@
      #'(begin
          (register! 'command.id command.e) ...)]))
 
-(define/contract (dispatch name args)
-  (-> symbol? (listof any/c) any/c)
+(define/contract (dispatch name [args null])
+  (->* (symbol?) ((listof any/c)) any/c)
   (apply (hash-ref (current-rpc-registry)
                    name
                    (lambda _

@@ -4,6 +4,7 @@
          "command.rkt"
          "common.rkt"
          "entry.rkt"
+         "json.rkt"
          "logging.rkt"
          "notification.rkt"
          "rpc.rkt"
@@ -11,11 +12,10 @@
 
 (register-rpc
  [parse-command parse-command/jsexpr]
- [commit-entry! (compose1 entry->jsexpr commit-entry!)]
+ [commit-entry! (compose1 ->jsexpr commit-entry!)]
  [archive-entry! (compose1 unit archive-entry!)]
  [snooze-entry! (compose1 unit snooze-entry!)]
- [find-pending-entries (lambda ()
-                         (map entry->jsexpr (find-pending-entries)))])
+ [find-pending-entries (compose1 ->jsexpr find-pending-entries)])
 
 (module+ main
   (define notifications (make-channel))
@@ -31,7 +31,7 @@
          (define entries (find-due-entries))
          (unless (null? entries)
            (channel-put notifications (hasheq 'type "entries-due"
-                                              'entries (map entry->jsexpr entries))))
+                                              'entries (->jsexpr entries))))
          (sync (alarm-evt deadline))
          (loop)))))
 

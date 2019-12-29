@@ -34,13 +34,14 @@ enum Token: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(String.self, forKey: .type)
+        let svc = try decoder.singleValueContainer()
         switch type {
         case "chunk":
-            self = .chunk(try decoder.singleValueContainer().decode(Chunk.self))
+            self = .chunk(try svc.decode(Chunk.self))
         case "relative-date":
-            self = .relativeDate(try decoder.singleValueContainer().decode(RelativeDate.self))
+            self = .relativeDate(try svc.decode(RelativeDate.self))
         case "tag":
-            self = .tag(try decoder.singleValueContainer().decode(Tag.self))
+            self = .tag(try svc.decode(Tag.self))
         default:
             throw TokenError.unknownType(type)
         }
@@ -62,7 +63,7 @@ struct RelativeDate: Decodable {
 struct Tag: Decodable {
     let text: String
     let span: Span
-    let tag: String
+    let name: String
 }
 
 struct Span: Decodable {

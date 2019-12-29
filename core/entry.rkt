@@ -11,11 +11,11 @@
          threading
          "command.rkt"
          "db.rkt"
+         "json.rkt"
          "notification.rkt")
 
 (provide
  (schema-out entry)
- entry->jsexpr
  commit-entry!
  archive-entry!
  snooze-entry!
@@ -45,7 +45,12 @@
   #:pre-delete-hook
   (lambda (e)
     (begin0 e
-      (notify 'entries-will-change))))
+      (notify 'entries-will-change)))
+
+  #:methods gen:to-jsexpr
+  [(define (->jsexpr e)
+     (hasheq 'id (entry-id e)
+             'title (entry-title e)))])
 
 (create-table! (current-db) entry-schema)
 
@@ -58,17 +63,23 @@
       (for/fold ([due (+minutes (now/moment) 15)]
                  [tags null])
                 ([token (in-list tokens)])
-        (case (hash-ref token 'type)
-          [("chunk")
+        (match token
+          [(chunk text span)
            (begin0 (values due tags)
-             (display (hash-ref token 'text)))]
+             (display text))]
 
-          [("relative-date")
-           (values (relative-date->moment token) tags)]
+          [(relative-date text span delta modifier)
+           (define adder
+             (case modifier
+               [(m) +minutes]
+               [(h) +hours]
+               [(d) +days]
+               [(w) +weeks]
+               [(M) +months]))
+           (values (adder (now/moment) delta) tags)]
 
-          ;; TODO: handle tags
-          [else
-           (values due tags)]))))
+          [(tag text span name)
+           (values due (cons name tags))]))))
 
   (insert-one! (current-db)
                (make-entry #:title (string-trim (get-output-string title-out))
@@ -115,21 +126,3 @@
 (define/contract (find-due-entries)
   (-> (listof entry?))
   (sequence->list (in-entities (current-db) due-entries)))
-
-(define/match (relative-date->moment token)
-  [((hash-table ['delta d]
-                ['modifier m]))
-   (define adder
-     (case m
-       [("m") +minutes]
-       [("h") +hours]
-       [("d") +days]
-       [("w") +weeks]
-       [("M") +months]))
-
-   (adder (now/moment) d)])
-
-(define/contract (entry->jsexpr e)
-  (-> entry? jsexpr?)
-  (hasheq 'id (entry-id e)
-          'title (entry-title e)))
