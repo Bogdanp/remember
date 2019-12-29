@@ -16,7 +16,7 @@
 
 (provide
  (schema-out entry)
- commit-entry!
+ commit!
  archive-entry!
  snooze-entry!
  find-pending-entries
@@ -44,19 +44,19 @@
 
 (create-table! (current-db) entry-schema)
 
-(define/contract (commit-entry! command)
+(define/contract (commit! command)
   (-> string? entry?)
   (define tokens (parse-command command))
-  (define title-out (open-output-string))
+  (define out (open-output-string))
   (define-values (due tags)
-    (parameterize ([current-output-port title-out])
+    (parameterize ([current-output-port out])
       (for/fold ([due (+minutes (now/moment) 15)]
                  [tags null])
                 ([token (in-list tokens)])
         (match token
           [(chunk text span)
-           (begin0 (values due tags)
-             (display text))]
+           (display text)
+           (values due tags)]
 
           [(relative-date text span delta modifier)
            (define adder
@@ -73,7 +73,7 @@
 
   (define the-entry
     (insert-one! (current-db)
-                 (make-entry #:title (string-trim (get-output-string title-out))
+                 (make-entry #:title (string-trim (get-output-string out))
                              #:due-at due)))
 
   (begin0 the-entry
@@ -129,7 +129,7 @@
 
     (define t0 (now/moment))
     (define the-entry
-      (commit-entry! "buy milk +1h"))
+      (commit! "buy milk +1h"))
 
     (check-match
      the-entry

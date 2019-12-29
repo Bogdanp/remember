@@ -32,7 +32,7 @@ class Client: AsyncNotifier & Parser & EntryDB {
     }
 
     func commit(command: String, withCompletionHandler handler: @escaping (CommitResult) -> Void) {
-        return rpc.call("commit-entry!", [command]) { (res: RPCResult<Entry>) in
+        return rpc.call("commit!", [command]) { (res: RPCResult<Entry>) in
             switch res {
             case .ok(let entry):
                 handler(.ok(entry))
