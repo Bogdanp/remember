@@ -94,7 +94,7 @@
               (~> (from entry #:as e)
                   (update [status "archived"])
                   (where (= e.id ,id))))
-  (notify 'entries-did-change))
+  (void (notify 'entries-did-change)))
 
 (define/contract (snooze-entry! id)
   (-> id/c void?)
@@ -109,7 +109,7 @@
         (define updated-entry
           (set-entry-due-at entry (+minutes (now/moment) 15)))
         (update-one! conn updated-entry))))
-  (notify 'entries-did-change))
+  (void (notify 'entries-did-change)))
 
 (define/contract (find-pending-entries)
   (-> (listof entry?))

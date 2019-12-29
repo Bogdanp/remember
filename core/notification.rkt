@@ -26,7 +26,7 @@
                 null))
 
 (define/contract (notify notification . args)
-  (-> symbol? any/c ... void?)
+  (-> symbol? any/c ... evt?)
   (define listeners
     (hash-ref (current-notifications-registry)
               notification
@@ -39,7 +39,9 @@
        (lambda _
          (apply listener args)))))
 
-  (for-each sync threads))
+  (thread
+   (lambda _
+     (for-each sync threads))))
 
 (define-syntax (define-listener stx)
   (syntax-parse stx
@@ -67,10 +69,10 @@
     (define-listener (on-entry-deleted e)
       (set! listener-3-notified? #t))
 
-    (notify 'on-entries-changed)
+    (sync (notify 'on-entries-changed))
     (check-true listener-1-notified?)
     (check-true listener-2-notified?)
     (check-false listener-3-notified?)
 
-    (notify 'on-entry-deleted #f)
+    (sync (notify 'on-entry-deleted #f))
     (check-true listener-3-notified?)))
