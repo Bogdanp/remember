@@ -37,16 +37,6 @@
    [(due-at (now/moment)) datetime/f]
    [(created-at (now/moment)) datetime/f])
 
-  #:pre-persist-hook
-  (lambda (e)
-    (begin0 e
-      (notify 'entries-will-change)))
-
-  #:pre-delete-hook
-  (lambda (e)
-    (begin0 e
-      (notify 'entries-will-change)))
-
   #:methods gen:to-jsexpr
   [(define (->jsexpr e)
      (hasheq 'id (entry-id e)
@@ -81,9 +71,13 @@
           [(tag text span name)
            (values due (cons name tags))]))))
 
-  (insert-one! (current-db)
-               (make-entry #:title (string-trim (get-output-string title-out))
-                           #:due-at due)))
+  (define the-entry
+    (insert-one! (current-db)
+                 (make-entry #:title (string-trim (get-output-string title-out))
+                             #:due-at due)))
+
+  (begin0 the-entry
+    (notify 'entries-did-change)))
 
 (define pending-entries
   (~> (from entry #:as e)
@@ -100,7 +94,7 @@
               (~> (from entry #:as e)
                   (update [status "archived"])
                   (where (= e.id ,id))))
-  (notify 'entries-will-change))
+  (notify 'entries-did-change))
 
 (define/contract (snooze-entry! id)
   (-> id/c void?)
@@ -114,8 +108,8 @@
       (when entry
         (define updated-entry
           (set-entry-due-at entry (+minutes (now/moment) 15)))
-        (void
-         (update-one! conn updated-entry))))))
+        (update-one! conn updated-entry))))
+  (notify 'entries-did-change))
 
 (define/contract (find-pending-entries)
   (-> (listof entry?))

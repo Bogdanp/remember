@@ -49,7 +49,7 @@ class CommandStore: ObservableObject {
         self.updatePendingEntries()
         self.asyncNotifier.addListener {
             switch $0 {
-            case .entriesWillChange:
+            case .entriesDidChange:
                 self.updatePendingEntries()
             default:
                 break

@@ -20,8 +20,8 @@
 (module+ main
   (define notifications (make-channel))
 
-  (define-listener (entries-will-change)
-    (channel-put notifications (hasheq 'type "entries-will-change")))
+  (define-listener (entries-did-change)
+    (channel-put notifications (hasheq 'type "entries-did-change")))
 
   (define scheduler
     (thread
