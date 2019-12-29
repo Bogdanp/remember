@@ -29,9 +29,8 @@
   (-> symbol? any/c ... void?)
   (define listeners
     (hash-ref (current-notifications-registry)
-                   notification
-                   (lambda _
-                     (error 'notify "unknown notification ~.s" notification))))
+              notification
+              null))
 
   (log-notifications-debug "dispatching ~.s to ~a listeners" notification (length listeners))
   (define threads

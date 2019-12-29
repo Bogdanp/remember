@@ -126,3 +126,26 @@
 (define/contract (find-due-entries)
   (-> (listof entry?))
   (sequence->list (in-entities (current-db) due-entries)))
+
+(module+ test
+  (require rackunit)
+
+  (parameterize ([current-db (sqlite3-connect #:database 'memory)])
+    (create-table! (current-db) entry-schema)
+
+    (define t0 (now/moment))
+    (define the-entry
+      (commit-entry! "buy milk +1h"))
+
+    (check-match
+     the-entry
+     (entry _ some-id "buy milk" "" 'pending some-due-at some-created-at))
+
+    (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 60)
+    (check-true (null? (find-due-entries)))
+    (check-not-false (member (entry-id the-entry)
+                             (map entry-id (find-pending-entries))))
+
+    (archive-entry! (entry-id the-entry))
+    (check-false (member (entry-id the-entry)
+                         (map entry-id (find-pending-entries))))))

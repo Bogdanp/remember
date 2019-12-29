@@ -129,7 +129,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let archiveAction = UNNotificationAction(
                 identifier: UserNotificationAction.archive.rawValue,
                 title: "Archive",
-                options: UNNotificationActionOptions(rawValue: 0))
+                options: [.destructive, .authenticationRequired])
 
             let entryCategory = UNNotificationCategory(
                 identifier: UserNotificationCategory.entry.rawValue,
