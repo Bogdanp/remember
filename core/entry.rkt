@@ -34,7 +34,7 @@
    [title string/f #:contract non-empty-string?]
    [(body "") string/f]
    [(status 'pending) symbol/f #:contract entry-status/c]
-   [(due-at (now/moment)) datetime/f]
+   [(due-at (now/moment)) datetime/f #:nullable]
    [(created-at (now/moment)) datetime/f])
 
   #:methods gen:to-jsexpr
@@ -50,7 +50,7 @@
   (define out (open-output-string))
   (define-values (due tags)
     (parameterize ([current-output-port out])
-      (for/fold ([due (now/moment)]
+      (for/fold ([due #f]
                  [tags null])
                 ([token (in-list tokens)])
         (match token
@@ -66,7 +66,7 @@
                [(d) +days]
                [(w) +weeks]
                [(M) +months]))
-           (values (adder due delta) tags)]
+           (values (adder (or due (now/moment)) delta) tags)]
 
           [(tag text span name)
            (values due (cons name tags))]))))
@@ -74,7 +74,7 @@
   (define the-entry
     (insert-one! (current-db)
                  (make-entry #:title (string-trim (get-output-string out))
-                             #:due-at due)))
+                             #:due-at (or due sql-null))))
 
   (begin0 the-entry
     (notify 'entries-did-change)))
@@ -85,8 +85,9 @@
 
 (define due-entries
   (~> pending-entries
-      (where (< (datetime e.due-at)
-                (datetime "now" "localtime")))))
+      (where (and (not (is e.due-at null))
+                  (< (datetime e.due-at)
+                     (datetime "now" "localtime"))))))
 
 (define/contract (archive-entry! id)
   (-> id/c void?)
@@ -128,6 +129,19 @@
     (parameterize ([current-db (sqlite3-connect #:database 'memory)])
       (create-table! (current-db) entry-schema)
       (f)))
+
+
+  (call-with-empty-db
+   (lambda _
+     (define the-entry
+       (commit! "buy milk"))
+
+     (check-match
+      the-entry
+      (entry _ some-id "buy milk" "" 'pending (== sql-null) some-created-at))
+
+     (check-not-false (member (entry-id the-entry)
+                              (map entry-id (find-pending-entries))))))
 
   (call-with-empty-db
    (lambda _
