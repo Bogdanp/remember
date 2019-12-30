@@ -13,6 +13,7 @@ import SwiftyAttributes
 enum CommandAction {
     case cancel(String)
     case commit(String)
+    case archive
     case previous
     case next
 }
@@ -102,6 +103,9 @@ struct CommandField: NSViewRepresentable {
                 return true
             } else if commandSelector == #selector(NSResponder.moveDown(_:)) {
                 action(.next)
+                return true
+            } else if commandSelector == #selector(NSResponder.deleteBackward(_:)) && control.stringValue.isEmpty {
+                action(.archive)
                 return true
             }
 

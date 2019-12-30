@@ -41,6 +41,8 @@ struct ContentView: View {
                             self.entriesVisible = false
                             Notifications.commandDidComplete()
                         }
+                    case .archive:
+                        self.store.archiveCurrentEntry()
                     case .previous:
                         self.entriesVisible = true
                         self.store.updatePendingEntries {

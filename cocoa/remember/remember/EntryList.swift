@@ -43,12 +43,11 @@ struct EntryList: View {
                 return Array(entries[lo ..< hi])
             } else {
                 let lo = index - 2
-                let hi = index +  2
+                let hi = index + 2
                 return Array(entries[lo ... hi])
             }
-        } else {
-            return []
         }
 
+        return []
     }
 }

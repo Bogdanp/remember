@@ -105,6 +105,14 @@ class Store: ObservableObject {
         }
     }
 
+    func archiveCurrentEntry() {
+        if let currentEntry = self.currentEntry {
+            self.entryDB.archiveEntry(byId: currentEntry.id) {
+                self.updatePendingEntries()
+            }
+        }
+    }
+
     func selectPreviousEntry() {
         if entries.isEmpty {
             return
