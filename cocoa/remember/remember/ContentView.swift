@@ -45,6 +45,7 @@ struct ContentView: View {
                         }
                     case .previous, .next:
                         self.showingPendingEntries = true
+                        self.store.updatePendingEntries()
                     }
                 }
             }
@@ -59,43 +60,3 @@ struct ContentView: View {
         .cornerRadius(8)
     }
 }
-
-struct EntryList: View {
-    @Binding var entries: [Entry]
-
-    init(_ entries: Binding<[Entry]>) {
-        _entries = entries
-    }
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                ForEach(entries) { entry in
-                    HStack {
-                        Text(entry.title)
-                        Spacer()
-                        Text(entry.dueIn ?? "")
-                    }
-                }
-                .padding(.top, 6)
-            }
-        }
-        .frame(width: nil, height: 200, alignment: .top)
-    }
-}
-
-//#if DEBUG
-//struct FakeParser: Parser {
-//    let result: [Token]
-//
-//    func parse(command: String) -> AnyPublisher<[Token], ParseError> {
-//        return Result.Publisher.init(result).eraseToAnyPublisher()
-//    }
-//}
-//
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView(parser: FakeParser(result: []))
-//    }
-//}
-//#endif
