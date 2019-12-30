@@ -11,6 +11,7 @@ import SwiftUI
 import SwiftyAttributes
 
 enum CommandAction {
+    case update(String)
     case cancel(String)
     case commit(String)
     case archive
@@ -115,6 +116,7 @@ struct CommandField: NSViewRepresentable {
         func controlTextDidChange(_ aNotification: Notification) {
             if let textField = aNotification.object as? NSTextField {
                 setter(textField.attributedStringValue)
+                action(.update(textField.stringValue))
             }
         }
     }

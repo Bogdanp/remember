@@ -33,6 +33,8 @@ struct ContentView: View {
                 CommandField($store.command,
                              tokens: $store.tokens) {
                     switch $0 {
+                    case .update(_):
+                        self.entriesVisible = false
                     case .cancel(_):
                         self.entriesVisible = false
                         self.store.clear()
@@ -42,7 +44,9 @@ struct ContentView: View {
                             Notifications.commandDidComplete()
                         }
                     case .archive:
-                        self.store.archiveCurrentEntry()
+                        if self.entriesVisible {
+                            self.store.archiveCurrentEntry()
+                        }
                     case .previous:
                         self.entriesVisible = true
                         self.store.updatePendingEntries {
