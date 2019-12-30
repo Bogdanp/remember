@@ -40,7 +40,31 @@
   #:methods gen:to-jsexpr
   [(define (->jsexpr e)
      (hasheq 'id (entry-id e)
-             'title (entry-title e)))])
+             'title (entry-title e)
+             'due-in (or (entry-due-in e)
+                         (json-null))))])
+
+(define (entry-due-at/local e)
+  (and (not (sql-null? (entry-due-at e)))
+       (with-timezone (entry-due-at e) (current-timezone))))
+
+(define (entry-due-in e)
+  (and (not (sql-null? (entry-due-at e)))
+       (let* ([now (now/moment)]
+              [due (entry-due-at/local e)]
+              [delta (seconds-between now due)])
+         (cond
+           [(<= delta 0)           "past due"]
+           [(>= delta (* 7 86400)) (format-delta (add1 (weeks-between now due)) "week" "weeks")]
+           [(>= delta 86400)       (format-delta (add1 (days-between now due)) "day" "days")]
+           [(>= delta 3600)        (format-delta (add1 (hours-between now due)) "hour" "hours")]
+           [(>= delta 60)          (format-delta (add1 (minutes-between now due)) "minute" "minutes")]
+           [else                   (format-delta (add1 (seconds-between now due)) "second" "seconds")]))))
+
+(define (format-delta d singular plural)
+  (format "~a ~a" d (if (= d 1)
+                        singular
+                        plural)))
 
 (create-table! (current-db) entry-schema)
 

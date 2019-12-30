@@ -68,12 +68,19 @@ struct EntryList: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            ForEach(entries) { entry in
-                Text(entry.title)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                ForEach(entries) { entry in
+                    HStack {
+                        Text(entry.title)
+                        Spacer()
+                        Text(entry.dueIn ?? "")
+                    }
+                }
+                .padding(.top, 6)
             }
-            .padding(.top, 6)
         }
+        .frame(width: nil, height: 200, alignment: .top)
     }
 }
 

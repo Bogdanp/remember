@@ -11,6 +11,13 @@ import Foundation
 struct Entry: Equatable &  Identifiable & Decodable {
     let id: UInt32
     let title: String
+    let dueIn: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case dueIn = "due-in"
+    }
 }
 
 enum CommitResult {
