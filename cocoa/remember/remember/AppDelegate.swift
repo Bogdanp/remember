@@ -61,23 +61,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setupUserNotifications()
     }
 
+    func applicationDidBecomeActive(_ notification: Notification) {
+        window.center()
+    }
+
     func applicationWillTerminate(_ aNotification: Notification) {
         rpc.shutdown()
     }
 
     private func setupHotKey() {
-        DDHotKeyCenter.shared()?.registerHotKey(
-            withKeyCode: Keycode.space,
-            modifierFlags: NSEvent.ModifierFlags.option.rawValue,
-            task: { _ in
-
-                if NSApp.isActive {
-                    NSApp.hide(nil)
-                } else {
-                    NSApp.activate(ignoringOtherApps: true)
-                    self.window.center()
-                }
-        })
+        KeyboardShortcut.register()
     }
 
     /// Sets up the global listener for archive events.  This is triggered whenever a user hits "Archive" on a due entry notification.
@@ -144,6 +137,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         })
     }
 
+    /// Emits new notifications for every due entry.
     private func handleEntriesDueNotification(_ notification: AsyncNotification) {
         switch notification {
         case .entriesDue(let notification):
@@ -171,5 +165,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         default:
             break
         }
+    }
+
+    /// Called whenever the user presses ⌘,
+    @IBAction func showPreferences(_ sender: Any) {
+        PreferencesManager.shared.show()
     }
 }

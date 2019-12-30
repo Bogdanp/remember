@@ -10,5 +10,6 @@
 #define DDHotKey_Bridging_Headder_h
 
 #import "vendor/DDHotKey/DDHotKeyCenter.h"
+#import "vendor/DDHotKey/DDHotKeyTextField.h"
 
 #endif /* DDHotKey_Bridging_Headder_h */
