@@ -5,6 +5,7 @@
          gregor
          json
          racket/contract
+         racket/format
          racket/match
          racket/sequence
          racket/string
@@ -55,10 +56,13 @@
               [delta (seconds-between now due)])
          (cond
            [(<= delta 0)           "past due"]
-           [(>= delta (* 7 86400)) (format-delta (add1 (weeks-between now due)) "week" "weeks")]
-           [(>= delta 86400)       (format-delta (add1 (days-between now due)) "day" "days")]
-           [(>= delta 3600)        (format-delta (add1 (hours-between now due)) "hour" "hours")]
-           [(>= delta 60)          (format-delta (add1 (minutes-between now due)) "minute" "minutes")]
+           [(>= delta (* 7 86400)) (~a "due on " (if (= (->year due)
+                                                        (->year (now/moment)))
+                                                     (~t due "MMM dd")
+                                                     (~t due "MMM dd, yyyy")))]
+           [(>= delta 86400)       (~a "due in " (format-delta (add1 (days-between now due)) "day" "days"))]
+           [(>= delta 3600)        (~a "due in " (format-delta (add1 (hours-between now due)) "hour" "hours"))]
+           [(>= delta 60)          (~a "due in " (format-delta (add1 (minutes-between now due)) "minute" "minutes"))]
            [else                   "less than a minute"]))))
 
 (define (format-delta d singular plural)
