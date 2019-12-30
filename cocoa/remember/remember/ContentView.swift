@@ -10,14 +10,13 @@ import Combine
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var store: CommandStore
-    @State var isEditable = true
-    @State var showingPendingEntries = false
+    @ObservedObject var store: Store
+    @State var entriesVisible = false
 
     init(asyncNotifier: AsyncNotifier,
          entryDB: EntryDB,
          parser: Parser) {
-        store = CommandStore(
+        store = Store(
             asyncNotifier: asyncNotifier,
             entryDB: entryDB,
             parser: parser)
@@ -32,25 +31,24 @@ struct ContentView: View {
                     .frame(width: 32, height: 32, alignment: .leading)
 
                 CommandField($store.command,
-                             tokens: $store.tokens,
-                             isEditable: $isEditable) {
+                             tokens: $store.tokens) {
                     switch $0 {
                     case .cancel(_):
-                        self.showingPendingEntries = false
+                        self.entriesVisible = false
                         self.store.clear()
                     case .commit(let c):
                         self.store.commit(command: c) {
-                            self.showingPendingEntries = false
+                            self.entriesVisible = false
                             Notifications.commandDidComplete()
                         }
                     case .previous, .next:
-                        self.showingPendingEntries = true
+                        self.entriesVisible = true
                         self.store.updatePendingEntries()
                     }
                 }
             }
 
-            if showingPendingEntries && !store.entries.isEmpty {
+            if entriesVisible && !store.entries.isEmpty {
                 Divider()
                 EntryList($store.entries, currentEntry: $store.currentEntry)
             }

@@ -27,7 +27,7 @@
 		43983BE023BA17580064C527 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BDF23BA17580064C527 /* Color.swift */; };
 		43983BE223BA19EC0064C527 /* EntryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE123BA19EC0064C527 /* EntryList.swift */; };
 		43983BE423BA279E0064C527 /* EntryListEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE323BA279E0064C527 /* EntryListEntry.swift */; };
-		43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */; };
+		43E6B94323B61CAD00F7ACE1 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94223B61CAD00F7ACE1 /* Store.swift */; };
 		43E6B94523B6660200F7ACE1 /* EntryDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94423B6660200F7ACE1 /* EntryDB.swift */; };
 		43E6B94823B6722B00F7ACE1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B94723B6722B00F7ACE1 /* Carbon.framework */; };
 		43E6B95823B6775B00F7ACE1 /* DDHotKeyUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95623B6775A00F7ACE1 /* DDHotKeyUtilities.m */; };
@@ -83,7 +83,7 @@
 		43983BDF23BA17580064C527 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		43983BE123BA19EC0064C527 /* EntryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryList.swift; sourceTree = "<group>"; };
 		43983BE323BA279E0064C527 /* EntryListEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryListEntry.swift; sourceTree = "<group>"; };
-		43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStore.swift; sourceTree = "<group>"; };
+		43E6B94223B61CAD00F7ACE1 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		43E6B94423B6660200F7ACE1 /* EntryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDB.swift; sourceTree = "<group>"; };
 		43E6B94723B6722B00F7ACE1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		43E6B94B23B673EF00F7ACE1 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
@@ -159,29 +159,29 @@
 			isa = PBXGroup;
 			children = (
 				436BE2A123B10D5000717375 /* remember.entitlements */,
+				43E6B94B23B673EF00F7ACE1 /* BridgingHeader.h */,
+				43E6B95223B6775A00F7ACE1 /* DDHotKeyCenter.h */,
+				43E6B95423B6775A00F7ACE1 /* DDHotKeyTextField.h */,
+				43E6B95323B6775A00F7ACE1 /* DDHotKeyUtilities.h */,
+				43E6B95523B6775A00F7ACE1 /* DDHotKeyCenter.m */,
+				43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */,
+				43E6B95623B6775A00F7ACE1 /* DDHotKeyUtilities.m */,
 				436BE2A023B10D5000717375 /* Info.plist */,
 				436BE29423B10D4E00717375 /* AppDelegate.swift */,
 				43E6B95F23B6A33600F7ACE1 /* AsyncNotification.swift */,
 				4385BC5723B4E4590086A98F /* Client.swift */,
 				43983BDF23BA17580064C527 /* Color.swift */,
 				43713C3D23B21CB000E20E48 /* CommandField.swift */,
-				43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */,
 				43713C4123B397C400E20E48 /* ComsCenter.swift */,
 				436BE29623B10D4E00717375 /* ContentView.swift */,
+				43E6B94423B6660200F7ACE1 /* EntryDB.swift */,
 				43983BE123BA19EC0064C527 /* EntryList.swift */,
 				43983BE323BA279E0064C527 /* EntryListEntry.swift */,
-				43E6B94B23B673EF00F7ACE1 /* BridgingHeader.h */,
-				43E6B95223B6775A00F7ACE1 /* DDHotKeyCenter.h */,
-				43E6B95523B6775A00F7ACE1 /* DDHotKeyCenter.m */,
-				43E6B95423B6775A00F7ACE1 /* DDHotKeyTextField.h */,
-				43E6B95723B6775B00F7ACE1 /* DDHotKeyTextField.m */,
-				43E6B95323B6775A00F7ACE1 /* DDHotKeyUtilities.h */,
-				43E6B95623B6775A00F7ACE1 /* DDHotKeyUtilities.m */,
-				43E6B94423B6660200F7ACE1 /* EntryDB.swift */,
 				4385BC5323B4CAEA0086A98F /* JSONChunker.swift */,
 				43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */,
 				43E6B95B23B6878600F7ACE1 /* Notifications.swift */,
 				4385BC5923B4F1DF0086A98F /* Parser.swift */,
+				43E6B94223B61CAD00F7ACE1 /* Store.swift */,
 				43983BDD23B794300064C527 /* UserNotifications.swift */,
 				433DB90E23B134B40027268A /* VisualEffectBackground.swift */,
 				436BE29823B10D5000717375 /* Assets.xcassets */,
@@ -399,7 +399,7 @@
 				43983BE223BA19EC0064C527 /* EntryList.swift in Sources */,
 				43713C4223B397C400E20E48 /* ComsCenter.swift in Sources */,
 				436BE29523B10D4E00717375 /* AppDelegate.swift in Sources */,
-				43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */,
+				43E6B94323B61CAD00F7ACE1 /* Store.swift in Sources */,
 				43983BDE23B794300064C527 /* UserNotifications.swift in Sources */,
 				43983BE023BA17580064C527 /* Color.swift in Sources */,
 			);

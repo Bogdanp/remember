@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-class CommandStore: ObservableObject {
+class Store: ObservableObject {
     private let asyncNotifier: AsyncNotifier
     private let entryDB: EntryDB
     private let parser: Parser
@@ -67,15 +67,15 @@ class CommandStore: ObservableObject {
         tokens = []
     }
 
-    func commit(command: String, action: @escaping () -> Void) {
+    func commit(command: String, withCompletionHandler handler: @escaping () -> Void) {
         self.entryDB.commit(command: command) { res in
             RunLoop.main.schedule {
                 switch res {
                 case .ok:
                     self.clear()
-                    action()
+                    handler()
                 case .error:
-                    action()
+                    handler()
                 }
             }
         }

@@ -137,17 +137,18 @@ class ComsCenter {
     }
 }
 
-fileprivate struct Handler {
+/// Represents a response handler for an async RPC.
+private struct Handler {
     let resolve: (Data) -> Void
     let reject: (RPCError) -> Void
 }
 
 /// Represents an async RPC response containing a result of type `R`.
-fileprivate struct Response<R: Decodable>: Decodable {
+private struct Response<R: Decodable>: Decodable {
     let result: R
 }
 
 /// Represents an async notification received from the core.
-fileprivate struct AsyncNotificationData: Decodable {
+private struct AsyncNotificationData: Decodable {
     let notification: AsyncNotification
 }
