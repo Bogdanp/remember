@@ -18,7 +18,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var rpc: ComsCenter!
     private var client: Client!
-    private var userNotificationsHandler = UserNotificationsHandler()
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard let coreURL = Bundle.main.url(forResource: "core/bin/remember-core", withExtension: nil) else {
@@ -61,7 +60,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setupUserNotifications()
     }
 
-    func applicationDidBecomeActive(_ notification: Notification) {
+    func applicationWillBecomeActive(_ notification: Notification) {
+        window.center()
+    }
+
+    func applicationDidResignActive(_ notification: Notification) {
         window.center()
     }
 
@@ -112,59 +115,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Sets up access to the notification center and installs an async notification listener to handle `entries-due` events.
     private func setupUserNotifications() {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { granted, err in
-            if !granted {
-                os_log("alert acess not granted", type: .error)
-                return
-            }
-
-            let archiveAction = UNNotificationAction(
-                identifier: UserNotificationAction.archive.rawValue,
-                title: "Archive",
-                options: [.destructive, .authenticationRequired])
-
-            let entryCategory = UNNotificationCategory(
-                identifier: UserNotificationCategory.entry.rawValue,
-                actions: [archiveAction],
-                intentIdentifiers: [],
-                options: .customDismissAction)
-
-            center.setNotificationCategories([entryCategory])
-            center.delegate = self.userNotificationsHandler
-
-            self.client.addListener(withHandler: self.handleEntriesDueNotification(_:))
-        })
-    }
-
-    /// Emits new notifications for every due entry.
-    private func handleEntriesDueNotification(_ notification: AsyncNotification) {
-        switch notification {
-        case .entriesDue(let notification):
-            let center = UNUserNotificationCenter.current()
-            for entry in notification.entries {
-                let content = UNMutableNotificationContent()
-                content.title = "Remember"
-                content.subtitle = entry.title
-                content.sound = .default
-                content.userInfo = [UserNotificationInfo.entryId.rawValue: entry.id]
-                content.categoryIdentifier = UserNotificationCategory.entry.rawValue
-
-                let request = UNNotificationRequest(
-                    identifier: "remember:\(entry.id)",
-                    content: content,
-                    trigger: nil)
-
-                center.add(request) { error in
-                    if let err = error {
-                        os_log("failed to add notification: %s", type: .error, "\(err)")
-                    }
-                }
-            }
-
-        default:
-            break
-        }
+        UserNotificationsManager.shared.setup(asyncNotifier: client)
     }
 
     /// Called whenever the user presses ⌘,
