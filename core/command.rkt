@@ -14,7 +14,7 @@
  (struct-out span)
  (struct-out token)
  (struct-out chunk)
- (struct-out relative-date)
+ (struct-out relative-datetime)
  (struct-out tag)
  parse-command
  parse-command/jsexpr)
@@ -52,13 +52,13 @@
   [(define (->jsexpr c)
      (token->jsexpr c "chunk"))])
 
-(struct relative-date token (delta modifier)
+(struct relative-datetime token (delta modifier)
   #:transparent
   #:methods gen:to-jsexpr
   [(define (->jsexpr rd)
-     (~> (token->jsexpr rd "relative-date")
-         (hash-set 'delta (relative-date-delta rd))
-         (hash-set 'modifier (symbol->string (relative-date-modifier rd)))))])
+     (~> (token->jsexpr rd "relative-datetime")
+         (hash-set 'delta (relative-datetime-delta rd))
+         (hash-set 'modifier (symbol->string (relative-datetime-modifier rd)))))])
 
 (struct tag token (name)
   #:transparent
@@ -68,7 +68,7 @@
          (hash-set 'name (tag-name t))))])
 
 (define PREFIX-CHARS '(#\+ #\#))
-(define RELATIVE-DATE-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
+(define RELATIVE-DATETIME-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
 (define TAG-RE #px"^#([^ ]+)")
 
 (define bytes->number (compose1 string->number bytes->string/utf-8))
@@ -93,14 +93,14 @@
      (chunk (read-string 1 in)
             (span start-loc (port-location in)))]))
 
-(define (read-relative-date [in (current-input-port)])
+(define (read-relative-datetime [in (current-input-port)])
   (define start-loc (port-location in))
-  (match (regexp-try-match RELATIVE-DATE-RE in)
+  (match (regexp-try-match RELATIVE-DATETIME-RE in)
     [(list text delta modifier)
-     (relative-date (bytes->string/utf-8 text)
-                    (span start-loc (port-location in))
-                    (bytes->number delta)
-                    (or (and modifier (bytes->symbol modifier)) 'd))]
+     (relative-datetime (bytes->string/utf-8 text)
+                        (span start-loc (port-location in))
+                        (bytes->number delta)
+                        (or (and modifier (bytes->symbol modifier)) 'd))]
 
     [_
      (chunk (read-string 1 in)
@@ -132,7 +132,7 @@
         [else
          (define token
            (case c
-             [(#\+) (read-relative-date)]
+             [(#\+) (read-relative-datetime)]
              [(#\#) (read-tag)]
              [else  (read-chunk)]))
          (loop (cons token tokens)
@@ -162,7 +162,7 @@
              (text . "hello ")
              (span . ((1 0 0)
                       (1 6 6))))
-     #hasheq((type . "relative-date")
+     #hasheq((type . "relative-datetime")
              (text . "+1d")
              (span . ((1 6 6)
                       (1 9 9)))
@@ -194,7 +194,7 @@
              (text . "buy milk ")
              (span . ((1 0 0)
                       (1 9 9))))
-     #hasheq((type . "relative-date")
+     #hasheq((type . "relative-datetime")
              (text . "+1d")
              (span . ((1 9 9)
                       (1 12 12)))

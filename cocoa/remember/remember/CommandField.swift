@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 import SwiftyAttributes
 
-fileprivate let BG_RELATIVE_DATE = hexColor(rgb: "21262d")!
+fileprivate let BG_RELATIVE_DATETIME = hexColor(rgb: "21262d")!
 fileprivate let BG_TAG = hexColor(rgb: "4c88f2")!
 
 enum CommandAction {
@@ -58,9 +58,9 @@ struct CommandField: NSViewRepresentable {
             case .chunk(let c):
                 attributedText += c.text
                     .withFont(systemFont)
-            case .relativeDate(let r):
+            case .relativeDateTime(let r):
                 attributedText += r.text.withFont(systemFont)
-                    .withBackgroundColor(BG_RELATIVE_DATE)
+                    .withBackgroundColor(BG_RELATIVE_DATETIME)
                     .withTextColor(Color.white)
             case .tag(let t):
                 attributedText += t.text.withFont(systemFont)

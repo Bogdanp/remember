@@ -58,7 +58,7 @@
            (display text)
            (values due tags)]
 
-          [(relative-date text span delta modifier)
+          [(relative-datetime text span delta modifier)
            (define adder
              (case modifier
                [(m) +minutes]
