@@ -18,6 +18,7 @@ class CommandStore: ObservableObject {
     @Published var command = NSAttributedString(string: "")
     @Published var tokens = [Token]()
     @Published var entries = [Entry]()
+    @Published var currentEntry: Entry? = nil
 
     init(asyncNotifier: AsyncNotifier, entryDB: EntryDB, parser: Parser) {
         self.asyncNotifier = asyncNotifier
@@ -84,6 +85,10 @@ class CommandStore: ObservableObject {
         self.entryDB.findPendingEntries { entries in
             RunLoop.main.schedule {
                 self.entries = entries
+
+                if self.currentEntry == nil && !entries.isEmpty {
+                    self.currentEntry = entries[0]
+                }
             }
         }
     }

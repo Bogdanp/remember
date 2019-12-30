@@ -26,6 +26,7 @@
 		43983BDE23B794300064C527 /* UserNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BDD23B794300064C527 /* UserNotifications.swift */; };
 		43983BE023BA17580064C527 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BDF23BA17580064C527 /* Color.swift */; };
 		43983BE223BA19EC0064C527 /* EntryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE123BA19EC0064C527 /* EntryList.swift */; };
+		43983BE423BA279E0064C527 /* EntryListEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE323BA279E0064C527 /* EntryListEntry.swift */; };
 		43E6B94323B61CAD00F7ACE1 /* CommandStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */; };
 		43E6B94523B6660200F7ACE1 /* EntryDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94423B6660200F7ACE1 /* EntryDB.swift */; };
 		43E6B94823B6722B00F7ACE1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B94723B6722B00F7ACE1 /* Carbon.framework */; };
@@ -81,6 +82,7 @@
 		43983BDD23B794300064C527 /* UserNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotifications.swift; sourceTree = "<group>"; };
 		43983BDF23BA17580064C527 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		43983BE123BA19EC0064C527 /* EntryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryList.swift; sourceTree = "<group>"; };
+		43983BE323BA279E0064C527 /* EntryListEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryListEntry.swift; sourceTree = "<group>"; };
 		43E6B94223B61CAD00F7ACE1 /* CommandStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandStore.swift; sourceTree = "<group>"; };
 		43E6B94423B6660200F7ACE1 /* EntryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDB.swift; sourceTree = "<group>"; };
 		43E6B94723B6722B00F7ACE1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -167,6 +169,7 @@
 				43713C4123B397C400E20E48 /* ComsCenter.swift */,
 				436BE29623B10D4E00717375 /* ContentView.swift */,
 				43983BE123BA19EC0064C527 /* EntryList.swift */,
+				43983BE323BA279E0064C527 /* EntryListEntry.swift */,
 				43E6B94B23B673EF00F7ACE1 /* BridgingHeader.h */,
 				43E6B95223B6775A00F7ACE1 /* DDHotKeyCenter.h */,
 				43E6B95523B6775A00F7ACE1 /* DDHotKeyCenter.m */,
@@ -382,6 +385,7 @@
 				43713C3E23B21CB000E20E48 /* CommandField.swift in Sources */,
 				43E6B95E23B68F4A00F7ACE1 /* Keycode.swift in Sources */,
 				4385BC5823B4E4590086A98F /* Client.swift in Sources */,
+				43983BE423BA279E0064C527 /* EntryListEntry.swift in Sources */,
 				43E6B95A23B6775B00F7ACE1 /* DDHotKeyTextField.m in Sources */,
 				433DB90F23B134B40027268A /* VisualEffectBackground.swift in Sources */,
 				43E6B95823B6775B00F7ACE1 /* DDHotKeyUtilities.m in Sources */,

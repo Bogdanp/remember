@@ -11,27 +11,18 @@ import SwiftUI
 
 struct EntryList: View {
     @Binding var entries: [Entry]
+    @Binding var currentEntry: Entry?
 
-    init(_ entries: Binding<[Entry]>) {
+    init(_ entries: Binding<[Entry]>, currentEntry: Binding<Entry?>) {
         _entries = entries
+        _currentEntry = currentEntry
     }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
                 ForEach(entries) { entry in
-                    HStack {
-                        Text(entry.title)
-                        Spacer()
-                        entry.dueIn.map { text in
-                            Text(text)
-                                .font(.system(size: 10))
-                                .foregroundColor(Color.white)
-                                .padding(5)
-                                .background(Color(BG_DUE_IN))
-                                .cornerRadius(5)
-                        }
-                    }
+                    EntryListEntry(entry, isCurrent: self.currentEntry.map { entry.id == $0.id } ?? false)
                 }
                 .padding(.top, 6)
             }

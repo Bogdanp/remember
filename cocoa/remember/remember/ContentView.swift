@@ -52,7 +52,7 @@ struct ContentView: View {
 
             if showingPendingEntries && !store.entries.isEmpty {
                 Divider()
-                EntryList($store.entries)
+                EntryList($store.entries, currentEntry: $store.currentEntry)
             }
         }
         .padding(15)
