@@ -2,7 +2,6 @@
 
 (require racket/cmdline
          "command.rkt"
-         "common.rkt"
          "entry.rkt"
          "json.rkt"
          "logging.rkt"

@@ -4,7 +4,8 @@
 
 (provide
  gen:to-jsexpr
- ->jsexpr)
+ ->jsexpr
+ unit)
 
 (define-generics to-jsexpr
   (->jsexpr to-jsexpr)
@@ -17,3 +18,8 @@
     (define/generic ->jsexpr/super ->jsexpr)
     (define (->jsexpr xs)
       (map ->jsexpr/super xs))]))
+
+;; Composes with RPCs that have no return value (i.e. return void?) to
+;; generate RPCUnit results.
+(define (unit _)
+  (hasheq))
