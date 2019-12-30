@@ -82,14 +82,58 @@ class Store: ObservableObject {
     }
 
     func updatePendingEntries() {
+        updatePendingEntries { }
+    }
+
+    func updatePendingEntries(withCompletionHandler handler: @escaping () -> Void) {
         self.entryDB.findPendingEntries { entries in
             RunLoop.main.schedule {
                 self.entries = entries
 
-                if self.currentEntry == nil && !entries.isEmpty {
+                if entries.isEmpty {
+                    self.currentEntry = nil
+                } else if self.currentEntry == nil {
                     self.currentEntry = entries[0]
+                } else if let currentEntry = self.currentEntry {
+                    if !entries.contains(where: { $0.id == currentEntry.id }) {
+                        self.currentEntry = entries[0]
+                    }
                 }
+
+                handler()
             }
+        }
+    }
+
+    func selectPreviousEntry() {
+        if entries.isEmpty {
+            return
+        }
+
+        if let currentEntry = self.currentEntry {
+            if let index = entries.firstIndex(where: { $0.id == currentEntry.id }) {
+                self.currentEntry = entries[(index - 1) < 0 ? entries.count - 1 : index - 1]
+            } else {
+                self.currentEntry = entries[0]
+            }
+        } else {
+            currentEntry = entries[0]
+        }
+    }
+
+    func selectNextEntry() {
+        if entries.isEmpty {
+            return
+        }
+
+        if let currentEntry = self.currentEntry {
+            if let index = entries.firstIndex(where: { $0.id == currentEntry.id }) {
+                self.currentEntry = entries[(index + 1) % entries.count]
+            } else  {
+                self.currentEntry = entries[0]
+            }
+        } else {
+            currentEntry = entries[0]
         }
     }
 }

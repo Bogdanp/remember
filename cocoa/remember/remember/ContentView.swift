@@ -41,9 +41,16 @@ struct ContentView: View {
                             self.entriesVisible = false
                             Notifications.commandDidComplete()
                         }
-                    case .previous, .next:
+                    case .previous:
                         self.entriesVisible = true
-                        self.store.updatePendingEntries()
+                        self.store.updatePendingEntries {
+                            self.store.selectPreviousEntry()
+                        }
+                    case .next:
+                        self.entriesVisible = true
+                        self.store.updatePendingEntries {
+                            self.store.selectNextEntry()
+                        }
                     }
                 }
             }
