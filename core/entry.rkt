@@ -50,7 +50,7 @@
   (define out (open-output-string))
   (define-values (due tags)
     (parameterize ([current-output-port out])
-      (for/fold ([due (+minutes (now/moment) 15)]
+      (for/fold ([due (now/moment)]
                  [tags null])
                 ([token (in-list tokens)])
         (match token
@@ -66,7 +66,7 @@
                [(d) +days]
                [(w) +weeks]
                [(M) +months]))
-           (values (adder (now/moment) delta) tags)]
+           (values (adder due delta) tags)]
 
           [(tag text span name)
            (values due (cons name tags))]))))
@@ -124,22 +124,34 @@
 (module+ test
   (require rackunit)
 
-  (parameterize ([current-db (sqlite3-connect #:database 'memory)])
-    (create-table! (current-db) entry-schema)
+  (define (call-with-empty-db f)
+    (parameterize ([current-db (sqlite3-connect #:database 'memory)])
+      (create-table! (current-db) entry-schema)
+      (f)))
 
-    (define t0 (now/moment))
-    (define the-entry
-      (commit! "buy milk +1h"))
+  (call-with-empty-db
+   (lambda _
+     (define t0 (now/moment))
+     (define the-entry
+       (commit! "buy milk +1h"))
 
-    (check-match
-     the-entry
-     (entry _ some-id "buy milk" "" 'pending some-due-at some-created-at))
+     (check-match
+      the-entry
+      (entry _ some-id "buy milk" "" 'pending some-due-at some-created-at))
 
-    (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 60)
-    (check-true (null? (find-due-entries)))
-    (check-not-false (member (entry-id the-entry)
-                             (map entry-id (find-pending-entries))))
+     (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 60)
+     (check-true (null? (find-due-entries)))
+     (check-not-false (member (entry-id the-entry)
+                              (map entry-id (find-pending-entries))))
 
-    (archive-entry! (entry-id the-entry))
-    (check-false (member (entry-id the-entry)
-                         (map entry-id (find-pending-entries))))))
+     (archive-entry! (entry-id the-entry))
+     (check-false (member (entry-id the-entry)
+                          (map entry-id (find-pending-entries))))))
+
+  (call-with-empty-db
+   (lambda _
+     (define t0 (now/moment))
+     (define the-entry
+       (commit! "buy milk +1h +15m"))
+
+     (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 75))))
