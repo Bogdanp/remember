@@ -13,7 +13,7 @@
 (define-logger server)
 
 (define/contract (serve in out [notifications-ch (make-channel)])
-  (->* (input-port? output-port?) (channel?) (-> void?))
+  (->* (input-port? output-port?) (channel?) (values evt? (-> void?)))
   (define stopped (make-semaphore))
 
   (define writes-ch (make-async-channel 128))
@@ -82,10 +82,11 @@
 
                (loop)))))))))
 
-  (lambda ()
-    (void
-     (semaphore-post stopped)
-     (sync thd))))
+  (values thd
+          (lambda ()
+            (void
+             (semaphore-post stopped)
+             (sync thd)))))
 
 (module+ test
   (require rackunit)
@@ -96,7 +97,7 @@
 
     (register-rpc add1 sub1)
 
-    (define stop
+    (define-values (_ stop)
       (serve s-in c-out))
 
     (parameterize ([current-input-port c-in]

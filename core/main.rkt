@@ -42,9 +42,10 @@
   (define out (current-output-port))
   (file-stream-buffer-mode in 'none)
   (file-stream-buffer-mode out 'none)
-  (define stop-server (serve in out notifications))
+  (define-values (server stop-server)
+    (serve in out notifications))
   (with-handlers ([exn:break?
                    (lambda _
                      (stop-server)
                      (stop-logger))])
-    (sync/enable-break never-evt)))
+    (sync/enable-break server)))
