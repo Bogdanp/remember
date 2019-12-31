@@ -36,7 +36,7 @@ struct EntryListItem: View {
     var dueIn: some View {
         entry.dueIn.map { text in
             Text(text)
-                .font(.system(size: 10))
+                .font(.system(size: 11))
                 .foregroundColor(Color(FG_DUE_IN))
                 .padding(5)
                 .background(Color(BG_DUE_IN))

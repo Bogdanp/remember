@@ -58,10 +58,6 @@ class Store: ObservableObject {
             }
         }
 
-        Notifications.observeWillHideWindow {
-            self.hideEntries()
-        }
-
         Notifications.observeWillSnoozeEntry {
             self.entryDB.snoozeEntry(byId: $0) { }
         }
