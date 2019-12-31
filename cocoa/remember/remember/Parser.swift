@@ -20,7 +20,8 @@ protocol Parser {
 
 enum Token: Decodable {
     case chunk(Chunk)
-    case relativeDateTime(RelativeDateTime)
+    case relativeTime(RelativeTime)
+    case namedDate(NamedDate)
     case tag(Tag)
 
     enum TokenError: Error {
@@ -38,8 +39,10 @@ enum Token: Decodable {
         switch type {
         case "chunk":
             self = .chunk(try svc.decode(Chunk.self))
-        case "relative-datetime":
-            self = .relativeDateTime(try svc.decode(RelativeDateTime.self))
+        case "relative-time":
+            self = .relativeTime(try svc.decode(RelativeTime.self))
+        case "named-date":
+            self = .namedDate(try svc.decode(NamedDate.self))
         case "tag":
             self = .tag(try svc.decode(Tag.self))
         default:
@@ -53,11 +56,17 @@ struct Chunk: Decodable {
     let span: Span
 }
 
-struct RelativeDateTime: Decodable {
+struct RelativeTime: Decodable {
     let text: String
     let span: Span
     let delta: Int
     let modifier: String
+}
+
+struct NamedDate: Decodable {
+    let text: String
+    let span: Span
+    let date: String
 }
 
 struct Tag: Decodable {

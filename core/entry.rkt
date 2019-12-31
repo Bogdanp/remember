@@ -3,6 +3,7 @@
 (require db
          deta
          gregor
+         gregor/time
          json
          racket/contract
          racket/format
@@ -87,15 +88,13 @@
            (display text)
            (values due tags)]
 
-          [(relative-datetime text span delta modifier)
-           (define adder
-             (case modifier
-               [(m) +minutes]
-               [(h) +hours]
-               [(d) +days]
-               [(w) +weeks]
-               [(M) +months]))
-           (values (adder (or due (now/moment)) delta) tags)]
+          [(and (relative-time text span delta modifier) r)
+           (define adder (relative-time-adder r))
+           (values (adder (or due (now/moment))) tags)]
+
+          [(named-date text span d)
+           (define t (if due (->time due) (time 8 0)))
+           (values (at-time d t) tags)]
 
           [(tag text span name)
            (values due (cons name tags))]))))
@@ -209,6 +208,15 @@
        (commit! "buy milk +1h +15m"))
 
      (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 75)))
+
+  (parameterize ([current-clock (lambda _ 0)])
+    (call-with-empty-db
+     (lambda _
+       (define the-entry
+         (commit! "buy milk @mon +1h +15m"))
+
+       (check-equal? (entry-due-at the-entry)
+                     (datetime 1970 1 5 9 15)))))
 
   (parameterize ([current-undo-ring (make-ring 128)])
     (call-with-empty-db

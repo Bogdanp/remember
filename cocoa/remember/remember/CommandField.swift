@@ -46,7 +46,7 @@ struct CommandField: NSViewRepresentable {
         field.placeholderString = "Remember"
 
         field.keyBindings.append(contentsOf: [
-            KeyBinding(withKeyCode: Keycode.z, andModifierFlags: [.command], using: #selector(Coordinator.undo(_:)))
+            KeyBinding(withKeyCode: Keycode.z, andModifierFlags: [.command], using: #selector(Coordinator.undo(_:))),
         ])
 
         return field
@@ -60,14 +60,21 @@ struct CommandField: NSViewRepresentable {
             case .chunk(let c):
                 attributedText += c.text
                     .withFont(systemFont)
-            case .relativeDateTime(let r):
-                attributedText += r.text.withFont(systemFont)
-                    .withBackgroundColor(BG_RELATIVE_DATETIME)
-                    .withTextColor(Color.white)
+            case .relativeTime(let r):
+                attributedText += r.text
+                    .withFont(systemFont)
+                    .withBackgroundColor(BG_RELATIVE_TIME)
+                    .withTextColor(FG_RELATIVE_TIME)
+            case .namedDate(let d):
+                attributedText += d.text
+                    .withFont(systemFont)
+                    .withBackgroundColor(BG_NAMED_DATE)
+                    .withTextColor(FG_NAMED_DATE)
             case .tag(let t):
-                attributedText += t.text.withFont(systemFont)
+                attributedText += t.text
+                    .withFont(systemFont)
                     .withBackgroundColor(BG_TAG)
-                    .withTextColor(Color.white)
+                    .withTextColor(FG_TAG)
             }
         }
 

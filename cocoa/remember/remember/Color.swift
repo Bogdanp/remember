@@ -11,8 +11,12 @@ import Foundation
 let BG_CURRENT_ENTRY = hexColor(rgba: "ffffff66")!
 let BG_DUE_IN = hexColor(rgba: "43424266")!
 let FG_DUE_IN = hexColor(rgb: "ffffff")!
-let BG_RELATIVE_DATETIME = hexColor(rgb: "21262d")!
+let BG_RELATIVE_TIME = hexColor(rgb: "21262d")!
+let FG_RELATIVE_TIME = hexColor(rgb: "ffffff")!
+let BG_NAMED_DATE = hexColor(rgb: "21262d")!
+let FG_NAMED_DATE = hexColor(rgb: "ffffff")!
 let BG_TAG = hexColor(rgb: "4c88f2")!
+let FG_TAG = hexColor(rgb: "ffffff")!
 
 func hexColor(rgb: String) -> NSColor? {
     return hexColor(rgba: "\(rgb)FF")

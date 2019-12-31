@@ -1,7 +1,10 @@
 #lang racket/base
 
-(require json
+(require gregor
+         gregor/time
+         json
          racket/contract
+         racket/format
          racket/generic
          racket/match
          racket/port
@@ -14,7 +17,9 @@
  (struct-out span)
  (struct-out token)
  (struct-out chunk)
- (struct-out relative-datetime)
+ (struct-out relative-time)
+ relative-time-adder
+ (struct-out named-date)
  (struct-out tag)
  parse-command
  parse-command/jsexpr)
@@ -52,13 +57,30 @@
   [(define (->jsexpr c)
      (token->jsexpr c "chunk"))])
 
-(struct relative-datetime token (delta modifier)
+(struct relative-time token (delta modifier)
   #:transparent
   #:methods gen:to-jsexpr
   [(define (->jsexpr rd)
-     (~> (token->jsexpr rd "relative-datetime")
-         (hash-set 'delta (relative-datetime-delta rd))
-         (hash-set 'modifier (symbol->string (relative-datetime-modifier rd)))))])
+     (~> (token->jsexpr rd "relative-time")
+         (hash-set 'delta (relative-time-delta rd))
+         (hash-set 'modifier (symbol->string (relative-time-modifier rd)))))])
+
+(define ((relative-time-adder r) dp)
+  (define adder
+    (case (relative-time-modifier r)
+      [(m) +minutes]
+      [(h) +hours]
+      [(d) +days]
+      [(w) +weeks]
+      [(M) +months]))
+  (adder dp (relative-time-delta r)))
+
+(struct named-date token (d)
+  #:transparent
+  #:methods gen:to-jsexpr
+  [(define (->jsexpr ed)
+     (~> (token->jsexpr ed "named-date")
+         (hash-set 'date (date->iso8601 (named-date-d ed)))))])
 
 (struct tag token (name)
   #:transparent
@@ -67,8 +89,9 @@
      (~> (token->jsexpr t "tag")
          (hash-set 'name (tag-name t))))])
 
-(define PREFIX-CHARS '(#\+ #\#))
-(define RELATIVE-DATETIME-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
+(define PREFIX-CHARS '(#\+ #\@ #\#))
+(define RELATIVE-TIME-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
+(define NAMED-DATE-RE #px"^@(tomorrow|mon|tue|wed|thu|fri|sat|sun)")
 (define TAG-RE #px"^#([^ ]+)")
 
 (define bytes->number (compose1 string->number bytes->string/utf-8))
@@ -93,14 +116,48 @@
      (chunk (read-string 1 in)
             (span start-loc (port-location in)))]))
 
-(define (read-relative-datetime [in (current-input-port)])
+(define (read-relative-time [in (current-input-port)])
   (define start-loc (port-location in))
-  (match (regexp-try-match RELATIVE-DATETIME-RE in)
+  (match (regexp-try-match RELATIVE-TIME-RE in)
     [(list text delta modifier)
-     (relative-datetime (bytes->string/utf-8 text)
-                        (span start-loc (port-location in))
-                        (bytes->number delta)
-                        (or (and modifier (bytes->symbol modifier)) 'd))]
+     (relative-time (bytes->string/utf-8 text)
+                    (span start-loc (port-location in))
+                    (bytes->number delta)
+                    (or (and modifier (bytes->symbol modifier)) 'd))]
+
+    [_
+     (chunk (read-string 1 in)
+            (span start-loc (port-location in)))]))
+
+(define (read-named-date/time [in (current-input-port)])
+  (define start-loc (port-location in))
+  (match (regexp-try-match NAMED-DATE-RE in)
+    [(list _ #"tomorrow")
+     (named-date "@tomorrow"
+                 (span start-loc (port-location in))
+                 (+days (today) 1))]
+
+    [(list _ mod)
+     (define d (today))
+     (define wd
+       (case mod
+         [(#"sun") 0]
+         [(#"mon") 1]
+         [(#"tue") 2]
+         [(#"wed") 3]
+         [(#"thu") 4]
+         [(#"fri") 5]
+         [(#"sat") 6]
+         [else (raise-user-error 'read-named-date/time "a valid weekday" mod)]))
+
+     (define delta
+       (- wd (->wday d)))
+
+     (named-date (~a "@" (bytes->string/utf-8 mod))
+                 (span start-loc (port-location in))
+                 (if (< delta 1)
+                     (+days d (+ 7 delta))
+                     (+days d delta)))]
 
     [_
      (chunk (read-string 1 in)
@@ -132,7 +189,8 @@
         [else
          (define token
            (case c
-             [(#\+) (read-relative-datetime)]
+             [(#\+) (read-relative-time)]
+             [(#\@) (read-named-date/time)]
              [(#\#) (read-tag)]
              [else  (read-chunk)]))
          (loop (cons token tokens)
@@ -162,7 +220,7 @@
              (text . "hello ")
              (span . ((1 0 0)
                       (1 6 6))))
-     #hasheq((type . "relative-datetime")
+     #hasheq((type . "relative-time")
              (text . "+1d")
              (span . ((1 6 6)
                       (1 9 9)))
@@ -194,7 +252,7 @@
              (text . "buy milk ")
              (span . ((1 0 0)
                       (1 9 9))))
-     #hasheq((type . "relative-datetime")
+     #hasheq((type . "relative-time")
              (text . "+1d")
              (span . ((1 9 9)
                       (1 12 12)))
@@ -208,4 +266,46 @@
              (text . "#groceries")
              (span . ((1 13 13)
                       (1 23 23)))
-             (name . "groceries")))))
+             (name . "groceries"))))
+
+  (parameterize ([current-clock (lambda _ 0)])
+    (check-equal?
+     (parse-command/jsexpr "buy milk @mon #groceries")
+     '(#hasheq((type . "chunk")
+               (text . "buy milk ")
+               (span . ((1 0 0)
+                        (1 9 9))) )
+       #hasheq((type . "named-date")
+               (text . "@mon")
+               (span . ((1 9 9)
+                        (1 13 13)))
+               (date . "1970-01-05"))
+       #hasheq((type . "chunk")
+               (text . " ")
+               (span . ((1 13 13)
+                        (1 14 14))))
+       #hasheq((type . "tag")
+               (text . "#groceries")
+               (span . ((1 14 14)
+                        (1 24 24)))
+               (name . "groceries"))))
+
+    (check-equal?
+     (parse-command/jsexpr "buy milk @thu #groceries")
+     '(#hasheq((type . "chunk")
+               (text . "buy milk ")
+               (span . ((1 0 0)
+                        (1 9 9))) )
+       #hasheq((type . "named-date")
+               (text . "@thu")
+               (span . ((1 9 9)
+                        (1 13 13)))
+               (date . "1970-01-08"))
+       #hasheq((type . "chunk")
+               (text . " ")
+               (span . ((1 13 13)
+                        (1 14 14))))
+       #hasheq((type . "tag")
+               (text . "#groceries")
+               (span . ((1 14 14) (1 24 24)))
+               (name . "groceries"))))))
