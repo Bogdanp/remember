@@ -42,13 +42,21 @@ class Client: AsyncNotifier & Parser & EntryDB {
         }
     }
 
-    func archiveEntry(byId id: UInt32, withCompletionHandler handler: @escaping () -> Void) {
+    func archiveEntry(byId id: Entry.Id) {
+        archiveEntry(byId: id) { }
+    }
+
+    func archiveEntry(byId id: Entry.Id, withCompletionHandler handler: @escaping () -> Void) {
         return rpc.call("archive-entry!", [id]) { (res: RPCResult<RPCUnit>) in
             handler()
         }
     }
 
-    func snoozeEntry(byId id: UInt32, withCompletionHandler handler: @escaping () -> Void) {
+    func snoozeEntry(byId id: Entry.Id) {
+        snoozeEntry(byId: id) { }
+    }
+
+    func snoozeEntry(byId id: Entry.Id, withCompletionHandler handler: @escaping () -> Void) {
         return rpc.call("snooze-entry!", [id]) { (res: RPCResult<RPCUnit>) in
             handler()
         }

@@ -21,7 +21,7 @@ struct EntryListEntry: View {
     var body: some View {
         content
             .padding(6)
-            .background(isCurrent ? Color(BG_CURRENT_ENTRY) : Color.clear)
+            .background(isCurrent ? Color(BG_CURRENT_ENTRY) : .clear)
             .cornerRadius(5)
     }
 

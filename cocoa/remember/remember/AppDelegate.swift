@@ -54,8 +54,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.makeKeyAndOrderFront(nil)
 
         setupHotKey()
-        setupArchivingListener()
-        setupSnoozingListener()
         setupHidingListener()
         setupUserNotifications()
     }
@@ -76,40 +74,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         KeyboardShortcut.register()
     }
 
-    /// Sets up the global listener for archive events.  This is triggered whenever a user hits "Archive" on a due entry notification.
-    private func setupArchivingListener() {
-        NotificationCenter.default.addObserver(
-            forName: .userDidArchive,
-            object: nil,
-            queue: nil) { notification in
-
-                if let entryId = notification.object as? UInt32 {
-                    self.client.archiveEntry(byId: entryId) { }
-                }
-        }
-    }
-
-    /// Sets up the global listener for snooze events.  This is triggered whenever a user hits "Close" on a due entry notification.
-    private func setupSnoozingListener() {
-        NotificationCenter.default.addObserver(
-            forName: .userDidSnooze,
-            object: nil,
-            queue: nil) { notification in
-
-                if let entryId = notification.object as? UInt32 {
-                    self.client.snoozeEntry(byId: entryId) { }
-                }
-        }
-    }
-
     /// Sets up the global hiding listener.  This is triggered whenever the user intends to hide the window.
     private func setupHidingListener() {
-        NotificationCenter.default.addObserver(
-            forName: .commandDidComplete,
-            object: nil,
-            queue: nil) { _ in
-
-                NSApp.hide(nil)
+        Notifications.observeWillHideWindow {
+            NSApp.hide(nil)
         }
     }
 

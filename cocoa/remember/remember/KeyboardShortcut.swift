@@ -18,7 +18,7 @@ class KeyboardShortcut {
             task: { _ in
 
                 if NSApp.isActive {
-                    NSApp.hide(nil)
+                    Notifications.willHideWindow()
                 } else {
                     NSApp.activate(ignoringOtherApps: true)
                 }

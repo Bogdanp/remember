@@ -18,6 +18,7 @@ class Store: ObservableObject {
     @Published var command = NSAttributedString(string: "")
     @Published var tokens = [Token]()
     @Published var entries = [Entry]()
+    @Published var entriesVisible = false
     @Published var currentEntry: Entry? = nil
 
     init(asyncNotifier: AsyncNotifier, entryDB: EntryDB, parser: Parser) {
@@ -56,18 +57,38 @@ class Store: ObservableObject {
                 break
             }
         }
+
+        Notifications.observeWillHideWindow {
+            self.hideEntries()
+        }
+
+        Notifications.observeWillSnoozeEntry {
+            self.entryDB.snoozeEntry(byId: $0) { }
+        }
+
+        Notifications.observeWillArchiveEntry {
+            self.entryDB.archiveEntry(byId: $0) { }
+        }
     }
 
     func clear() {
+        self.hideEntries()
         if command.string.isEmpty {
-            Notifications.commandDidComplete()
+            Notifications.willHideWindow()
         }
 
         command = NSAttributedString(string: "")
         tokens = []
     }
 
+    func commit(command: String) {
+        commit(command: command) {
+            Notifications.willHideWindow()
+        }
+    }
+
     func commit(command: String, withCompletionHandler handler: @escaping () -> Void) {
+        self.hideEntries()
         self.entryDB.commit(command: command) { res in
             RunLoop.main.schedule {
                 switch res {
@@ -143,5 +164,13 @@ class Store: ObservableObject {
         } else {
             currentEntry = entries[0]
         }
+    }
+
+    func hideEntries() {
+        self.entriesVisible = false
+    }
+
+    func showEntries() {
+        self.entriesVisible = true
     }
 }

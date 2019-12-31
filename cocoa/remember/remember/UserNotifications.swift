@@ -117,9 +117,9 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
 
             switch action {
             case .dismiss:
-                Notifications.userDidSnooze(entryId: id)
+                Notifications.willSnoozeEntry(entryId: id)
             case .archive:
-                Notifications.userDidArchive(entryId: id)
+                Notifications.willArchiveEntry(entryId: id)
             }
         }
 

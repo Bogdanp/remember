@@ -9,27 +9,61 @@
 import Foundation
 
 struct Notifications {
-    static func commandDidComplete() {
+    static func willHideWindow() {
         NotificationCenter.default.post(
-            name: .commandDidComplete,
+            name: .willHideWindow,
             object: nil)
     }
 
-    static func userDidArchive(entryId: UInt32) {
+    static func observeWillHideWindow(withCompletionHandler handler: @escaping () -> Void) {
+        NotificationCenter.default.addObserver(
+            forName: .willHideWindow,
+            object: nil,
+            queue: nil) { _ in
+
+                handler()
+        }
+    }
+
+    static func willArchiveEntry(entryId: Entry.Id) {
         NotificationCenter.default.post(
-            name: .userDidArchive,
+            name: .willArchiveEntry,
             object: entryId)
     }
 
-    static func userDidSnooze(entryId: UInt32) {
+    static func observeWillArchiveEntry(withCompletionHandler handler: @escaping (Entry.Id) -> Void) {
+        NotificationCenter.default.addObserver(
+            forName: .willArchiveEntry,
+            object: nil,
+            queue: nil) { notification in
+
+                if let id = notification.object as? Entry.Id {
+                    handler(id)
+                }
+        }
+    }
+
+    static func willSnoozeEntry(entryId: Entry.Id) {
         NotificationCenter.default.post(
-            name: .userDidSnooze,
+            name: .willSnoozeEntry,
             object: entryId)
+    }
+
+    static func observeWillSnoozeEntry(withCompletionHandler handler: @escaping (Entry.Id) -> Void) {
+        NotificationCenter.default.addObserver(
+            forName: .willSnoozeEntry,
+            object: nil,
+            queue: nil) { notification in
+
+                if let id = notification.object as? Entry.Id {
+                    handler(id)
+                }
+        }
     }
 }
 
 extension Notification.Name {
-    static let commandDidComplete = Notification.Name("io.defn.remember.commandDidComplete")
-    static let userDidArchive = Notification.Name("io.defn.remember.userDidArchive")
-    static let userDidSnooze = Notification.Name("io.defn.remember.userDidSnooze")
+    static let willHideWindow = Notification.Name("io.defn.remember.willHideWindow")
+    static let willArchiveEntry = Notification.Name("io.defn.remember.willArchiveEntry")
+    static let willSnoozeEntry = Notification.Name("io.defn.remember.willSnoozeEntry")
 }

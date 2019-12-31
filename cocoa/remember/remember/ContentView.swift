@@ -10,8 +10,7 @@ import Combine
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var store: Store
-    @State var entriesVisible = false
+    @ObservedObject private var store: Store
 
     init(asyncNotifier: AsyncNotifier,
          entryDB: EntryDB,
@@ -34,26 +33,22 @@ struct ContentView: View {
                              tokens: $store.tokens) {
                     switch $0 {
                     case .update(_):
-                        self.entriesVisible = false
+                        self.store.hideEntries()
                     case .cancel(_):
-                        self.entriesVisible = false
                         self.store.clear()
                     case .commit(let c):
-                        self.store.commit(command: c) {
-                            self.entriesVisible = false
-                            Notifications.commandDidComplete()
-                        }
+                        self.store.commit(command: c)
                     case .archive:
-                        if self.entriesVisible {
+                        if self.store.entriesVisible {
                             self.store.archiveCurrentEntry()
                         }
                     case .previous:
-                        self.entriesVisible = true
+                        self.store.showEntries()
                         self.store.updatePendingEntries {
                             self.store.selectPreviousEntry()
                         }
                     case .next:
-                        self.entriesVisible = true
+                        self.store.showEntries()
                         self.store.updatePendingEntries {
                             self.store.selectNextEntry()
                         }
@@ -61,7 +56,7 @@ struct ContentView: View {
                 }
             }
 
-            if entriesVisible && !store.entries.isEmpty {
+            if store.entriesVisible && !store.entries.isEmpty {
                 Divider()
                 EntryList($store.entries, currentEntry: $store.currentEntry)
             }
