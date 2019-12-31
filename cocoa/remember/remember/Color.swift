@@ -8,8 +8,9 @@
 
 import Foundation
 
-let BG_CURRENT_ENTRY = hexColor(rgba: "ffffffaa")!
-let BG_DUE_IN = hexColor(rgb: "a8a8aa")!
+let BG_CURRENT_ENTRY = hexColor(rgba: "ffffff66")!
+let BG_DUE_IN = hexColor(rgba: "43424266")!
+let FG_DUE_IN = hexColor(rgb: "ffffff")!
 let BG_RELATIVE_DATETIME = hexColor(rgb: "21262d")!
 let BG_TAG = hexColor(rgb: "4c88f2")!
 

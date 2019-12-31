@@ -9,6 +9,10 @@
 import Foundation
 
 struct Notifications {
+    private static func observe(_ name: NSNotification.Name, using handler: @escaping (Notification) -> Void) {
+        NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil, using: handler)
+    }
+
     static func willHideWindow() {
         NotificationCenter.default.post(
             name: .willHideWindow,
@@ -16,12 +20,8 @@ struct Notifications {
     }
 
     static func observeWillHideWindow(withCompletionHandler handler: @escaping () -> Void) {
-        NotificationCenter.default.addObserver(
-            forName: .willHideWindow,
-            object: nil,
-            queue: nil) { _ in
-
-                handler()
+        observe(.willHideWindow) { _ in
+            handler()
         }
     }
 
@@ -32,14 +32,10 @@ struct Notifications {
     }
 
     static func observeWillArchiveEntry(withCompletionHandler handler: @escaping (Entry.Id) -> Void) {
-        NotificationCenter.default.addObserver(
-            forName: .willArchiveEntry,
-            object: nil,
-            queue: nil) { notification in
-
-                if let id = notification.object as? Entry.Id {
-                    handler(id)
-                }
+        observe(.willArchiveEntry) { notification in
+            if let id = notification.object as? Entry.Id {
+                handler(id)
+            }
         }
     }
 
@@ -50,14 +46,10 @@ struct Notifications {
     }
 
     static func observeWillSnoozeEntry(withCompletionHandler handler: @escaping (Entry.Id) -> Void) {
-        NotificationCenter.default.addObserver(
-            forName: .willSnoozeEntry,
-            object: nil,
-            queue: nil) { notification in
-
-                if let id = notification.object as? Entry.Id {
-                    handler(id)
-                }
+        observe(.willSnoozeEntry) { notification in
+            if let id = notification.object as? Entry.Id {
+                handler(id)
+            }
         }
     }
 }

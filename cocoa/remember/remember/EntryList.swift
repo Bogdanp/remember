@@ -21,7 +21,7 @@ struct EntryList: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             ForEach(visibleEntries()) { entry in
-                EntryListEntry(entry, isCurrent: self.currentEntry.map { entry.id == $0.id } ?? false)
+                EntryListItem(entry, isCurrent: self.currentEntry.map { entry.id == $0.id } ?? false)
             }
             .padding(.top, 6)
         }

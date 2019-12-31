@@ -17,6 +17,7 @@ enum CommandAction {
     case archive
     case previous
     case next
+    case undo
 }
 
 struct CommandField: NSViewRepresentable {
@@ -36,13 +37,18 @@ struct CommandField: NSViewRepresentable {
     }
 
     func makeNSView(context: NSViewRepresentableContext<CommandField>) -> NSViewType {
-        let field = NSTextField()
+        let field = CommandTextField()
         field.allowsEditingTextAttributes = true
         field.backgroundColor = NSColor.clear
         field.delegate = context.coordinator
         field.isBordered = false
         field.focusRingType = .none
         field.placeholderString = "Remember"
+
+        field.keyBindings.append(contentsOf: [
+            KeyBinding(withKeyCode: Keycode.z, andModifierFlags: [.command], using: #selector(Coordinator.undo(_:)))
+        ])
+
         return field
     }
 
@@ -93,6 +99,7 @@ struct CommandField: NSViewRepresentable {
         }
 
         func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+            print(commandSelector)
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
                 action(.commit(control.stringValue))
                 return true
@@ -113,11 +120,50 @@ struct CommandField: NSViewRepresentable {
             return false
         }
 
+        @objc func undo(_ sender: NSTextField) {
+            if sender.stringValue.isEmpty {
+                action(.undo)
+            }
+        }
+
         func controlTextDidChange(_ aNotification: Notification) {
+            print(aNotification)
             if let textField = aNotification.object as? NSTextField {
                 setter(textField.attributedStringValue)
                 action(.update(textField.stringValue))
             }
         }
+    }
+}
+
+fileprivate struct KeyBinding {
+    private let keyCode: UInt16
+    private let modifierFlags: NSEvent.ModifierFlags
+
+    let selector: Selector
+
+    init(withKeyCode keyCode: UInt16, andModifierFlags modifierFlags: NSEvent.ModifierFlags, using selector: Selector) {
+        self.keyCode = keyCode
+        self.modifierFlags = modifierFlags
+        self.selector = selector
+    }
+
+    func matches(_ event: NSEvent) -> Bool {
+        return event.keyCode == keyCode &&
+            event.modifierFlags.contains(modifierFlags)
+    }
+}
+
+fileprivate class CommandTextField: NSTextField {
+    var keyBindings = [KeyBinding]()
+
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        for binding in keyBindings {
+            if binding.matches(event) {
+                return NSApp.sendAction(binding.selector, to: delegate, from: self)
+            }
+        }
+
+        return super.performKeyEquivalent(with: event)
     }
 }

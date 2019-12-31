@@ -34,4 +34,5 @@ protocol EntryDB {
     func snoozeEntry(byId: Entry.Id)
     func snoozeEntry(byId: Entry.Id, withCompletionHandler: @escaping () -> Void)
     func findPendingEntries(withCompletionHandler: @escaping ([Entry]) -> Void)
+    func undo(withCompletionHandler: @escaping () -> Void)
 }

@@ -52,6 +52,8 @@ struct ContentView: View {
                         self.store.updatePendingEntries {
                             self.store.selectNextEntry()
                         }
+                    case .undo:
+                        self.store.undo()
                     }
                 }
             }

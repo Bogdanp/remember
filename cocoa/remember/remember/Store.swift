@@ -174,4 +174,10 @@ class Store: ObservableObject {
     func showEntries() {
         self.entriesVisible = true
     }
+
+    func undo() {
+        self.entryDB.undo {
+            self.updatePendingEntries()
+        }
+    }
 }

@@ -72,4 +72,10 @@ class Client: AsyncNotifier & Parser & EntryDB {
             }
         }
     }
+
+    func undo(withCompletionHandler handler: @escaping () -> Void) {
+        return rpc.call("undo!", []) { (res: RPCResult<RPCUnit>) in
+            handler()
+        }
+    }
 }
