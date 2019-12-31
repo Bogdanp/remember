@@ -63,7 +63,7 @@
            [(>= delta 86400)       (~a "due in " (format-delta (add1 (days-between now due)) "day" "days"))]
            [(>= delta 3600)        (~a "due in " (format-delta (add1 (hours-between now due)) "hour" "hours"))]
            [(>= delta 60)          (~a "due in " (format-delta (add1 (minutes-between now due)) "minute" "minutes"))]
-           [else                   "less than a minute"]))))
+           [else                   "due in under a minute"]))))
 
 (define (format-delta d singular plural)
   (format "~a ~a" d (if (= d 1)
