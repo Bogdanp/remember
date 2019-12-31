@@ -99,7 +99,6 @@ struct CommandField: NSViewRepresentable {
         }
 
         func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
-            print(commandSelector)
             if commandSelector == #selector(NSResponder.insertNewline(_:)) {
                 action(.commit(control.stringValue))
                 return true
@@ -127,7 +126,6 @@ struct CommandField: NSViewRepresentable {
         }
 
         func controlTextDidChange(_ aNotification: Notification) {
-            print(aNotification)
             if let textField = aNotification.object as? NSTextField {
                 setter(textField.attributedStringValue)
                 action(.update(textField.stringValue))

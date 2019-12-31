@@ -110,6 +110,7 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
     func dismiss(byEntryId id: Entry.Id) {
         let center  = UNUserNotificationCenter.current()
         center.removeDeliveredNotifications(withIdentifiers: [String(id)])
+        self.removePending(byId: id)
     }
 
     func dismissAll() {

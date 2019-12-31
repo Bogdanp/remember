@@ -58,14 +58,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setupUserNotifications()
     }
 
-    func applicationWillBecomeActive(_ notification: Notification) {
-        window.center()
-    }
-
-    func applicationDidResignActive(_ notification: Notification) {
-        window.center()
-    }
-
     func applicationWillTerminate(_ aNotification: Notification) {
         UserNotificationsManager.shared.dismissAll()
         rpc.shutdown()
