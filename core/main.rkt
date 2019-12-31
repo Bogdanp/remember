@@ -7,14 +7,16 @@
          "logging.rkt"
          "notification.rkt"
          "rpc.rkt"
-         "server.rkt")
+         "server.rkt"
+         "undo.rkt")
 
 (register-rpc
  [parse-command parse-command/jsexpr]
  [commit! (compose1 ->jsexpr commit!)]
  [archive-entry! (compose1 unit archive-entry!)]
  [snooze-entry! (compose1 unit snooze-entry!)]
- [find-pending-entries (compose1 ->jsexpr find-pending-entries)])
+ [find-pending-entries (compose1 ->jsexpr find-pending-entries)]
+ [undo! (compose1 unit undo!)])
 
 (module+ main
   (define notifications (make-channel))

@@ -13,7 +13,8 @@
          "command.rkt"
          "db.rkt"
          "json.rkt"
-         "notification.rkt")
+         "notification.rkt"
+         "undo.rkt")
 
 (provide
  (schema-out entry)
@@ -123,6 +124,16 @@
               (~> (from entry #:as e)
                   (update [status "archived"])
                   (where (= e.id ,id))))
+  (notify 'entries-did-change)
+  (push-undo! (lambda _
+                (unarchive-entry! id))))
+
+(define/contract (unarchive-entry! id)
+  (-> id/c void?)
+  (query-exec (current-db)
+              (~> (from entry #:as e)
+                  (update [status "pending"])
+                  (where (= e.id ,id))))
   (void (notify 'entries-did-change)))
 
 (define/contract (snooze-entry! id)
@@ -151,7 +162,8 @@
   (sequence->list (in-entities (current-db) due-entries)))
 
 (module+ test
-  (require rackunit)
+  (require rackunit
+           "ring.rkt")
 
   (define (call-with-empty-db f)
     (parameterize ([current-db (sqlite3-connect #:database 'memory)])
@@ -196,4 +208,24 @@
      (define the-entry
        (commit! "buy milk +1h +15m"))
 
-     (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 75))))
+     (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 75)))
+
+  (parameterize ([current-undo-ring (make-ring 128)])
+    (call-with-empty-db
+     (lambda _
+       (define the-entry
+         (commit! "buy milk +1h +15m"))
+
+       (archive-entry! (entry-id the-entry))
+       (check-equal? (entry-status
+                      (lookup (current-db)
+                              (~> (from entry #:as e)
+                                  (where (= e.id ,(entry-id the-entry))))))
+                     'archived)
+
+       (undo!)
+       (check-equal? (entry-status
+                      (lookup (current-db)
+                              (~> (from entry #:as e)
+                                  (where (= e.id ,(entry-id the-entry))))))
+                     'pending)))))
