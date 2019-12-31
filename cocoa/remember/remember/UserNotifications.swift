@@ -77,6 +77,7 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
                 case .entriesDue(let notification):
                     for entry in notification.entries {
                         if !self.addPending(byId: entry.id) {
+                            os_log("notification for entry %d ignored", entry.id)
                             continue
                         }
 
@@ -104,6 +105,15 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
                 }
             }
         })
+    }
+
+    func dismissAll() {
+        let center = UNUserNotificationCenter.current()
+        center.removeAllDeliveredNotifications()
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        return completionHandler([.alert])
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {

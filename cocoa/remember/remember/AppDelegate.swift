@@ -67,6 +67,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
+        UserNotificationsManager.shared.dismissAll()
         rpc.shutdown()
     }
 
