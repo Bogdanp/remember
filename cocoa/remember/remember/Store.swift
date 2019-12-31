@@ -129,6 +129,7 @@ class Store: ObservableObject {
     func archiveCurrentEntry() {
         if let currentEntry = self.currentEntry {
             self.entryDB.archiveEntry(byId: currentEntry.id) {
+                UserNotificationsManager.shared.dismiss(byEntryId: currentEntry.id)
                 self.updatePendingEntries()
             }
         }
