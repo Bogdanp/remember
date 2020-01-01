@@ -255,6 +255,7 @@
 				436BE28F23B10D4E00717375 /* Resources */,
 				43E6B94123B5480700F7ACE1 /* ShellScript */,
 				4355FC3F23BCC241000463B6 /* ShellScript */,
+				43A60B9723BD4D7300160E3E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -389,6 +390,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PROJECT_DIR}/Carthage/Build/Mac/LaunchAtLogin.framework/Resources/copy-helper.sh\"\n";
+		};
+		43A60B9723BD4D7300160E3E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "codesign --force \\\n    --timestamp \\\n    --entitlements=\"$CODE_SIGN_ENTITLEMENTS\" \\\n    --sign=\"$EXPANDED_CODE_SIGN_IDENTITY_NAME\" \\\n    -o runtime \\\n    \"${PROJECT_DIR}/Resources/core/lib/Racket.framework/Versions/7.5_3m/Racket\"\n\ncodesign --force \\\n    --timestamp \\\n    --entitlements=\"$CODE_SIGN_ENTITLEMENTS\" \\\n    --sign=\"$EXPANDED_CODE_SIGN_IDENTITY_NAME\" \\\n    -o runtime \\\n    \"${PROJECT_DIR}/Resources/core/bin/remember-core\"\n";
 		};
 		43E6B94123B5480700F7ACE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
