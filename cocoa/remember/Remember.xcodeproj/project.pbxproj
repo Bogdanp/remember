@@ -93,6 +93,7 @@
 		43983BDF23BA17580064C527 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		43983BE123BA19EC0064C527 /* EntryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryList.swift; sourceTree = "<group>"; };
 		43983BE323BA279E0064C527 /* EntryListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryListItem.swift; sourceTree = "<group>"; };
+		43A60B9E23BD5ED600160E3E /* remember-core.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "remember-core.entitlements"; sourceTree = "<group>"; };
 		43E6B94223B61CAD00F7ACE1 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		43E6B94423B6660200F7ACE1 /* EntryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDB.swift; sourceTree = "<group>"; };
 		43E6B94723B6722B00F7ACE1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -169,6 +170,7 @@
 		436BE29323B10D4E00717375 /* remember */ = {
 			isa = PBXGroup;
 			children = (
+				43A60B9E23BD5ED600160E3E /* remember-core.entitlements */,
 				436BE2A123B10D5000717375 /* remember.entitlements */,
 				43E6B94B23B673EF00F7ACE1 /* BridgingHeader.h */,
 				43E6B95223B6775A00F7ACE1 /* DDHotKeyCenter.h */,
@@ -406,7 +408,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "codesign --force \\\n    --timestamp \\\n    --entitlements=\"$CODE_SIGN_ENTITLEMENTS\" \\\n    --sign=\"$EXPANDED_CODE_SIGN_IDENTITY_NAME\" \\\n    -o runtime \\\n    \"${PROJECT_DIR}/Resources/core/lib/Racket.framework/Versions/7.5_3m/Racket\"\n\ncodesign --force \\\n    --timestamp \\\n    --entitlements=\"$CODE_SIGN_ENTITLEMENTS\" \\\n    --sign=\"$EXPANDED_CODE_SIGN_IDENTITY_NAME\" \\\n    -o runtime \\\n    \"${PROJECT_DIR}/Resources/core/bin/remember-core\"\n";
+			shellScript = "codesign --force \\\n    --timestamp \\\n    --entitlements=\"${PROJECT_DIR}/remember/remember-core.entitlements\" \\\n    --sign=\"$EXPANDED_CODE_SIGN_IDENTITY_NAME\" \\\n    -i org.racket-lang.Racket \\\n    -o runtime \\\n    \"${PROJECT_DIR}/Resources/core/lib/Racket.framework/Versions/7.5_3m/Racket\"\n\ncodesign --force \\\n    --timestamp \\\n    --entitlements=\"${PROJECT_DIR}/remember/remember-core.entitlements\" \\\n    --sign=\"$EXPANDED_CODE_SIGN_IDENTITY_NAME\" \\\n    -i io.defn.remember.remember-core \\\n    -o runtime \\\n    \"${PROJECT_DIR}/Resources/core/bin/remember-core\"\n";
 		};
 		43E6B94123B5480700F7ACE1 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
