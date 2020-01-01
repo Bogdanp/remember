@@ -91,7 +91,7 @@
 
 (define PREFIX-CHARS '(#\+ #\@ #\#))
 (define RELATIVE-TIME-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
-(define NAMED-DATE-RE #px"^@(tomorrow|mon|tue|wed|thu|fri|sat|sun)")
+(define NAMED-DATE-RE #px"^@(tmw|tomorrow|mon|tue|wed|thu|fri|sat|sun)")
 (define TAG-RE #px"^#([^ ]+)")
 
 (define bytes->number (compose1 string->number bytes->string/utf-8))
@@ -132,8 +132,8 @@
 (define (read-named-date/time [in (current-input-port)])
   (define start-loc (port-location in))
   (match (regexp-try-match NAMED-DATE-RE in)
-    [(list _ #"tomorrow")
-     (named-date "@tomorrow"
+    [(list _ (and (or #"tmw" #"tomorrow") mod))
+     (named-date (~a "@" (bytes->string/utf-8 mod))
                  (span start-loc (port-location in))
                  (+days (today) 1))]
 
