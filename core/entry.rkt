@@ -72,10 +72,6 @@
                         singular
                         plural)))
 
-(call-with-database-connection
-  (lambda (conn)
-    (create-table! conn entry-schema)))
-
 (define/contract (commit! command)
   (-> string? entry?)
   (define tokens (parse-command command))
@@ -173,16 +169,14 @@
 
 (module+ test
   (require rackunit
-           "ring.rkt")
+           "ring.rkt"
+           "schema.rkt")
 
   (define (call-with-empty-db f)
     (parameterize ([current-db (make-db
                                 (lambda _
                                   (sqlite3-connect #:database 'memory)))])
-      (call-with-database-connection
-        (lambda (conn)
-          (create-table! conn entry-schema)))
-
+      (migrate!)
       (f)))
 
 

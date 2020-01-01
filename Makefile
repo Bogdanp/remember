@@ -6,7 +6,7 @@ build/bin/remember-core: temp/remember-core
 	mkdir -p build
 	raco distribute build temp/remember-core
 
-temp/remember-core: core/compiled/main_rkt.zo
+temp/remember-core: core/compiled/main_rkt.zo migrations/*.sql
 	mkdir -p temp
 	raco exe -o temp/remember-core core/main.rkt
 
