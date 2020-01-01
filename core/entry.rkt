@@ -15,6 +15,7 @@
          "db.rkt"
          "json.rkt"
          "notification.rkt"
+         "tag.rkt"
          "undo.rkt")
 
 (provide
@@ -24,9 +25,6 @@
  snooze-entry!
  find-pending-entries
  find-due-entries)
-
-(define id/c
-  exact-nonnegative-integer?)
 
 (define entry-status/c
   (or/c 'pending 'archived))
@@ -97,15 +95,16 @@
           [(tag text span name)
            (values due (cons name tags))]))))
 
-  (define the-entry
-    (call-with-database-connection
-      (lambda (conn)
+  (call-with-database-transaction
+    (lambda (conn)
+      (define the-entry
         (insert-one! conn
                      (make-entry #:title (string-trim (get-output-string out))
-                                 #:due-at (or due sql-null))))))
+                                 #:due-at (or due sql-null))))
 
-  (begin0 the-entry
-    (notify 'entries-did-change)))
+      (begin0 the-entry
+        (assign-tags! (entry-id the-entry) tags)
+        (notify 'entries-did-change)))))
 
 (define pending-entries
   (~> (from entry #:as e)
@@ -170,17 +169,10 @@
 (module+ test
   (require rackunit
            "ring.rkt"
-           "schema.rkt")
+           "schema.rkt"
+           "testing.rkt")
 
-  (define (call-with-empty-db f)
-    (parameterize ([current-db (make-db
-                                (lambda _
-                                  (sqlite3-connect #:database 'memory)))])
-      (migrate!)
-      (f)))
-
-
-  (call-with-empty-db
+  (call-with-empty-database
    (lambda _
      (define the-entry
        (commit! "buy milk"))
@@ -192,7 +184,7 @@
      (check-not-false (member (entry-id the-entry)
                               (map entry-id (find-pending-entries))))))
 
-  (call-with-empty-db
+  (call-with-empty-database
    (lambda _
      (define t0 (now/moment))
      (define the-entry
@@ -211,7 +203,7 @@
      (check-false (member (entry-id the-entry)
                           (map entry-id (find-pending-entries))))))
 
-  (call-with-empty-db
+  (call-with-empty-database
    (lambda _
      (define t0 (now/moment))
      (define the-entry
@@ -220,7 +212,7 @@
      (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 75)))
 
   (parameterize ([current-clock (lambda _ 0)])
-    (call-with-empty-db
+    (call-with-empty-database
      (lambda _
        (define the-entry
          (commit! "buy milk @mon +1h +15m"))
@@ -229,7 +221,7 @@
                      (datetime 1970 1 5 9 15)))))
 
   (parameterize ([current-undo-ring (make-ring 128)])
-    (call-with-empty-db
+    (call-with-empty-database
      (lambda _
        (define the-entry
          (commit! "buy milk +1h +15m"))
@@ -250,4 +242,16 @@
                           (lookup conn
                                   (~> (from entry #:as e)
                                       (where (= e.id ,(entry-id the-entry))))))))
-                     'pending)))))
+                     'pending))))
+
+  (call-with-empty-database
+   (lambda _
+     (define the-entry
+       (commit! "buy milk +1d"))
+
+     (assign-tags! (entry-id the-entry) '("groceries" "misc"))
+     (assign-tags! (entry-id the-entry) '("groceries" "other"))
+     (check-equal? (call-with-database-connection
+                     (lambda (conn)
+                       (query-list conn "select name from tags order by name")))
+                   '("groceries" "misc" "other")))))

@@ -5,10 +5,16 @@
          "appdata.rkt")
 
 (provide
+ id/c
+ isolation-level/c
+
  make-db
  current-db
  call-with-database-connection
  call-with-database-transaction)
+
+(define id/c
+  exact-nonnegative-integer?)
 
 (define isolation-level/c
   (or/c false/c
