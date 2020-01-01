@@ -72,7 +72,9 @@
                         singular
                         plural)))
 
-(create-table! (current-db) entry-schema)
+(call-with-database-connection
+  (lambda (conn)
+    (create-table! conn entry-schema)))
 
 (define/contract (commit! command)
   (-> string? entry?)
@@ -100,9 +102,11 @@
            (values due (cons name tags))]))))
 
   (define the-entry
-    (insert-one! (current-db)
-                 (make-entry #:title (string-trim (get-output-string out))
-                             #:due-at (or due sql-null))))
+    (call-with-database-connection
+      (lambda (conn)
+        (insert-one! conn
+                     (make-entry #:title (string-trim (get-output-string out))
+                                 #:due-at (or due sql-null))))))
 
   (begin0 the-entry
     (notify 'entries-did-change)))
@@ -119,27 +123,30 @@
 
 (define/contract (archive-entry! id)
   (-> id/c void?)
-  (query-exec (current-db)
-              (~> (from entry #:as e)
-                  (update [status "archived"])
-                  (where (= e.id ,id))))
+  (call-with-database-connection
+    (lambda (conn)
+      (query-exec conn
+                  (~> (from entry #:as e)
+                      (update [status "archived"])
+                      (where (= e.id ,id))))))
   (notify 'entries-did-change)
   (push-undo! (lambda _
                 (unarchive-entry! id))))
 
 (define/contract (unarchive-entry! id)
   (-> id/c void?)
-  (query-exec (current-db)
-              (~> (from entry #:as e)
-                  (update [status "pending"])
-                  (where (= e.id ,id))))
+  (call-with-database-connection
+    (lambda (conn)
+      (query-exec conn
+                  (~> (from entry #:as e)
+                      (update [status "pending"])
+                      (where (= e.id ,id))))))
   (void (notify 'entries-did-change)))
 
 (define/contract (snooze-entry! id)
   (-> id/c void?)
-  (define conn (current-db))
-  (call-with-transaction conn
-    (lambda ()
+  (call-with-database-transaction
+    (lambda (conn)
       (define entry
         (lookup conn (~> (from entry #:as e)
                          (where (= e.id ,id)))))
@@ -152,21 +159,30 @@
 
 (define/contract (find-pending-entries)
   (-> (listof entry?))
-  (sequence->list (in-entities (current-db)
-                               (~> pending-entries
-                                   (order-by ([(datetime e.due-at)]))))))
+  (call-with-database-connection
+    (lambda (conn)
+      (sequence->list (in-entities conn
+                                   (~> pending-entries
+                                       (order-by ([(datetime e.due-at)]))))))))
 
 (define/contract (find-due-entries)
   (-> (listof entry?))
-  (sequence->list (in-entities (current-db) due-entries)))
+  (call-with-database-connection
+    (lambda (conn)
+      (sequence->list (in-entities conn due-entries)))))
 
 (module+ test
   (require rackunit
            "ring.rkt")
 
   (define (call-with-empty-db f)
-    (parameterize ([current-db (sqlite3-connect #:database 'memory)])
-      (create-table! (current-db) entry-schema)
+    (parameterize ([current-db (make-db
+                                (lambda _
+                                  (sqlite3-connect #:database 'memory)))])
+      (call-with-database-connection
+        (lambda (conn)
+          (create-table! conn entry-schema)))
+
       (f)))
 
 
@@ -226,14 +242,18 @@
 
        (archive-entry! (entry-id the-entry))
        (check-equal? (entry-status
-                      (lookup (current-db)
-                              (~> (from entry #:as e)
-                                  (where (= e.id ,(entry-id the-entry))))))
+                      (call-with-database-connection
+                        (lambda (conn)
+                          (lookup conn
+                                  (~> (from entry #:as e)
+                                      (where (= e.id ,(entry-id the-entry))))))))
                      'archived)
 
        (undo!)
        (check-equal? (entry-status
-                      (lookup (current-db)
-                              (~> (from entry #:as e)
-                                  (where (= e.id ,(entry-id the-entry))))))
+                      (call-with-database-connection
+                        (lambda (conn)
+                          (lookup conn
+                                  (~> (from entry #:as e)
+                                      (where (= e.id ,(entry-id the-entry))))))))
                      'pending)))))
