@@ -65,6 +65,11 @@ struct CommandField: NSViewRepresentable {
                     .withFont(systemFont)
                     .withBackgroundColor(BG_RELATIVE_TIME)
                     .withTextColor(FG_RELATIVE_TIME)
+            case .namedDateTime(let dt):
+                attributedText += dt.text
+                    .withFont(systemFont)
+                    .withBackgroundColor(BG_NAMED_DATETIME)
+                    .withTextColor(FG_NAMED_DATETIME)
             case .namedDate(let d):
                 attributedText += d.text
                     .withFont(systemFont)

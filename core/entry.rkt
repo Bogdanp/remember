@@ -88,6 +88,9 @@
            (define adder (relative-time-adder r))
            (values (adder (or due (now/moment))) tags)]
 
+          [(named-datetime text span dt)
+           (values dt tags)]
+
           [(named-date text span d)
            (define t (if due (->time due) (time 8 0)))
            (values (at-time d t) tags)]
