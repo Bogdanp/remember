@@ -6,7 +6,9 @@
 //  Copyright © 2019 CLEARTYPE SRL. All rights reserved.
 //
 
+import Combine
 import Foundation
+import LaunchAtLogin
 import SwiftUI
 
 class PreferencesManager: NSObject, NSWindowDelegate {
@@ -49,22 +51,54 @@ class PreferencesManager: NSObject, NSWindowDelegate {
 }
 
 private struct GeneralPreferencesView : View {
-    @State var shortcut = ""
+    @ObservedObject var store = PreferencesStore()
 
     var body: some View {
-        VStack {
-            HStack {
-                Text("Test:")
-                TextField("Test", text: $shortcut)
-            }
-            HStack {
-                Text("Keyboard Shortcut:")
-                KeyboardShortcutField { hk in
-                    KeyboardShortcutDefaults(fromHotKey: hk).save()
+        Form {
+            Section {
+                Preference("Startup:") {
+                    Toggle("Launch Remember at Login", isOn: $store.launchAtLogin)
+                }
+                Preference("Keyboard Shortcut:") {
+                    KeyboardShortcutField { hk in
+                        KeyboardShortcutDefaults(fromHotKey: hk).save()
+                    }
                 }
             }
         }
         .padding(15)
+    }
+}
+
+private class PreferencesStore: NSObject, ObservableObject {
+    @Published var launchAtLogin = LaunchAtLogin.isEnabled
+
+    private var launchAtLoginCancellable: AnyCancellable?
+
+    override init() {
+        super.init()
+
+        launchAtLoginCancellable = $launchAtLogin.sink {
+            LaunchAtLogin.isEnabled = $0
+        }
+    }
+}
+
+private struct Preference<Content: View> : View {
+    private let label: String
+    private let content: Content
+
+    init(_ label: String, @ViewBuilder content: () -> Content) {
+        self.label = label
+        self.content = content()
+    }
+
+    var body: some View {
+        HStack {
+            Text(label)
+                .frame(width: 150, height: nil, alignment:  .trailing)
+            content
+        }
     }
 }
 
