@@ -24,30 +24,31 @@
 (define-listener (entries-did-change)
   (channel-put notifications (hasheq 'type "entries-did-change")))
 
-(define scheduler
-  (thread
-   (lambda _
-     (let loop ()
-       (define deadline (+ (current-inexact-milliseconds) 60000))
-       (define entries (find-due-entries))
-       (unless (null? entries)
-         (channel-put notifications (hasheq 'type "entries-due"
-                                            'entries (->jsexpr entries))))
-       (sync (alarm-evt deadline))
-       (loop)))))
+(module+ main
+  (define scheduler
+    (thread
+     (lambda _
+       (let loop ()
+         (define deadline (+ (current-inexact-milliseconds) 60000))
+         (define entries (find-due-entries))
+         (unless (null? entries)
+           (channel-put notifications (hasheq 'type "entries-due"
+                                              'entries (->jsexpr entries))))
+         (sync (alarm-evt deadline))
+         (loop)))))
 
-(define stop-logger
-  (start-logger #:levels '((notifications . debug)
-                           (server . debug))))
+  (define stop-logger
+    (start-logger #:levels '((notifications . debug)
+                             (server . debug))))
 
-(define in (current-input-port))
-(define out (current-output-port))
-(file-stream-buffer-mode in 'none)
-(file-stream-buffer-mode out 'none)
-(define-values (server stop-server)
-  (serve in out notifications))
-(with-handlers ([exn:break?
-                 (lambda _
-                   (stop-server)
-                   (stop-logger))])
-  (sync/enable-break server))
+  (define in (current-input-port))
+  (define out (current-output-port))
+  (file-stream-buffer-mode in 'none)
+  (file-stream-buffer-mode out 'none)
+  (define-values (server stop-server)
+    (serve in out notifications))
+  (with-handlers ([exn:break?
+                   (lambda _
+                     (stop-server)
+                     (stop-logger))])
+    (sync/enable-break server)))

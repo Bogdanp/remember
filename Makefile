@@ -3,6 +3,7 @@ cocoa/remember/Resources/core/bin/remember-core: build/bin/remember-core
 	cp -r build/* cocoa/remember/Resources/core/
 
 build/bin/remember-core: temp/remember-core
+	rm -r build
 	mkdir -p build
 	raco distribute build temp/remember-core
 
@@ -17,4 +18,4 @@ core/compiled/%_rkt.zo: core/%.rkt
 
 .PHONY: clean
 clean:
-	rm -fr core/compiled build temp
+	rm -fr core/compiled cocoa/remember/Resources/core build temp
