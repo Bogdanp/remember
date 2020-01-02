@@ -1,21 +1,28 @@
-cocoa/remember/Resources/core/bin/remember-core: build/bin/remember-core
-	mkdir -p cocoa/remember/Resources/core
-	cp -r build/* cocoa/remember/Resources/core/
+TEMP_DIR=temp
+BUILD_DIR=build
 
-build/bin/remember-core: temp/remember-core
-	rm -r build
-	mkdir -p build
-	raco distribute build temp/remember-core
+CORE_SRC_DIR=core
+CORE_OBJ_DIR=core/compiled
 
-temp/remember-core: core/compiled/main_rkt.zo migrations/*.sql
-	mkdir -p temp
-	raco exe -o temp/remember-core core/main.rkt
+COCOA_OBJ_DIR=cocoa/remember/Resources/core
 
-core/compiled/main_rkt.zo: core/*.rkt
+$(COCOA_OBJ_DIR)/bin/remember-core: $(BUILD_DIR)/bin/remember-core
+	rm -fr $(COCOA_OBJ_DIR) && mkdir -p $(COCOA_OBJ_DIR)
+	cp -r $(BUILD_DIR)/* $(COCOA_OBJ_DIR)/
 
-core/compiled/%_rkt.zo: core/%.rkt
+$(BUILD_DIR)/bin/remember-core: $(TEMP_DIR)/remember-core
+	rm -fr $(BUILD_DIR) && mkdir -p $(BUILD_DIR)
+	raco distribute $(BUILD_DIR) $(TEMP_DIR)/remember-core
+
+$(TEMP_DIR)/remember-core: $(CORE_OBJ_DIR)/main_rkt.zo migrations/*.sql
+	rm -fr $(TEMP_DIR) && mkdir -p $(TEMP_DIR)
+	raco exe -o $(TEMP_DIR)/remember-core core/main.rkt
+
+$(CORE_OBJ_DIR)/main_rkt.zo: core/*.rkt
+
+$(CORE_OBJ_DIR)/%_rkt.zo: core/%.rkt
 	raco make $<
 
 .PHONY: clean
 clean:
-	rm -fr core/compiled cocoa/remember/Resources/core build temp
+	rm -fr core/compiled $(COCOA_OBJ_DIR) $(BUILD_DIR) $(TEMP_DIR)
