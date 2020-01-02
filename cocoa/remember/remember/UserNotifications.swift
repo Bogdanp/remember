@@ -17,6 +17,7 @@ enum UserNotificationInfo: String {
 enum UserNotificationAction: String {
     case dismiss = "com.apple.UNNotificationDismissActionIdentifier"
     case archive = "io.defn.remember.ArchiveAction"
+    case snooze = "io.defn.remember.SnoozeAction"
 }
 
 enum UserNotificationCategory: String {
@@ -33,10 +34,14 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
         super.init()
     }
 
-    private func addPending(byId id: UInt32) -> Bool {
+    private func addPending(byId id: UInt32, withDeadline deadline: DispatchTime) -> Bool {
         queue.sync {
             if self.pending.contains(id) {
                 return false
+            }
+
+            queue.asyncAfter(deadline: deadline) {
+                self.pending.removeAll(where: { $0 == id })
             }
 
             self.pending.append(id)
@@ -63,9 +68,14 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
                 title: "Archive",
                 options: [.destructive, .authenticationRequired])
 
+            let snoozeAction = UNNotificationAction(
+                identifier: UserNotificationAction.snooze.rawValue,
+                title: "Snooze",
+                options: [.destructive, .authenticationRequired])
+
             let entryCategory = UNNotificationCategory(
                 identifier: UserNotificationCategory.entry.rawValue,
-                actions: [archiveAction],
+                actions: [archiveAction, snoozeAction],
                 intentIdentifiers: [],
                 options: .customDismissAction)
 
@@ -76,7 +86,7 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
                 switch notification {
                 case .entriesDue(let notification):
                     for entry in notification.entries {
-                        if !self.addPending(byId: entry.id) {
+                        if !self.addPending(byId: entry.id, withDeadline: .now() + .seconds(10 * 60)) {
                             os_log("notification for entry %d ignored", entry.id)
                             continue
                         }
@@ -132,10 +142,10 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
             self.removePending(byId: id)
 
             switch action {
-            case .dismiss:
-                Notifications.willSnoozeEntry(entryId: id)
             case .archive:
                 Notifications.willArchiveEntry(entryId: id)
+            case .dismiss, .snooze:
+                Notifications.willSnoozeEntry(entryId: id)
             }
         }
 
