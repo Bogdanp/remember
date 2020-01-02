@@ -58,12 +58,21 @@ class Store: ObservableObject {
             }
         }
 
-        Notifications.observeWillSnoozeEntry {
-            self.entryDB.snoozeEntry(byId: $0) { }
-        }
-
         Notifications.observeWillArchiveEntry {
             self.entryDB.archiveEntry(byId: $0) { }
+        }
+
+        Notifications.observeWillSelectEntry { id in
+            if let entry = self.entries.first(where: { $0.id == id }) {
+                RunLoop.main.schedule {
+                    self.currentEntry = entry
+                    self.showEntries()
+                }
+            }
+        }
+
+        Notifications.observeWillSnoozeEntry {
+            self.entryDB.snoozeEntry(byId: $0) { }
         }
     }
 

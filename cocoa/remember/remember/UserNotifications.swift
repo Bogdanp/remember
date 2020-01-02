@@ -15,6 +15,7 @@ enum UserNotificationInfo: String {
 }
 
 enum UserNotificationAction: String {
+    case `default` = "com.apple.UNNotificationDefaultActionIdentifier"
     case dismiss = "com.apple.UNNotificationDismissActionIdentifier"
     case archive = "io.defn.remember.ArchiveAction"
     case snooze = "io.defn.remember.SnoozeAction"
@@ -146,6 +147,8 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
                 Notifications.willArchiveEntry(entryId: id)
             case .dismiss, .snooze:
                 Notifications.willSnoozeEntry(entryId: id)
+            case .`default`:
+                Notifications.willSelectEntry(entryId: id)
             }
         }
 

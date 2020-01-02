@@ -39,6 +39,20 @@ struct Notifications {
         }
     }
 
+    static func willSelectEntry(entryId: Entry.Id) {
+        NotificationCenter.default.post(
+            name: .willSelectEntry,
+            object: entryId)
+    }
+
+    static func observeWillSelectEntry(withCompletionHandler handler: @escaping (Entry.Id) -> Void) {
+        observe(.willSelectEntry) { notification in
+            if let id = notification.object as? Entry.Id {
+                handler(id)
+            }
+        }
+    }
+
     static func willSnoozeEntry(entryId: Entry.Id) {
         NotificationCenter.default.post(
             name: .willSnoozeEntry,
@@ -57,5 +71,6 @@ struct Notifications {
 extension Notification.Name {
     static let willHideWindow = Notification.Name("io.defn.remember.willHideWindow")
     static let willArchiveEntry = Notification.Name("io.defn.remember.willArchiveEntry")
+    static let willSelectEntry = Notification.Name("io.defn.remember.willSelectEntry")
     static let willSnoozeEntry = Notification.Name("io.defn.remember.willSnoozeEntry")
 }
