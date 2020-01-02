@@ -29,7 +29,7 @@
     (thread
      (lambda _
        (let loop ()
-         (define deadline (+ (current-inexact-milliseconds) 60000))
+         (define deadline (+ (current-inexact-milliseconds) 30000))
          (define entries (find-due-entries))
          (unless (null? entries)
            (channel-put notifications (hasheq 'type "entries-due"
