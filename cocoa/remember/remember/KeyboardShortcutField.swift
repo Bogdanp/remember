@@ -34,8 +34,6 @@ final class KeyboardShortcutField: NSViewRepresentable {
     }
 
     @objc func didChange(_ sender: DDHotKeyTextField) {
-        sender.resignFirstResponder()
-
         if let handler = self.handler {
             handler(sender.hotKey)
         }

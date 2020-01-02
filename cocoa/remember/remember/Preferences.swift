@@ -44,6 +44,7 @@ class PreferencesManager: NSObject, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
+        KeyboardShortcut.register()
         self.window.orderOut(self)
         self.window.contentView = nil
         return false
