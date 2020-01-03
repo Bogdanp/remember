@@ -76,6 +76,11 @@ struct CommandField: NSViewRepresentable {
                     .withFont(systemFont)
                     .withBackgroundColor(BG_NAMED_DATE)
                     .withTextColor(FG_NAMED_DATE)
+            case .recurrence(let r):
+                attributedText += r.text
+                    .withFont(systemFont)
+                    .withBackgroundColor(BG_RECURRENCE)
+                    .withTextColor(FG_RECURRENCE)
             case .tag(let t):
                 attributedText += t.text
                     .withFont(systemFont)

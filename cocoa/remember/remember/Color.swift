@@ -17,6 +17,8 @@ let BG_NAMED_DATETIME = hexColor(rgba: "00000000")!
 let FG_NAMED_DATETIME = hexColor(rgb: "4c88f2")!
 let BG_NAMED_DATE = hexColor(rgba: "00000000")!
 let FG_NAMED_DATE = hexColor(rgb: "4c88f2")!
+let BG_RECURRENCE = hexColor(rgba: "00000000")!
+let FG_RECURRENCE = hexColor(rgb: "3a03a0")!
 let BG_TAG = hexColor(rgba: "00000000")!
 let FG_TAG = hexColor(rgb: "c51b17")!
 

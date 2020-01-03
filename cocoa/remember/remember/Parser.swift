@@ -23,6 +23,7 @@ enum Token: Decodable {
     case relativeTime(RelativeTime)
     case namedDateTime(NamedDateTime)
     case namedDate(NamedDate)
+    case recurrence(Recurrence)
     case tag(Tag)
 
     enum TokenError: Error {
@@ -46,6 +47,8 @@ enum Token: Decodable {
             self = .namedDateTime(try svc.decode(NamedDateTime.self))
         case "named-date":
             self = .namedDate(try svc.decode(NamedDate.self))
+        case "recurrence":
+            self = .recurrence(try svc.decode(Recurrence.self))
         case "tag":
             self = .tag(try svc.decode(Tag.self))
         default:
@@ -62,7 +65,7 @@ struct Chunk: Decodable {
 struct RelativeTime: Decodable {
     let text: String
     let span: Span
-    let delta: Int
+    let delta: UInt
     let modifier: String
 }
 
@@ -76,6 +79,13 @@ struct NamedDate: Decodable {
     let text: String
     let span: Span
     let date: String
+}
+
+struct Recurrence: Decodable {
+    let text: String
+    let span: Span
+    let delta: UInt
+    let modifier: String
 }
 
 struct Tag: Decodable {
