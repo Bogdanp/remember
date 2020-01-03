@@ -13,13 +13,13 @@
   (make-parameter (make-ring 128)))
 
 (define/contract (push-undo! f)
-  (-> (-> void?) void?)
+  (-> (-> any) void?)
   (ring-push! (current-undo-ring) f))
 
 (define/contract (undo!)
   (-> void?)
   (define f (ring-pop! (current-undo-ring)))
-  (when f (f)))
+  (when f (void (f))))
 
 (module+ test
   (require rackunit)

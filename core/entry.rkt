@@ -30,6 +30,9 @@
 (define entry-status/c
   (or/c 'pending 'archived))
 
+(define recurrence-modifier/c
+  (or/c 'hour 'day 'week 'month 'year))
+
 (define-schema entry
   #:table "entries"
   ([id id/f #:primary-key #:auto-increment]
@@ -37,6 +40,9 @@
    [(body "") string/f]
    [(status 'pending) symbol/f #:contract entry-status/c]
    [(due-at (now/moment)) datetime/f #:nullable]
+   [next-recurrence-at datetime/f #:nullable]
+   [recurrence-delta integer/f #:nullable]
+   [recurrence-modifier symbol/f #:nullable #:contract recurrence-modifier/c]
    [(created-at (now/moment)) datetime/f])
 
   #:methods gen:to-jsexpr
@@ -45,6 +51,14 @@
              'title (entry-title e)
              'due-in (or (entry-due-in e)
                          (json-null))))])
+
+(define (entry-recurs? e)
+  (and (not (sql-null? (entry-next-recurrence-at e)))
+       (not (sql-null? (entry-recurrence-delta e)))
+       (not (sql-null? (entry-recurrence-modifier e)))))
+
+(define (entry-recurrence e)
+  (recurrence #f #f (entry-recurrence-delta e) (entry-recurrence-modifier e)))
 
 (define (entry-due-at/local e)
   (and (not (sql-null? (entry-due-at e)))
@@ -75,36 +89,52 @@
   (-> string? entry?)
   (define tokens (parse-command command))
   (define out (open-output-string))
-  (define-values (due tags)
+  (define-values (due rec tags)
     (parameterize ([current-output-port out])
       (for/fold ([due #f]
+                 [rec #f]
                  [tags null])
                 ([token (in-list tokens)])
         (match token
           [(chunk text span)
-           (display text)
-           (values due tags)]
+           (begin0 (values due rec tags)
+             (display text))]
 
           [(and (relative-time text span delta modifier) r)
            (define adder (relative-time-adder r))
-           (values (adder (or due (now/moment))) tags)]
+           (values (adder (or due (now/moment)))
+                   rec
+                   tags)]
 
           [(named-datetime text span dt)
-           (values dt tags)]
+           (values dt rec tags)]
 
           [(named-date text span d)
            (define t (if due (->time due) (time 8 0)))
-           (values (at-time d t) tags)]
+           (values (at-time d t) rec tags)]
+
+          [(and (recurrence text span delta modifier) the-rec)
+           (values due the-rec tags)]
 
           [(tag text span name)
-           (values due (cons name tags))]))))
+           (values due rec (cons name tags))]))))
+
+  (define-values (next-rec-at rec-delta rec-modifier)
+    (if (and due rec)
+        (values (recurrence-next rec due)
+                (recurrence-delta rec)
+                (recurrence-modifier rec))
+        (values #f #f #f)))
 
   (call-with-database-transaction
     (lambda (conn)
       (define the-entry
         (insert-one! conn
                      (make-entry #:title (string-trim (get-output-string out))
-                                 #:due-at (or due sql-null))))
+                                 #:due-at (or due sql-null)
+                                 #:next-recurrence-at (or next-rec-at sql-null)
+                                 #:recurrence-delta (or rec-delta sql-null)
+                                 #:recurrence-modifier (or rec-modifier sql-null))))
 
       (begin0 the-entry
         (assign-tags! (entry-id the-entry) tags)
@@ -121,26 +151,50 @@
                      (datetime "now" "localtime"))))))
 
 (define/contract (archive-entry! id)
-  (-> id/c void?)
-  (call-with-database-connection
+  (-> id/c (or/c false/c entry?))
+  (call-with-database-transaction
     (lambda (conn)
-      (query-exec conn
-                  (~> (from entry #:as e)
-                      (update [status "archived"])
-                      (where (= e.id ,id))))))
-  (notify 'entries-did-change)
-  (push-undo! (lambda _
-                (unarchive-entry! id))))
+      (define the-entry
+        (lookup conn (~> (from entry #:as e)
+                         (where (= e.id ,id)))))
 
-(define/contract (unarchive-entry! id)
-  (-> id/c void?)
-  (call-with-database-connection
-    (lambda (conn)
-      (query-exec conn
-                  (~> (from entry #:as e)
-                      (update [status "pending"])
-                      (where (= e.id ,id))))))
-  (void (notify 'entries-did-change)))
+      (cond
+        [(not the-entry)]
+
+        [(entry-recurs? the-entry)
+         (define rec (entry-recurrence the-entry))
+         (define old-due-at (entry-due-at the-entry))
+         (define new-due-at
+           (if (datetime>=? (entry-next-recurrence-at the-entry) (now))
+               (entry-next-recurrence-at the-entry)
+               (recurrence-next rec (entry-next-recurrence-at the-entry))))
+         (define old-rec-at (entry-next-recurrence-at the-entry))
+         (define new-rec-at (recurrence-next rec new-due-at))
+
+         (define updated-entry
+           (update-one! conn (~> the-entry
+                                 (set-entry-due-at new-due-at)
+                                 (set-entry-next-recurrence-at new-rec-at))))
+         (begin0 updated-entry
+           (notify 'entries-did-change)
+           (push-undo! (lambda _
+                         (call-with-database-connection
+                           (lambda (conn)
+                             (update-one! conn (~> updated-entry
+                                                   (set-entry-due-at old-due-at)
+                                                   (set-entry-next-recurrence-at old-rec-at)))
+                             (notify 'entries-did-change))))))]
+
+        [else
+         (define updated-entry
+           (update-one! conn (set-entry-status the-entry 'archived)))
+         (begin0 updated-entry
+           (notify 'entries-did-change)
+           (push-undo! (lambda _
+                         (call-with-database-connection
+                           (lambda (conn)
+                             (update-one! conn (set-entry-status updated-entry 'pending))
+                             (notify 'entries-did-change))))))]))))
 
 (define/contract (snooze-entry! id)
   (-> id/c void?)
@@ -209,7 +263,9 @@
 
      (check-match
       the-entry
-      (entry _ some-id "buy milk" "" 'pending (== sql-null) some-created-at))
+      (struct* entry ([title "buy milk"]
+                      [body ""]
+                      [status 'pending])))
 
      (check-not-false (member (entry-id the-entry)
                               (map entry-id (find-pending-entries))))))
@@ -222,7 +278,9 @@
 
      (check-match
       the-entry
-      (entry _ some-id "buy milk" "" 'pending some-due-at some-created-at))
+      (struct* entry ([title "buy milk"]
+                      [body ""]
+                      [status 'pending])))
 
      (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 60)
      (check-true (null? (find-due-entries)))
@@ -301,4 +359,60 @@
        (undo!)
        (check-not-false (call-with-database-connection
                           (lambda (conn)
-                            (lookup conn (from entry #:as e)))))))))
+                            (lookup conn (from entry #:as e))))))))
+
+  (parameterize ([current-clock (lambda _ 0)])
+    (call-with-empty-database
+     (lambda _
+       (define the-entry
+         (commit! "invoice Tom @10am mon *weekly*"))
+
+       (check-match
+        the-entry
+        (struct* entry ([title "invoice Tom"]
+                        [body ""]
+                        [due-at (== (datetime 1970 1 5 10 0))]
+                        [next-recurrence-at (== (datetime 1970 1 12 10 0))]
+                        [recurrence-delta 1]
+                        [recurrence-modifier 'week])))
+
+       (define (reload!)
+         (set! the-entry (call-with-database-connection
+                           (lambda (conn)
+                             (lookup conn (~> (from entry #:as e)
+                                              (where (= e.id ,(entry-id the-entry)))))))))
+
+       (archive-entry! (entry-id the-entry))
+       (reload!)
+       (check-match
+        the-entry
+        (struct* entry ([title "invoice Tom"]
+                        [body ""]
+                        [due-at (== (datetime 1970 1 12 10 0))]
+                        [next-recurrence-at (== (datetime 1970 1 19 10 0))]
+                        [recurrence-delta 1]
+                        [recurrence-modifier 'week])))
+
+       (undo!)
+       (reload!)
+       (check-match
+        the-entry
+        (struct* entry ([title "invoice Tom"]
+                        [body ""]
+                        [due-at (== (datetime 1970 1 5 10 0))]
+                        [next-recurrence-at (== (datetime 1970 1 12 10 0))]
+                        [recurrence-delta 1]
+                        [recurrence-modifier 'week])))
+
+       (parameterize ([current-clock (lambda _
+                                       (* 14 86400))])
+         (archive-entry! (entry-id the-entry))
+         (reload!)
+         (check-match
+          the-entry
+          (struct* entry ([title "invoice Tom"]
+                          [body ""]
+                          [due-at (== (datetime 1970 1 19 10 0))]
+                          [next-recurrence-at (== (datetime 1970 1 26 10 0))]
+                          [recurrence-delta 1]
+                          [recurrence-modifier 'week]))))))))

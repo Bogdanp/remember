@@ -21,6 +21,8 @@
  relative-time-adder
  (struct-out named-date)
  (struct-out named-datetime)
+ (struct-out recurrence)
+ recurrence-next
  (struct-out tag)
  parse-command
  parse-command/jsexpr)
@@ -97,6 +99,24 @@
      (~> (token->jsexpr t "recurrence")
          (hash-set 'delta (recurrence-delta t))
          (hash-set 'modifier (symbol->string (recurrence-modifier t)))))])
+
+(define/contract (recurrence-next r dt)
+  (-> recurrence? datetime-provider? datetime-provider?)
+  (define adder
+    (case (recurrence-modifier r)
+      [(hour)  +hours]
+      [(day)   +days]
+      [(week)  +weeks]
+      [(month) +months]
+      [(year)  +years]))
+
+  (let loop ([dt dt])
+    (define next-dt
+      (adder dt (recurrence-delta r)))
+
+    (cond
+      [(datetime>=? next-dt (now)) next-dt]
+      [else (loop next-dt)])))
 
 (struct tag token (name)
   #:transparent
