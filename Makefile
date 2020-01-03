@@ -25,4 +25,4 @@ $(CORE_OBJ_DIR)/%_rkt.zo: core/%.rkt
 
 .PHONY: clean
 clean:
-	rm -fr core/compiled $(COCOA_OBJ_DIR) $(BUILD_DIR) $(TEMP_DIR)
+	rm -fr $(CORE_OBJ_DIR) $(COCOA_OBJ_DIR) $(BUILD_DIR) $(TEMP_DIR)
