@@ -38,9 +38,9 @@ struct ContentView: View {
                         self.store.clear()
                     case .commit(let c):
                         self.store.commit(command: c)
-                    case .archive:
+                    case .dwim:
                         if self.store.entriesVisible {
-                            self.store.archiveCurrentEntry()
+                            self.store.dwimCurrentEntry()
                         }
                     case .delete:
                         if self.store.entriesVisible {

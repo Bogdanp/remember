@@ -14,7 +14,7 @@ enum CommandAction {
     case update(String)
     case cancel(String)
     case commit(String)
-    case archive
+    case dwim
     case delete
     case previous
     case next
@@ -131,7 +131,7 @@ struct CommandField: NSViewRepresentable {
                 action(.next)
                 return true
             } else if commandSelector == #selector(NSResponder.deleteBackward(_:)) && control.stringValue.isEmpty {
-                action(.archive)
+                action(.dwim)
                 return true
             } else if commandSelector == #selector(NSResponder.deleteWordBackward(_:)) && control.stringValue.isEmpty {
                 action(.delete)
