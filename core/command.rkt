@@ -90,6 +90,14 @@
      (~> (token->jsexpr t "named-datetime")
          (hash-set 'datetime (datetime->iso8601 (named-datetime-dt t)))))])
 
+(struct recurrence token (delta modifier)
+  #:transparent
+  #:methods gen:to-jsexpr
+  [(define (->jsexpr t)
+     (~> (token->jsexpr t "recurrence")
+         (hash-set 'delta (recurrence-delta t))
+         (hash-set 'modifier (symbol->string (recurrence-modifier t)))))])
+
 (struct tag token (name)
   #:transparent
   #:methods gen:to-jsexpr
@@ -97,10 +105,11 @@
      (~> (token->jsexpr t "tag")
          (hash-set 'name (tag-name t))))])
 
-(define PREFIX-CHARS '(#\+ #\@ #\#))
+(define PREFIX-CHARS '(#\+ #\* #\@ #\#))
 (define RELATIVE-TIME-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
 (define NAMED-DATE-RE #px"^@(tmw|tomorrow|mon|tue|wed|thu|fri|sat|sun)")
 (define NAMED-DATETIME-RE #px"^@(([1-9]|10|11|12)(:(0[0-9]|[1-9][0-9]))?(am|pm)) ?(tmw|tomorrow|mon|tue|wed|thu|fri|sat|sun)?")
+(define RECURRENCE-RE #px"^\\*(hourly|daily|weekly|monthly|yearly|every ([1-9][0-9]*) (hours|days|weeks|months|years))\\*")
 (define TAG-RE #px"^#([^ ]+)")
 
 (define bytes->number (compose1 string->number bytes->string/utf-8))
@@ -212,6 +221,35 @@
       (chunk (read-string 1 in)
              (span start-loc (port-location in)))))
 
+(define (read-recurrence [in (current-input-port)])
+  (define start-loc (port-location in))
+  (match (regexp-try-match RECURRENCE-RE in)
+    [(list text modifier #f #f)
+     (recurrence (bytes->string/utf-8 text)
+                 (span start-loc (port-location in))
+                 1
+                 (case modifier
+                   [(#"hourly")  'hour]
+                   [(#"daily")   'day]
+                   [(#"weekly")  'week]
+                   [(#"monthly") 'month]
+                   [(#"yearly")  'year]))]
+
+    [(list text _ delta modifier)
+     (recurrence (bytes->string/utf-8 text)
+                 (span start-loc (port-location in))
+                 (bytes->number delta)
+                 (case modifier
+                   [(#"hours")  'hour]
+                   [(#"days")   'day]
+                   [(#"weeks")  'week]
+                   [(#"months") 'month]
+                   [(#"years")  'year]))]
+
+    [_
+     (chunk (read-string 1 in)
+            (span start-loc (port-location in)))]))
+
 (define (read-chunk [in (current-input-port)])
   (define out (open-output-string))
   (define start-loc (port-location in))
@@ -240,6 +278,7 @@
            (case c
              [(#\+) (read-relative-time)]
              [(#\@) (read-named-date/time)]
+             [(#\*) (read-recurrence)]
              [(#\#) (read-tag)]
              [else  (read-chunk)]))
          (loop (cons token tokens)
@@ -396,4 +435,48 @@
                (text . "#groceries")
                (span . ((1 21 21)
                         (1 31 31)))
-               (name . "groceries"))))))
+               (name . "groceries"))))
+
+    (check-equal?
+     (parse-command/jsexpr "invoice Jim @10am mon *weekly*")
+     '(#hasheq((type . "chunk")
+               (text . "invoice Jim ")
+               (span . ((1 0 0)
+                        (1 12 12))))
+       #hasheq((type . "named-datetime")
+               (text . "@10am mon")
+               (span . ((1 12 12)
+                        (1 21 21)))
+               (datetime . "1970-01-05T10:00:00"))
+       #hasheq((type . "chunk")
+               (text . " ")
+               (span . ((1 21 21)
+                        (1 22 22))))
+       #hasheq((type . "recurrence")
+               (text . "*weekly*")
+               (span . ((1 22 22)
+                        (1 30 30)))
+               (delta . 1)
+               (modifier . "week"))))
+
+    (check-equal?
+     (parse-command/jsexpr "invoice Jim @10am mon *every 2 weeks*")
+     '(#hasheq((type . "chunk")
+               (text . "invoice Jim ")
+               (span . ((1 0 0)
+                        (1 12 12))))
+       #hasheq((type . "named-datetime")
+               (text . "@10am mon")
+               (span . ((1 12 12)
+                        (1 21 21)))
+               (datetime . "1970-01-05T10:00:00"))
+       #hasheq((type . "chunk")
+               (text . " ")
+               (span . ((1 21 21)
+                        (1 22 22))))
+       #hasheq((type . "recurrence")
+               (text . "*every 2 weeks*")
+               (span . ((1 22 22)
+                        (1 37 37)))
+               (delta . 2)
+               (modifier . "week"))))))
