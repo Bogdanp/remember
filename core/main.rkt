@@ -16,8 +16,10 @@
 (register-rpc
  [parse-command parse-command/jsexpr]
  [commit! (compose1 ->jsexpr commit!)]
+ [dwim! (compose1 unit dwim!)]
  [archive-entry! (compose1 unit archive-entry!)]
  [snooze-entry! (compose1 unit snooze-entry!)]
+ [delete-entry! (compose1 unit delete-entry!)]
  [find-pending-entries (compose1 ->jsexpr find-pending-entries)]
  [undo! (compose1 unit undo!)])
 

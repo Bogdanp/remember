@@ -21,8 +21,10 @@
 (provide
  (schema-out entry)
  commit!
+ dwim!
  archive-entry!
  snooze-entry!
+ delete-entry!
  find-pending-entries
  find-due-entries)
 
@@ -119,6 +121,10 @@
                   (< (datetime e.due-at)
                      (datetime "now" "localtime"))))))
 
+(define/contract (dwim! id)
+  (-> id/c void?)
+  (archive-entry! id))
+
 (define/contract (archive-entry! id)
   (-> id/c void?)
   (call-with-database-connection
@@ -153,7 +159,18 @@
         (define updated-entry
           (set-entry-due-at entry (+minutes (now/moment) 15)))
         (update-one! conn updated-entry))))
-  (void (notify 'entries-did-change)))
+  (void
+   (notify 'entries-did-change)))
+
+(define/contract (delete-entry! id)
+  (-> id/c void)
+  (call-with-database-connection
+    (lambda (conn)
+      (query-exec conn (~> (from entry #:as e)
+                           (where (= e.id ,id))
+                           (delete)))
+      (void
+       (notify 'entries-did-change)))))
 
 (define/contract (find-pending-entries)
   (-> (listof entry?))
@@ -257,4 +274,15 @@
      (check-equal? (call-with-database-connection
                      (lambda (conn)
                        (query-list conn "select name from tags order by name")))
-                   '("groceries" "misc" "other")))))
+                   '("groceries" "misc" "other"))))
+
+  (call-with-empty-database
+   (lambda _
+     (define the-entry
+       (commit! "buy milk +1d"))
+
+     (delete-entry! (entry-id the-entry))
+     (check-false (call-with-database-connection
+                    (lambda (conn)
+                      (lookup conn (~> (from entry #:as e)
+                                       (where (= e.id ,(entry-id the-entry)))))))))))
