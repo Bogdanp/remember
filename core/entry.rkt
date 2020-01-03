@@ -212,7 +212,7 @@
    (notify 'entries-did-change)))
 
 (define/contract (delete-entry! id)
-  (-> id/c void)
+  (-> id/c void?)
   (define the-entry
     (call-with-database-transaction
       (lambda (conn)
