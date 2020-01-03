@@ -1,6 +1,7 @@
 #lang racket/base
 
 (require "command.rkt"
+         "db.rkt"
          "entry.rkt"
          "json.rkt"
          "logging.rkt"
@@ -12,6 +13,7 @@
 
 (define notifications (make-channel))
 
+(backup-database!)
 (migrate!)
 (register-rpc
  [parse-command parse-command/jsexpr]

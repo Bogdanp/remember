@@ -1,7 +1,9 @@
 #lang racket/base
 
 (require db
+         gregor
          racket/contract
+         racket/format
          "appdata.rkt")
 
 (provide
@@ -11,7 +13,8 @@
  make-db
  current-db
  call-with-database-connection
- call-with-database-transaction)
+ call-with-database-transaction
+ backup-database!)
 
 (define id/c
   exact-nonnegative-integer?)
@@ -71,3 +74,10 @@
              #:isolation isolation
              (lambda _
                (f conn))))))]))
+
+(define (backup-database!)
+  (define database-path (build-application-path "remember.sqlite3"))
+  (when (file-exists? database-path)
+    (define backup-suffix (~a "-" (~t (today) "yyyy-MM-dd") ".bak"))
+    (define backup-path (path-add-extension database-path (string->bytes/utf-8 backup-suffix)))
+    (copy-file database-path backup-path #t)))
