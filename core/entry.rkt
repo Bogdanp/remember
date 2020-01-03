@@ -164,13 +164,28 @@
 
 (define/contract (delete-entry! id)
   (-> id/c void)
-  (call-with-database-connection
-    (lambda (conn)
-      (query-exec conn (~> (from entry #:as e)
-                           (where (= e.id ,id))
-                           (delete)))
-      (void
-       (notify 'entries-did-change)))))
+  (define the-entry
+    (call-with-database-transaction
+      (lambda (conn)
+        (define the-entry
+          (lookup conn (~> (from entry #:as e)
+                           (where (= e.id ,id)))))
+        (begin0 the-entry
+          (delete-one! conn the-entry)))))
+
+  (when the-entry
+    (notify 'entries-did-change)
+    (push-undo! (lambda _
+                  (call-with-database-connection
+                    (lambda (conn)
+                      (void
+                       (insert-one! conn
+                                    (make-entry
+                                     #:title (entry-title the-entry)
+                                     #:body (entry-body the-entry)
+                                     #:status (entry-status the-entry)
+                                     #:due-at (entry-due-at the-entry)
+                                     #:created-at (entry-created-at the-entry))))))))))
 
 (define/contract (find-pending-entries)
   (-> (listof entry?))
@@ -276,13 +291,19 @@
                        (query-list conn "select name from tags order by name")))
                    '("groceries" "misc" "other"))))
 
-  (call-with-empty-database
-   (lambda _
-     (define the-entry
-       (commit! "buy milk +1d"))
+  (parameterize ([current-undo-ring (make-ring 128)])
+    (call-with-empty-database
+     (lambda _
+       (define the-entry
+         (commit! "buy milk +1d"))
 
-     (delete-entry! (entry-id the-entry))
-     (check-false (call-with-database-connection
-                    (lambda (conn)
-                      (lookup conn (~> (from entry #:as e)
-                                       (where (= e.id ,(entry-id the-entry)))))))))))
+       (delete-entry! (entry-id the-entry))
+       (check-false  (call-with-database-connection
+                       (lambda (conn)
+                         (lookup conn (~> (from entry #:as e)
+                                          (where (= e.id ,(entry-id the-entry))))))))
+
+       (undo!)
+       (check-not-false (call-with-database-connection
+                          (lambda (conn)
+                            (lookup conn (from entry #:as e)))))))))
