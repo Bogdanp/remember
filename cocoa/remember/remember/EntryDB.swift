@@ -29,10 +29,14 @@ enum CommitResult {
 
 protocol EntryDB {
     func commit(command: String, withCompletionHandler: @escaping (CommitResult) -> Void)
+    func dwim(byId: Entry.Id)
+    func dwim(byId: Entry.Id, withCompletionHandler: @escaping () -> Void)
     func archiveEntry(byId: Entry.Id)
     func archiveEntry(byId: Entry.Id, withCompletionHandler: @escaping () -> Void)
     func snoozeEntry(byId: Entry.Id)
     func snoozeEntry(byId: Entry.Id, withCompletionHandler: @escaping () -> Void)
+    func deleteEntry(byId: Entry.Id)
+    func deleteEntry(byId: Entry.Id, withCompletionHandler: @escaping () -> Void)
     func findPendingEntries(withCompletionHandler: @escaping ([Entry]) -> Void)
     func undo(withCompletionHandler: @escaping () -> Void)
 }

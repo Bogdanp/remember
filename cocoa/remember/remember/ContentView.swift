@@ -42,6 +42,10 @@ struct ContentView: View {
                         if self.store.entriesVisible {
                             self.store.archiveCurrentEntry()
                         }
+                    case .delete:
+                        if self.store.entriesVisible {
+                            self.store.deleteCurrentEntry()
+                        }
                     case .previous:
                         self.store.showEntries()
                         self.store.updatePendingEntries {

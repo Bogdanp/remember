@@ -140,6 +140,15 @@ class Store: ObservableObject {
         }
     }
 
+    func deleteCurrentEntry() {
+        if let currentEntry = self.currentEntry {
+            self.entryDB.deleteEntry(byId: currentEntry.id) {
+                UserNotificationsManager.shared.dismiss(byEntryId: currentEntry.id)
+                self.updatePendingEntries()
+            }
+        }
+    }
+
     func selectPreviousEntry() {
         if entries.isEmpty {
             return

@@ -42,6 +42,16 @@ class Client: AsyncNotifier & Parser & EntryDB {
         }
     }
 
+    func dwim(byId id: Entry.Id) {
+        dwim(byId: id) { }
+    }
+
+    func dwim(byId id: Entry.Id, withCompletionHandler handler: @escaping () -> Void) {
+        return rpc.call("dwim!", [id]) { (res: RPCResult<RPCUnit>) in
+            handler()
+        }
+    }
+
     func archiveEntry(byId id: Entry.Id) {
         archiveEntry(byId: id) { }
     }
@@ -58,6 +68,16 @@ class Client: AsyncNotifier & Parser & EntryDB {
 
     func snoozeEntry(byId id: Entry.Id, withCompletionHandler handler: @escaping () -> Void) {
         return rpc.call("snooze-entry!", [id]) { (res: RPCResult<RPCUnit>) in
+            handler()
+        }
+    }
+
+    func deleteEntry(byId id: Entry.Id) {
+        deleteEntry(byId: id) { }
+    }
+
+    func deleteEntry(byId id: Entry.Id, withCompletionHandler handler: @escaping () -> Void) {
+        return rpc.call("delete-entry!", [id]) { (res: RPCResult<RPCUnit>) in
             handler()
         }
     }
