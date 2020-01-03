@@ -32,5 +32,10 @@
       (for ([migration-path (in-list migration-paths)])
         (define ref (path->string (last (explode-path migration-path))))
         (unless (query-maybe-value conn "select true from schema_migrations where ref = $1" ref)
-          (query-exec conn (file->string migration-path))
+          ;; This is pretty piggy but db-lib doesn't support multiple statements per query.
+          (define migration (file->string migration-path))
+          (define statements (string-split migration ";\n"))
+          (for ([statement (in-list statements)])
+            (when (non-empty-string? (string-trim statement))
+              (query-exec conn statement)))
           (query-exec conn "insert into schema_migrations values($1)" ref))))))
