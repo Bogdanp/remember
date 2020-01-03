@@ -42,16 +42,6 @@ class Client: AsyncNotifier & Parser & EntryDB {
         }
     }
 
-    func dwim(byId id: Entry.Id) {
-        dwim(byId: id) { }
-    }
-
-    func dwim(byId id: Entry.Id, withCompletionHandler handler: @escaping () -> Void) {
-        return rpc.call("dwim!", [id]) { (res: RPCResult<RPCUnit>) in
-            handler()
-        }
-    }
-
     func archiveEntry(byId id: Entry.Id) {
         archiveEntry(byId: id) { }
     }

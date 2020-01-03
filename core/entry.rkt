@@ -21,7 +21,6 @@
 (provide
  (schema-out entry)
  commit!
- dwim!
  archive-entry!
  snooze-entry!
  delete-entry!
@@ -120,10 +119,6 @@
       (where (and (not (is e.due-at null))
                   (< (datetime e.due-at)
                      (datetime "now" "localtime"))))))
-
-(define/contract (dwim! id)
-  (-> id/c void?)
-  (archive-entry! id))
 
 (define/contract (archive-entry! id)
   (-> id/c void?)

@@ -131,9 +131,9 @@ class Store: ObservableObject {
         }
     }
 
-    func dwimCurrentEntry() {
+    func archiveCurrentEntry() {
         if let currentEntry = self.currentEntry {
-            self.entryDB.dwim(byId: currentEntry.id) {
+            self.entryDB.archiveEntry(byId: currentEntry.id) {
                 UserNotificationsManager.shared.dismiss(byEntryId: currentEntry.id)
                 self.updatePendingEntries()
             }
