@@ -12,7 +12,7 @@
          racket/string
          threading
          "command.rkt"
-         "db.rkt"
+         "database.rkt"
          "json.rkt"
          "notification.rkt"
          "tag.rkt"

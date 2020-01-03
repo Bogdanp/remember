@@ -1,7 +1,7 @@
 #lang racket/base
 
 (require "command.rkt"
-         "db.rkt"
+         "database.rkt"
          "entry.rkt"
          "json.rkt"
          "logging.rkt"

@@ -7,7 +7,7 @@
          racket/path
          racket/runtime-path
          racket/string
-         "db.rkt")
+         "database.rkt")
 
 (provide
  migrate!)

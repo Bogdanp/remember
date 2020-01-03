@@ -4,7 +4,7 @@
          racket/contract
          racket/string
          threading
-         "db.rkt")
+         "database.rkt")
 
 (provide
  assign-tags!)

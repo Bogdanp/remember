@@ -1,7 +1,7 @@
 #lang racket/base
 
 (require db
-         "db.rkt"
+         "database.rkt"
          "schema.rkt")
 
 (provide
