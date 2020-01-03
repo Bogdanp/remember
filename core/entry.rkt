@@ -234,6 +234,9 @@
                                      #:body (entry-body the-entry)
                                      #:status (entry-status the-entry)
                                      #:due-at (entry-due-at the-entry)
+                                     #:next-recurrence-at (entry-next-recurrence-at the-entry)
+                                     #:recurrence-delta (entry-recurrence-delta the-entry)
+                                     #:recurrence-modifier (entry-recurrence-modifier the-entry)
                                      #:created-at (entry-created-at the-entry))))))))))
 
 (define/contract (find-pending-entries)
@@ -379,8 +382,7 @@
        (define (reload!)
          (set! the-entry (call-with-database-connection
                            (lambda (conn)
-                             (lookup conn (~> (from entry #:as e)
-                                              (where (= e.id ,(entry-id the-entry)))))))))
+                             (lookup conn (~> (from entry #:as e)))))))
 
        (archive-entry! (entry-id the-entry))
        (reload!)
@@ -415,4 +417,9 @@
                           [due-at (== (datetime 1970 1 19 10 0))]
                           [next-recurrence-at (== (datetime 1970 1 26 10 0))]
                           [recurrence-delta 1]
-                          [recurrence-modifier 'week]))))))))
+                          [recurrence-modifier 'week]))))
+
+       (delete-entry! (entry-id the-entry))
+       (undo!)
+       (reload!)
+       (check-true (entry-recurs? the-entry))))))
