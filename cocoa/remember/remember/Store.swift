@@ -66,7 +66,9 @@ class Store: ObservableObject {
             if let entry = self.entries.first(where: { $0.id == id }) {
                 RunLoop.main.schedule {
                     self.currentEntry = entry
-                    self.showEntries()
+                    self.updatePendingEntries {
+                        self.showEntries()
+                    }
                 }
             }
         }
