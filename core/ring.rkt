@@ -34,7 +34,7 @@
 (define/contract (ring-pop! r)
   (-> ring? (or/c false/c any/c))
   (call-with-semaphore (ring-sema r)
-    (lambda  _
+    (lambda _
       (cond
         [(zero? (ring-size r)) #f]
         [else

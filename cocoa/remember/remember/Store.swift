@@ -77,7 +77,7 @@ class Store: ObservableObject {
     }
 
     func clear() {
-        self.hideEntries()
+        hideEntries()
         if command.string.isEmpty {
             Notifications.willHideWindow()
         }
@@ -93,8 +93,8 @@ class Store: ObservableObject {
     }
 
     func commit(command: String, withCompletionHandler handler: @escaping () -> Void) {
-        self.hideEntries()
-        self.entryDB.commit(command: command) { res in
+        hideEntries()
+        entryDB.commit(command: command) { res in
             RunLoop.main.schedule {
                 switch res {
                 case .ok:
@@ -107,12 +107,27 @@ class Store: ObservableObject {
         }
     }
 
+    func hideEntries() {
+        entriesVisible = false
+    }
+
+    func showEntries() {
+        entriesVisible = true
+    }
+
     func updatePendingEntries() {
         updatePendingEntries { }
     }
 
     func updatePendingEntries(withCompletionHandler handler: @escaping () -> Void) {
-        self.entryDB.findPendingEntries { entries in
+        // Ensure that the "cursor" is preserved as much as possible when the entries
+        // change by keeping track of the current position.
+        var currentEntryIndex = 0
+        if let currentEntry = self.currentEntry {
+            currentEntryIndex = entries.firstIndex(where: { $0.id == currentEntry.id }) ?? 0
+        }
+
+        entryDB.findPendingEntries { entries in
             RunLoop.main.schedule {
                 self.entries = entries
 
@@ -122,7 +137,7 @@ class Store: ObservableObject {
                     self.currentEntry = entries[0]
                 } else if let currentEntry = self.currentEntry {
                     if !entries.contains(where: { $0.id == currentEntry.id }) {
-                        self.currentEntry = entries[0]
+                        self.currentEntry = entries[currentEntryIndex % entries.count]
                     }
                 }
 
@@ -133,7 +148,7 @@ class Store: ObservableObject {
 
     func archiveCurrentEntry() {
         if let currentEntry = self.currentEntry {
-            self.entryDB.archiveEntry(byId: currentEntry.id) {
+            entryDB.archiveEntry(byId: currentEntry.id) {
                 UserNotificationsManager.shared.dismiss(byEntryId: currentEntry.id)
                 self.updatePendingEntries()
             }
@@ -142,55 +157,55 @@ class Store: ObservableObject {
 
     func deleteCurrentEntry() {
         if let currentEntry = self.currentEntry {
-            self.entryDB.deleteEntry(byId: currentEntry.id) {
+            entryDB.deleteEntry(byId: currentEntry.id) {
                 UserNotificationsManager.shared.dismiss(byEntryId: currentEntry.id)
                 self.updatePendingEntries()
             }
         }
     }
 
-    func selectPreviousEntry() {
-        if entries.isEmpty {
-            return
+    private func findPreviousEntryIndex() -> Int {
+        if let currentEntry = self.currentEntry,
+            let index = entries.firstIndex(where: { $0.id == currentEntry.id }) {
+
+            return (index - 1) < 0 ? entries.count - 1 : index - 1
         }
 
-        if let currentEntry = self.currentEntry {
-            if let index = entries.firstIndex(where: { $0.id == currentEntry.id }) {
-                self.currentEntry = entries[(index - 1) < 0 ? entries.count - 1 : index - 1]
-            } else {
-                self.currentEntry = entries[0]
-            }
+        return 0
+    }
+
+    private func findNextEntryIndex() -> Int {
+        if let currentEntry = self.currentEntry,
+            let index = entries.firstIndex(where: { $0.id == currentEntry.id }) {
+
+            return (index + 1) % entries.count
+        }
+
+        return 0
+    }
+
+    func selectPreviousEntry() {
+        if entries.isEmpty {
+            entriesVisible = false
+        } else if !entriesVisible {
+            entriesVisible = true
         } else {
-            currentEntry = entries[0]
+            currentEntry = entries[self.findPreviousEntryIndex()]
         }
     }
 
     func selectNextEntry() {
         if entries.isEmpty {
-            return
-        }
-
-        if let currentEntry = self.currentEntry {
-            if let index = entries.firstIndex(where: { $0.id == currentEntry.id }) {
-                self.currentEntry = entries[(index + 1) % entries.count]
-            } else  {
-                self.currentEntry = entries[0]
-            }
+            entriesVisible = false
+        } else if !entriesVisible {
+            entriesVisible = true
         } else {
-            currentEntry = entries[0]
+            currentEntry = entries[findNextEntryIndex()]
         }
-    }
-
-    func hideEntries() {
-        self.entriesVisible = false
-    }
-
-    func showEntries() {
-        self.entriesVisible = true
     }
 
     func undo() {
-        self.entryDB.undo {
+        entryDB.undo {
             self.updatePendingEntries()
         }
     }

@@ -47,12 +47,10 @@ struct ContentView: View {
                             self.store.deleteCurrentEntry()
                         }
                     case .previous:
-                        self.store.showEntries()
                         self.store.updatePendingEntries {
                             self.store.selectPreviousEntry()
                         }
                     case .next:
-                        self.store.showEntries()
                         self.store.updatePendingEntries {
                             self.store.selectNextEntry()
                         }
