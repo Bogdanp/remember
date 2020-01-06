@@ -28,7 +28,7 @@
  find-due-entries)
 
 (define entry-status/c
-  (or/c 'pending 'archived))
+  (or/c 'pending 'archived 'deleted))
 
 (define recurrence-modifier/c
   (or/c 'hour 'day 'week 'month 'year))
@@ -39,11 +39,11 @@
    [title string/f #:contract non-empty-string?]
    [(body "") string/f]
    [(status 'pending) symbol/f #:contract entry-status/c]
-   [(due-at (now/moment)) datetime/f #:nullable]
+   [(due-at (now)) datetime/f #:nullable]
    [next-recurrence-at datetime/f #:nullable]
    [recurrence-delta integer/f #:nullable]
    [recurrence-modifier symbol/f #:nullable #:contract recurrence-modifier/c]
-   [(created-at (now/moment)) datetime/f])
+   [(created-at (now)) datetime/f])
 
   #:methods gen:to-jsexpr
   [(define (->jsexpr e)
@@ -60,24 +60,20 @@
 (define (entry-recurrence e)
   (recurrence #f #f (entry-recurrence-delta e) (entry-recurrence-modifier e)))
 
-(define (entry-due-at/local e)
-  (and (not (sql-null? (entry-due-at e)))
-       (with-timezone (entry-due-at e) (current-timezone))))
-
 (define (entry-due-in e)
   (and (not (sql-null? (entry-due-at e)))
-       (let* ([now (now/moment)]
-              [due (entry-due-at/local e)]
-              [delta (seconds-between now due)])
+       (let* ([t (now)]
+              [due (entry-due-at e)]
+              [delta (seconds-between t due)])
          (cond
            [(<= delta 0)           "past due"]
            [(>= delta (* 7 86400)) (~a "due on " (if (= (->year due)
-                                                        (->year (now/moment)))
+                                                        (->year (now)))
                                                      (~t due "MMM dd")
                                                      (~t due "MMM dd, yyyy")))]
-           [(>= delta 86400)       (~a "due in " (format-delta (add1 (days-between now due)) "day" "days"))]
-           [(>= delta 3600)        (~a "due in " (format-delta (add1 (hours-between now due)) "hour" "hours"))]
-           [(>= delta 60)          (~a "due in " (format-delta (add1 (minutes-between now due)) "minute" "minutes"))]
+           [(>= delta 86400)       (~a "due in " (format-delta (add1 (days-between t due)) "day" "days"))]
+           [(>= delta 3600)        (~a "due in " (format-delta (add1 (hours-between t due)) "hour" "hours"))]
+           [(>= delta 60)          (~a "due in " (format-delta (add1 (minutes-between t due)) "minute" "minutes"))]
            [else                   "due in under a minute"]))))
 
 (define (format-delta d singular plural)
@@ -102,7 +98,7 @@
 
           [(and (relative-time text span delta modifier) r)
            (define adder (relative-time-adder r))
-           (values (adder (or due (now/moment)))
+           (values (adder (or due (now)))
                    rec
                    tags)]
 
@@ -198,46 +194,33 @@
 
 (define/contract (snooze-entry! id)
   (-> id/c void?)
-  (call-with-database-transaction
-    (lambda (conn)
-      (define entry
-        (lookup conn (~> (from entry #:as e)
-                         (where (= e.id ,id)))))
+  (define the-entry
+    (call-with-database-transaction
+      (lambda (conn)
+        (and~> (lookup conn (~> (from entry #:as e)
+                                (where (= e.id ,id))))
+               (set-entry-due-at (+minutes (now) 15))
+               (update-one! conn _)))))
 
-      (when entry
-        (define updated-entry
-          (set-entry-due-at entry (+minutes (now/moment) 15)))
-        (update-one! conn updated-entry))))
-  (void
-   (notify 'entries-did-change)))
+  (when the-entry
+    (void (notify 'entries-did-change))))
 
 (define/contract (delete-entry! id)
   (-> id/c void?)
   (define the-entry
     (call-with-database-transaction
       (lambda (conn)
-        (define the-entry
-          (lookup conn (~> (from entry #:as e)
-                           (where (= e.id ,id)))))
-        (begin0 the-entry
-          (delete-one! conn the-entry)))))
+        (and~> (lookup conn (~> (from entry #:as e)
+                                (where (= e.id ,id))))
+               (set-entry-status 'deleted)
+               (update-one! conn _)))))
 
   (when the-entry
     (notify 'entries-did-change)
     (push-undo! (lambda _
                   (call-with-database-connection
                     (lambda (conn)
-                      (void
-                       (insert-one! conn
-                                    (make-entry
-                                     #:title (entry-title the-entry)
-                                     #:body (entry-body the-entry)
-                                     #:status (entry-status the-entry)
-                                     #:due-at (entry-due-at the-entry)
-                                     #:next-recurrence-at (entry-next-recurrence-at the-entry)
-                                     #:recurrence-delta (entry-recurrence-delta the-entry)
-                                     #:recurrence-modifier (entry-recurrence-modifier the-entry)
-                                     #:created-at (entry-created-at the-entry))))))))))
+                      (update-one! conn (set-entry-status the-entry 'pending))))))))
 
 (define/contract (find-pending-entries)
   (-> (listof entry?))
@@ -275,7 +258,7 @@
 
   (call-with-empty-database
    (lambda _
-     (define t0 (now/moment))
+     (define t0 (now))
      (define the-entry
        (commit! "buy milk +1h"))
 
@@ -296,7 +279,24 @@
 
   (call-with-empty-database
    (lambda _
-     (define t0 (now/moment))
+     (define t0 (now))
+     (define the-entry
+       (commit! "buy milk +1h"))
+
+     (define (reload!)
+       (set! the-entry
+             (call-with-database-connection
+               (lambda (conn)
+                 (lookup conn (~> (from entry #:as e)
+                                  (where (= e.id ,(entry-id the-entry)))))))))
+
+     (snooze-entry! (entry-id the-entry))
+     (reload!)
+     (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 15)))
+
+  (call-with-empty-database
+   (lambda _
+     (define t0 (now))
      (define the-entry
        (commit! "buy milk +1h +15m"))
 
@@ -353,16 +353,20 @@
        (define the-entry
          (commit! "buy milk +1d"))
 
+       (define (reload!)
+         (set! the-entry
+               (call-with-database-connection
+                 (lambda (conn)
+                   (lookup conn (~> (from entry #:as e)
+                                    (where (= e.id ,(entry-id the-entry)))))))))
+
        (delete-entry! (entry-id the-entry))
-       (check-false  (call-with-database-connection
-                       (lambda (conn)
-                         (lookup conn (~> (from entry #:as e)
-                                          (where (= e.id ,(entry-id the-entry))))))))
+       (reload!)
+       (check-eq?  (entry-status the-entry) 'deleted)
 
        (undo!)
-       (check-not-false (call-with-database-connection
-                          (lambda (conn)
-                            (lookup conn (from entry #:as e))))))))
+       (reload!)
+       (check-eq? (entry-status the-entry) 'pending))))
 
   (parameterize ([current-clock (lambda _ 0)])
     (call-with-empty-database
@@ -382,7 +386,8 @@
        (define (reload!)
          (set! the-entry (call-with-database-connection
                            (lambda (conn)
-                             (lookup conn (~> (from entry #:as e)))))))
+                             (lookup conn (~> (from entry #:as e)
+                                              (where (= e.id ,(entry-id the-entry)))))))))
 
        (archive-entry! (entry-id the-entry))
        (reload!)
