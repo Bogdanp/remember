@@ -15,6 +15,7 @@ import os
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow!
+    private var windowDelegate: NSWindowDelegate = WindowDelegate()
 
     private var rpc: ComsCenter!
     private var client: Client!
@@ -36,19 +37,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             entryDB: client,
             parser: client)
 
+        let hostingView = NSHostingView(rootView: contentView)
+
         window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 680, height: 0),
             styleMask: [.titled, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
+        window.delegate = windowDelegate
         window.center()
         window.collectionBehavior = .canJoinAllSpaces
         window.setFrameAutosaveName("Remember")
         window.backgroundColor = .clear
+        window.initialFirstResponder = hostingView
         window.isMovableByWindowBackground = true
         window.isOpaque = false
-        window.contentView = NSHostingView(rootView: contentView)
+        window.contentView = hostingView
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.makeKeyAndOrderFront(nil)
@@ -56,6 +61,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setupHotKey()
         setupHidingListener()
         setupUserNotifications()
+
+        // This serves the same purpose as `windowDidBecomeKey` in `WindowDelegate`.
+        if !NSApp.isActive {
+            NSApp.activate(ignoringOtherApps: true)
+        }
     }
 
     func applicationWillResignActive(_ notification: Notification) {
@@ -86,5 +96,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     /// Called whenever the user presses ⌘,
     @IBAction func showPreferences(_ sender: Any) {
         PreferencesManager.shared.show()
+    }
+}
+
+fileprivate class WindowDelegate: NSObject, NSWindowDelegate {
+    // This hack ensures that the application becomes active after being started with Spotlight.
+    // It's weird that this would be necessary, but whatevs.  Maybe there's a better way...
+    func windowDidBecomeKey(_ notification: Notification) {
+        if !NSApp.isActive {
+            NSApp.activate(ignoringOtherApps: true)
+        }
     }
 }

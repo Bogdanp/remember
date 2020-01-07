@@ -50,7 +50,6 @@ struct CommandField: NSViewRepresentable {
             KeyBinding(withKeyCode: Keycode.z, andModifierFlags: [.command], using: #selector(Coordinator.undo(_:))),
         ])
 
-        field.becomeFirstResponder()
         return field
     }
 
