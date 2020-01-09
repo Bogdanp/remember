@@ -50,7 +50,8 @@
      (hasheq 'id (entry-id e)
              'title (entry-title e)
              'due-in (or (entry-due-in e)
-                         (json-null))))])
+                         (json-null))
+             'recurs? (entry-recurs? e)))])
 
 (define (entry-recurs? e)
   (and (not (sql-null? (entry-next-recurrence-at e)))
