@@ -23,7 +23,6 @@ struct EntryList: View {
             ForEach(visibleEntries()) { entry in
                 EntryListItem(entry, isCurrent: self.currentEntry.map { entry.id == $0.id } ?? false)
             }
-            .padding(.top, 6)
         }
     }
 

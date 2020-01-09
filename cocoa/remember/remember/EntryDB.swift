@@ -14,11 +14,13 @@ struct Entry: Equatable &  Identifiable & Decodable {
     let id: Id
     let title: String
     let dueIn: String?
+    let isRecurring: Bool
 
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case dueIn = "due-in"
+        case isRecurring = "recurs?"
     }
 }
 

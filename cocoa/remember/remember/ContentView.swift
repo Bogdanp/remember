@@ -59,14 +59,21 @@ struct ContentView: View {
                     }
                 }
             }
+            .padding(.top, 15)
+            .padding(.leading, 15)
+            .padding(.trailing, 15)
+            .padding(.bottom, entriesVisible ? 10 : 15)
 
-            if store.entriesVisible && !store.entries.isEmpty {
+            if entriesVisible {
                 Divider()
                 EntryList($store.entries, currentEntry: $store.currentEntry)
             }
         }
-        .padding(15)
         .visualEffect()
         .cornerRadius(8)
+    }
+
+    var entriesVisible: Bool {
+        store.entriesVisible && !store.entries.isEmpty
     }
 }

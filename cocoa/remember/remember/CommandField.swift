@@ -61,31 +61,27 @@ struct CommandField: NSViewRepresentable {
             case .chunk(let c):
                 attributedText += c.text
                     .withFont(systemFont)
+                    .withTextColor(NSColor.textColor)
             case .relativeTime(let r):
                 attributedText += r.text
                     .withFont(systemFont)
-                    .withBackgroundColor(BG_RELATIVE_TIME)
-                    .withTextColor(FG_RELATIVE_TIME)
+                    .withTextColor(NSColor.systemBlue)
             case .namedDateTime(let dt):
                 attributedText += dt.text
                     .withFont(systemFont)
-                    .withBackgroundColor(BG_NAMED_DATETIME)
-                    .withTextColor(FG_NAMED_DATETIME)
+                    .withTextColor(NSColor.systemBlue)
             case .namedDate(let d):
                 attributedText += d.text
                     .withFont(systemFont)
-                    .withBackgroundColor(BG_NAMED_DATE)
-                    .withTextColor(FG_NAMED_DATE)
+                    .withTextColor(NSColor.systemBlue)
             case .recurrence(let r):
                 attributedText += r.text
                     .withFont(systemFont)
-                    .withBackgroundColor(BG_RECURRENCE)
-                    .withTextColor(FG_RECURRENCE)
+                    .withTextColor(NSColor.systemGreen)
             case .tag(let t):
                 attributedText += t.text
                     .withFont(systemFont)
-                    .withBackgroundColor(BG_TAG)
-                    .withTextColor(FG_TAG)
+                    .withTextColor(NSColor.systemPink)
             }
         }
 
