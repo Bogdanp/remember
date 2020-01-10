@@ -67,15 +67,45 @@
               [due (entry-due-at e)]
               [delta (seconds-between t due)])
          (cond
-           [(<= delta 0)           "past due"]
-           [(>= delta (* 7 86400)) (~a "due on " (if (= (->year due)
-                                                        (->year (now)))
-                                                     (~t due "MMM dd")
-                                                     (~t due "MMM dd, yyyy")))]
-           [(>= delta 86400)       (~a "due in " (format-delta (add1 (days-between t due)) "day" "days"))]
-           [(>= delta 3600)        (~a "due in " (format-delta (add1 (hours-between t due)) "hour" "hours"))]
-           [(>= delta 60)          (~a "due in " (format-delta (add1 (minutes-between t due)) "minute" "minutes"))]
-           [else                   "due in under a minute"]))))
+           [(<= delta 0)
+            "past due"]
+
+           [(>= delta (* 7 86400))
+            (~a "due on " (if (= (->year due)
+                                 (->year (now)))
+                              (~t due "MMM dd")
+                              (~t due "MMM dd, yyyy")))]
+
+           [(>= (hours-between t due) 36)
+            (~a "due in " (format-delta (add1 (days-between t due)) "day" "days"))]
+
+           [(not (= (->day t)
+                    (->day due)))
+            (cond
+              [(>= (->hours due) 23) "due tomorrow night"]
+              [(>= (->hours due) 17) "due tomorrow evening"]
+              [(>= (->hours due) 12) "due tomorrow afternoon"]
+              [(>= (->hours due) 11) "due noon tomorrow"]
+              [(>= (->hours due) 5)  "due tomorrow morning"]
+              [else                  "due tonight"])]
+
+           [(>= delta (* 3600 4))
+            (cond
+              [(>= (->hours due) 23) "due tonight"]
+              [(>= (->hours due) 17) "due this evening"]
+              [(>= (->hours due) 12) "due this afternoon"]
+              [(>= (->hours due) 11) "due at noon"]
+              [(>= (->hours due) 5)  "due this morning"]
+              [else                  "due today"])]
+
+           [(>= delta 3600)
+            (~a "due in " (format-delta (add1 (hours-between t due)) "hour" "hours"))]
+
+           [(>= delta 60)
+            (~a "due in " (format-delta (add1 (minutes-between t due)) "minute" "minutes"))]
+
+           [else
+            "due in under a minute"]))))
 
 (define (format-delta d singular plural)
   (format "~a ~a" d (if (= d 1)
