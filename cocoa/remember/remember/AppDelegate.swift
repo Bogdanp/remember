@@ -50,7 +50,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.collectionBehavior = .canJoinAllSpaces
         window.setFrameAutosaveName("Remember")
         window.backgroundColor = .clear
-        window.initialFirstResponder = hostingView
         window.isMovableByWindowBackground = true
         window.isOpaque = false
         window.contentView = hostingView

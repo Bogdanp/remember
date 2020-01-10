@@ -91,6 +91,13 @@ struct CommandField: NSViewRepresentable {
         } else {
             nsView.attributedStringValue = text
         }
+
+        // Become the first responder as soon as the window becomes visible.  Doing this before has no effect.
+        // As usual, hacky, but it seems to work.  This seems to be the norm with SwiftUI.
+        if nsView.window != nil && !context.coordinator.didBecomeFirstResponder {
+            nsView.becomeFirstResponder()
+            context.coordinator.didBecomeFirstResponder = true
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -104,6 +111,8 @@ struct CommandField: NSViewRepresentable {
     final class Coordinator: NSObject, NSTextFieldDelegate {
         private var action: (CommandAction) -> Void
         private var setter: (NSAttributedString) -> Void
+
+        var didBecomeFirstResponder = false
 
         init(action theAction: @escaping (CommandAction) -> Void,
              setter theSetter: @escaping (NSAttributedString) -> Void) {
