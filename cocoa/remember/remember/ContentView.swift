@@ -19,7 +19,6 @@ struct ContentView: View {
             asyncNotifier: asyncNotifier,
             entryDB: entryDB,
             parser: parser)
-        store.setup()
     }
 
     var body: some View {

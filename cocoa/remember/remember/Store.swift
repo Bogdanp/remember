@@ -20,19 +20,15 @@ class Store: ObservableObject {
     @Published var entries = [Entry]()
     @Published var entriesVisible = false
     @Published var currentEntry: Entry? = nil
+    @Published var editingEntryWithId: Entry.Id? = nil
 
     init(asyncNotifier: AsyncNotifier, entryDB: EntryDB, parser: Parser) {
         self.asyncNotifier = asyncNotifier
         self.entryDB = entryDB
         self.parser = parser
-        self.parseCancellable = nil
-    }
-
-    func setup() {
-        parseCancellable = $command
+        self.parseCancellable = $command
             .map(\.string)
             .filter { !$0.isEmpty }
-            .removeDuplicates()
             .flatMap { text in
                 return Future { promise in
                     self.parser.parse(command: text) {
@@ -86,6 +82,7 @@ class Store: ObservableObject {
 
         command = NSAttributedString(string: "")
         tokens = []
+        editingEntryWithId = nil
     }
 
     func commit(command: String) {
@@ -95,8 +92,7 @@ class Store: ObservableObject {
     }
 
     func commit(command: String, withCompletionHandler handler: @escaping () -> Void) {
-        hideEntries()
-        entryDB.commit(command: command) { res in
+        let commitHandler = { (res: CommitResult) in
             RunLoop.main.schedule {
                 switch res {
                 case .ok:
@@ -106,6 +102,14 @@ class Store: ObservableObject {
                     handler()
                 }
             }
+        }
+
+        if command.isEmpty {
+            editCurrentEntry()
+        } else if let id = editingEntryWithId {
+            entryDB.update(byId: id, withCommand: command, andCompletionHandler: commitHandler)
+        } else {
+            entryDB.commit(command: command, withCompletionHandler: commitHandler)
         }
     }
 
@@ -165,6 +169,20 @@ class Store: ObservableObject {
             }
         }
     }
+    
+    func editCurrentEntry() {
+        if let currentEntry = self.currentEntry {
+            command = NSAttributedString(string: currentEntry.title)
+            editingEntryWithId = currentEntry.id
+        }
+    }
+    
+    func stopEditing() {
+        if editingEntryWithId != nil {
+            command = NSAttributedString(string: "")
+            editingEntryWithId = nil
+        }
+    }
 
     private func findPreviousEntryIndex() -> Int {
         if let currentEntry = self.currentEntry,
@@ -193,6 +211,7 @@ class Store: ObservableObject {
             entriesVisible = true
         } else {
             currentEntry = entries[self.findPreviousEntryIndex()]
+            stopEditing()
         }
     }
 
@@ -203,6 +222,7 @@ class Store: ObservableObject {
             entriesVisible = true
         } else {
             currentEntry = entries[findNextEntryIndex()]
+            stopEditing()
         }
     }
 

@@ -31,7 +31,7 @@ enum CommitResult {
 
 protocol EntryDB {
     func commit(command: String, withCompletionHandler: @escaping (CommitResult) -> Void)
-    func update(byId: String, withCommand: String, andCompletionHandler: @escaping (CommitResult) -> Void)
+    func update(byId: Entry.Id, withCommand: String, andCompletionHandler: @escaping (CommitResult) -> Void)
     func archiveEntry(byId: Entry.Id)
     func archiveEntry(byId: Entry.Id, withCompletionHandler: @escaping () -> Void)
     func snoozeEntry(byId: Entry.Id)

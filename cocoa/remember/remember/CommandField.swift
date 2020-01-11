@@ -89,7 +89,7 @@ struct CommandField: NSViewRepresentable {
         if attributedText.string == text.string {
             nsView.attributedStringValue = attributedText
         } else {
-            nsView.attributedStringValue = text
+            nsView.attributedStringValue = text.withFont(systemFont)
         }
 
         // Become the first responder as soon as the window becomes visible.  Doing this before has no effect.
