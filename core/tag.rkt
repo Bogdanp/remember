@@ -1,13 +1,16 @@
 #lang racket/base
 
-(require deta
+(require db
+         deta
          racket/contract
+         (only-in racket/list remove-duplicates)
          racket/string
          threading
          "database.rkt")
 
 (provide
- assign-tags!)
+ assign-tags!
+ find-tags-by-entry-id)
 
 (define-schema tag
   #:table "tags"
@@ -36,3 +39,10 @@
                                                (= et.tag-id ,(tag-id t))))))
             (insert! conn (make-entry-tag #:entry-id entry-id
                                           #:tag-id (tag-id t)))))))))
+
+(define/contract (find-tags-by-entry-id conn id)
+  (-> connection? id/c (listof non-empty-string?))
+  (query-list conn (~> (from "entry_tags" #:as et)
+                       (join "tags" #:as t #:on (= t.id et.tag-id))
+                       (select t.name)
+                       (where (= et.entry-id ,id)))))

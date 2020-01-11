@@ -42,6 +42,17 @@ class Client: AsyncNotifier & Parser & EntryDB {
         }
     }
 
+    func update(byId id: String, withCommand command: String, andCompletionHandler handler: @escaping (CommitResult) -> Void) {
+        return rpc.call("update!", [id, command]) { (res: RPCResult<Entry>) in
+            switch res {
+            case .ok(let entry):
+                handler(.ok(entry))
+            case .error(let error):
+                handler(.error(error))
+            }
+        }
+    }
+
     func archiveEntry(byId id: Entry.Id) {
         archiveEntry(byId: id) { }
     }

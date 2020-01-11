@@ -7,6 +7,7 @@
          json
          racket/contract
          racket/format
+         (only-in racket/list remove-duplicates)
          racket/match
          racket/sequence
          racket/string
@@ -21,6 +22,7 @@
 (provide
  (schema-out entry)
  commit!
+ update!
  archive-entry!
  snooze-entry!
  delete-entry!
@@ -36,7 +38,7 @@
 (define-schema entry
   #:table "entries"
   ([id id/f #:primary-key #:auto-increment]
-   [title string/f #:contract non-empty-string?]
+   [title string/f #:contract non-empty-string? #:wrapper string-trim]
    [(body "") string/f]
    [(status 'pending) symbol/f #:contract entry-status/c]
    [(due-at (now)) datetime/f #:nullable]
@@ -114,15 +116,17 @@
                         singular
                         plural)))
 
-(define/contract (commit! command)
-  (-> string? entry?)
+(define (process-command command
+                         #:init-due [init-due #f]
+                         #:init-rec [init-rec #f]
+                         #:init-tags [init-tags null])
   (define tokens (parse-command command))
   (define out (open-output-string))
   (define-values (due rec tags)
     (parameterize ([current-output-port out])
-      (for/fold ([due #f]
-                 [rec #f]
-                 [tags null])
+      (for/fold ([due init-due]
+                 [rec init-rec]
+                 [tags init-tags])
                 ([token (in-list tokens)])
         (match token
           [(chunk text span)
@@ -148,6 +152,17 @@
           [(tag text span name)
            (values due rec (cons name tags))]))))
 
+
+  (values (get-output-string out)
+          due
+          rec
+          tags))
+
+(define/contract (commit! command)
+  (-> string? entry?)
+  (define-values (title due rec tags)
+    (process-command command))
+
   (define-values (next-rec-at rec-delta rec-modifier)
     (if (and due rec)
         (values (recurrence-next rec due)
@@ -159,7 +174,7 @@
     (lambda (conn)
       (define the-entry
         (insert-one! conn
-                     (make-entry #:title (string-trim (get-output-string out))
+                     (make-entry #:title title
                                  #:due-at (or due sql-null)
                                  #:next-recurrence-at (or next-rec-at sql-null)
                                  #:recurrence-delta (or rec-delta sql-null)
@@ -168,6 +183,64 @@
       (begin0 the-entry
         (assign-tags! (entry-id the-entry) tags)
         (notify 'entries-did-change)))))
+
+(define/contract (update! id command)
+  (-> id/c string? entry?)
+  (call-with-database-transaction
+    (lambda (conn)
+      (cond
+        [(lookup conn (~> (from entry #:as e)
+                          (where (= e.id ,id))))
+         => (lambda (the-entry)
+              ;; Scenario 1:
+              ;;  (commit! "buy milk +1h")
+              ;;  *no time passes*
+              ;;  (update! 1 "buy milk +1h")
+              ;;  *entry is due in 2 hours*
+              (define due/dwim
+                (cond
+                  [(sql-> (entry-due-at the-entry))
+                   => (lambda (due)
+                        (cond
+                          [(datetime>=? due (now)) due]
+                          [else (now)]))]
+
+                  [else #f]))
+
+              (define-values (title due rec tags)
+                (process-command command
+                                 #:init-due due/dwim
+                                 #:init-rec (and (entry-recurs? the-entry)
+                                                 (entry-recurrence the-entry))
+                                 #:init-tags (find-tags-by-entry-id conn id)))
+
+              (define-values (next-rec-at rec-delta rec-modifier)
+                (if (and due rec)
+                    (values (recurrence-next rec due)
+                            (recurrence-delta rec)
+                            (recurrence-modifier rec))
+                    (values #f #f #f)))
+
+              (define updated-entry
+                (update-one! conn (~> the-entry
+                                      (set-entry-title title)
+                                      (set-entry-due-at (or due sql-null))
+                                      (set-entry-next-recurrence-at (or next-rec-at sql-null))
+                                      (set-entry-recurrence-delta (or rec-delta sql-null))
+                                      (set-entry-recurrence-modifier (or rec-modifier sql-null)))))
+
+              (begin0 updated-entry
+                (assign-tags! id tags)
+                (notify 'entries-did-change)
+                (push-undo! (lambda _
+                              ;; TODO: undo tag changes!
+                              (update-one! conn (~> updated-entry
+                                                    (set-entry-title (entry-title the-entry))
+                                                    (set-entry-due-at (or (entry-due-at the-entry) sql-null))
+                                                    (set-entry-next-recurrence-at (or (entry-next-recurrence-at the-entry) sql-null))
+                                                    (set-entry-recurrence-delta (or (entry-recurrence-delta the-entry) sql-null))
+                                                    (set-entry-recurrence-modifier (or (entry-recurrence-modifier the-entry) sql-null))))))))]
+        [else #f]))))
 
 (define pending-entries
   (~> (from entry #:as e)
@@ -460,4 +533,74 @@
        (delete-entry! (entry-id the-entry))
        (undo!)
        (reload!)
-       (check-true (entry-recurs? the-entry))))))
+       (check-true (entry-recurs? the-entry)))))
+
+  (parameterize ([current-clock (lambda _ 0)])
+    (call-with-empty-database
+     (lambda _
+       (define the-entry
+         (commit! "invoice Tom @10am mon *weekly*"))
+
+       (define (reload!)
+         (set! the-entry (call-with-database-connection
+                           (lambda (conn)
+                             (lookup conn (~> (from entry #:as e)
+                                              (where (= e.id ,(entry-id the-entry)))))))))
+
+       (update! (entry-id the-entry) "invoice Tommy")
+       (reload!)
+
+       (check-match
+        the-entry
+        (struct* entry ([title "invoice Tommy"]
+                        [body ""]
+                        [due-at (== (datetime 1970 1 5 10 0))]
+                        [next-recurrence-at (== (datetime 1970 1 12 10 0))]
+                        [recurrence-delta 1]
+                        [recurrence-modifier 'week])))
+
+       (update! (entry-id the-entry) "invoice Tom @11am mon")
+       (reload!)
+
+       (check-match
+        the-entry
+        (struct* entry ([title "invoice Tom"]
+                        [body ""]
+                        [due-at (== (datetime 1970 1 5 11 0))]
+                        [next-recurrence-at (== (datetime 1970 1 12 11 0))]
+                        [recurrence-delta 1]
+                        [recurrence-modifier 'week])))
+
+       (update! (entry-id the-entry) "invoice Tom *monthly*")
+       (reload!)
+
+       (check-match
+        the-entry
+        (struct* entry ([title "invoice Tom"]
+                        [body ""]
+                        [due-at (== (datetime 1970 1 5 11 0))]
+                        [next-recurrence-at (== (datetime 1970 2 05 11 0))]
+                        [recurrence-delta 1]
+                        [recurrence-modifier 'month])))
+
+       (define (find-tags)
+         (sort
+          (call-with-database-connection
+            (lambda (conn)
+              (find-tags-by-entry-id conn (entry-id the-entry))))
+          string<?))
+
+       (check-equal? (find-tags) null)
+       (update! (entry-id the-entry) "invoice Tom #accounting #important")
+       (reload!)
+
+       (check-match
+        the-entry
+        (struct* entry ([title "invoice Tom"]
+                        [body ""]
+                        [due-at (== (datetime 1970 1 5 11 0))]
+                        [next-recurrence-at (== (datetime 1970 2 05 11 0))]
+                        [recurrence-delta 1]
+                        [recurrence-modifier 'month])))
+       (check-equal? (find-tags)
+                     '("accounting" "important"))))))

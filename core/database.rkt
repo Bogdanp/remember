@@ -14,6 +14,7 @@
  current-db
  call-with-database-connection
  call-with-database-transaction
+ sql->
  backup-database!)
 
 (define id/c
@@ -74,6 +75,11 @@
              #:isolation isolation
              (lambda _
                (f conn))))))]))
+
+(define (sql-> v)
+  (cond
+    [(sql-null? v) #f]
+    [else v]))
 
 (define (backup-database!)
   (define database-path (build-application-path "remember.sqlite3"))
