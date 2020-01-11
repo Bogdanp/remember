@@ -76,16 +76,18 @@
                               (~t due "MMM dd")
                               (~t due "MMM dd, yyyy")))]
 
-           [(>= (hours-between t due) 36)
+           [(or (> (days-between t due) 1)
+                (date=? (->date (+days t 2))
+                        (->date due)))
             (~a "due in " (format-delta (add1 (days-between t due)) "day" "days"))]
 
-           [(not (= (->day t)
-                    (->day due)))
+           [(date=? (->date (+days t 1))
+                    (->date due))
             (cond
               [(>= (->hours due) 23) "due tomorrow night"]
               [(>= (->hours due) 17) "due tomorrow evening"]
               [(>= (->hours due) 12) "due tomorrow afternoon"]
-              [(>= (->hours due) 11) "due noon tomorrow"]
+              [(>= (->hours due) 11) "due at noon tomorrow"]
               [(>= (->hours due) 5)  "due tomorrow morning"]
               [else                  "due tonight"])]
 
