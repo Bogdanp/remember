@@ -33,7 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.rpc = rpc
         client = Client(rpc)
 
-        self.updater = AutoUpdater(withServiceURL: URL(string: "http://local.remember")!)
+        self.updater = AutoUpdater(withServiceURL: URL(string: "https://remember.defn.io/versions/")!)
         self.updater.start(withInterval: 3600 * 4) { changes, version in
             RunLoop.main.schedule {
                 UpdatesManager.shared.show(withChangelog: changes, andVersion: version)
