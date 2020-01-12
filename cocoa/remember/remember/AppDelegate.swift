@@ -46,7 +46,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             defer: false
         )
         window.delegate = windowDelegate
-        window.center()
         window.collectionBehavior = .canJoinAllSpaces
         window.setFrameAutosaveName("Remember")
         window.backgroundColor = .clear
@@ -67,13 +66,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func applicationWillBecomeActive(_ notification: Notification) {
+        positionWindow()
+    }
+
     func applicationWillResignActive(_ notification: Notification) {
         NSApp.hide(nil)
+
+        // Re-position the window in case it was moved around by the user.  Re-positioning it
+        // now prevents it from moving around when the user re-activates the application later.
+        positionWindow()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         UserNotificationsManager.shared.dismissAll()
         rpc.shutdown()
+    }
+
+    /// Ensures that the window is always positioned in exactly the same spot.  Roughly the same position as Spotlight.
+    private func positionWindow() {
+        if let screenFrame = window.screen?.frame {
+            let screenWidth = screenFrame.size.width
+            let screenHeight = screenFrame.size.height
+
+            let x = (screenWidth - window.frame.size.width) / 2
+            let y = (screenHeight * 0.80) - window.frame.size.height
+            let f = NSRect(x: x, y: y, width: window.frame.size.width, height: window.frame.size.height)
+
+            window.setFrame(f, display: true)
+        }
     }
 
     private func setupHotKey() {
