@@ -193,10 +193,15 @@
                           (where (= e.id ,id))))
          => (lambda (the-entry)
               ;; Scenario 1:
-              ;;  (commit! "buy milk +1h")
-              ;;  *no time passes*
-              ;;  (update! 1 "buy milk +1h")
-              ;;  *entry is due in 2 hours*
+              ;;  - (commit! "buy milk +1h")
+              ;;  - (update! 1 "buy milk +1h")
+              ;;  - *entry is due in 2 hours*
+              ;;
+              ;; Scenario 2:
+              ;;  - (commit! "buy milk +1h")
+              ;;  - *4 hours pass*
+              ;;  - (update! 1 "buy milk +1")
+              ;;  - *entry is due in 1 hour*
               (define due/dwim
                 (cond
                   [(sql-> (entry-due-at the-entry))
