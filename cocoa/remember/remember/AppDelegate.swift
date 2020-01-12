@@ -19,6 +19,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var rpc: ComsCenter!
     private var client: Client!
+    private var updater: AutoUpdater!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard let coreURL = Bundle.main.url(forResource: "core/bin/remember-core", withExtension: nil) else {
@@ -31,6 +32,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         self.rpc = rpc
         client = Client(rpc)
+
+        self.updater = AutoUpdater(withServiceURL: URL(string: "http://local.remember")!)
+        self.updater.start(withInterval: 3600 * 4) { changes, version in
+            RunLoop.main.schedule {
+                UpdatesManager.shared.show(withChangelog: changes, andVersion: version)
+            }
+        }
 
         let contentView = ContentView(
             asyncNotifier: client,
