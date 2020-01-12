@@ -27,8 +27,8 @@ class UpdatesManager: NSObject, NSWindowDelegate {
         self.window = window
     }
 
-    func show(withChangelog changelog: String, andVersion version: Version) {
-        let updatesView = UpdatesView(changelog: changelog, version: version)
+    func show(withChangelog changelog: String, andRelease release: Release) {
+        let updatesView = UpdatesView(changelog: changelog, release: release)
         self.window.contentView = NSHostingView(rootView: updatesView)
         self.window.center()
         self.window.makeKeyAndOrderFront(self)
@@ -45,9 +45,41 @@ class UpdatesManager: NSObject, NSWindowDelegate {
     }
 }
 
+fileprivate class UpdatesStore: ObservableObject {
+    @Published var updating = false
+
+    private let updater = AutoUpdater()
+
+    func performUpdate(toRelease release: Release) {
+        if updating {
+            return
+        }
+
+        updating = true
+        updater.performUpdate(toRelease: release) { res in
+            RunLoop.main.schedule {
+                defer {
+                    self.updating = false
+                }
+
+                switch res {
+                case .ok:
+                    return
+                case .error(let message):
+                    let alert = NSAlert()
+                    alert.messageText = message
+                    alert.runModal()
+                }
+            }
+        }
+    }
+}
+
 fileprivate struct UpdatesView: View {
     let changelog: String
-    let version: Version
+    let release: Release
+
+    @ObservedObject var store = UpdatesStore()
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
@@ -57,7 +89,7 @@ fileprivate struct UpdatesView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("A new version of Remember is available!").bold()
-                Text("Version \(version.version) is now available. Would you like to install it now?")
+                Text("Version \(release.version) is now available. Would you like to install it now?")
                 Text("Release notes:").bold()
                 Changelog(changelog)
                     .frame(width: nil, height: 150, alignment: .top)
@@ -70,13 +102,20 @@ fileprivate struct UpdatesView: View {
                         Text("Remind me Later")
                     })
                         .buttonStyle(BorderedButtonStyle())
+                        .disabled(store.updating)
 
                     Button(action: {
-
+                        self.store.performUpdate(toRelease: self.release)
                     }, label: {
-                        Text("Install Updates")
+                        if store.updating {
+                            ProgressIndicator()
+                            Text("Installing Updates...")
+                        } else {
+                            Text("Install Updates")
+                        }
                     })
                         .buttonStyle(BorderedButtonStyle())
+                        .disabled(store.updating)
                 }
             }
         }
@@ -125,6 +164,24 @@ fileprivate struct Changelog: NSViewRepresentable {
             textView.textContainer?.widthTracksTextView = true
             textView.string = changelog
         }
+    }
+}
+
+fileprivate struct ProgressIndicator: NSViewRepresentable {
+    typealias NSViewType = NSProgressIndicator
+
+    func makeNSView(context: NSViewRepresentableContext<ProgressIndicator>) -> NSViewType {
+        let indicator = NSProgressIndicator()
+        indicator.controlSize = .small
+        indicator.isIndeterminate = true
+        indicator.style = .spinning
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.startAnimation(self)
+        return indicator
+    }
+
+    func updateNSView(_ nsView: NSViewType, context: NSViewRepresentableContext<ProgressIndicator>) {
+
     }
 }
 
