@@ -33,12 +33,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.rpc = rpc
         client = Client(rpc)
 
-        self.updater = AutoUpdater()
-        self.updater.start(withInterval: 3600 * 4) { changes, version in
-            RunLoop.main.schedule {
-                UpdatesManager.shared.show(withChangelog: changes, andRelease: version)
-            }
-        }
+//        self.updater = AutoUpdater()
+//        self.updater.start(withInterval: 3600 * 4) { changes, version in
+//            RunLoop.main.schedule {
+//                UpdatesManager.shared.show(withChangelog: changes, andRelease: version)
+//            }
+//        }
 
         let contentView = ContentView(
             asyncNotifier: client,
