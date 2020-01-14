@@ -310,7 +310,7 @@
       (lambda (conn)
         (and~> (lookup conn (~> (from entry #:as e)
                                 (where (= e.id ,id))))
-               (set-entry-due-at (+minutes (now) 15))
+               (set-entry-due-at (+minutes (now) 45))
                (update-one! conn _)))))
 
   (when the-entry
@@ -403,7 +403,7 @@
 
      (snooze-entry! (entry-id the-entry))
      (reload!)
-     (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 15)))
+     (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 45)))
 
   (call-with-empty-database
    (lambda _
