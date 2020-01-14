@@ -87,7 +87,7 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
                 switch notification {
                 case .entriesDue(let notification):
                     for entry in notification.entries {
-                        if !self.addPending(byId: entry.id, withDeadline: .now() + .seconds(10 * 60)) {
+                        if !self.addPending(byId: entry.id, withDeadline: .now() + .seconds(15 * 60)) {
                             os_log("notification for entry %d ignored", entry.id)
                             continue
                         }
