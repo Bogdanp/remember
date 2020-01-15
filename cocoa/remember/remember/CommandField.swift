@@ -128,10 +128,10 @@ struct CommandField: NSViewRepresentable {
             } else if commandSelector == #selector(NSResponder.cancelOperation(_:)) {
                 action(.cancel(control.stringValue))
                 return true
-            } else if commandSelector == #selector(NSResponder.moveUp(_:)) {
+            } else if commandSelector == #selector(NSResponder.moveUp(_:)) || commandSelector == #selector(NSResponder.insertBacktab(_:)) {
                 action(.previous)
                 return true
-            } else if commandSelector == #selector(NSResponder.moveDown(_:)) {
+            } else if commandSelector == #selector(NSResponder.moveDown(_:)) || commandSelector == #selector(NSResponder.insertTab(_:)) {
                 action(.next)
                 return true
             } else if commandSelector == #selector(NSResponder.deleteBackward(_:)) && control.stringValue.isEmpty {
