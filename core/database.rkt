@@ -3,7 +3,10 @@
 (require db
          gregor
          racket/contract
+         racket/file
          racket/format
+         racket/list
+         racket/path
          "appdata.rkt")
 
 (provide
@@ -81,9 +84,26 @@
     [(sql-null? v) #f]
     [else v]))
 
+(define max-backups 7)
+
+(define (delete-old-backups!)
+  (define all-backups
+    (sort
+     (find-files
+      (lambda (p)
+        (equal? (path-get-extension p) #".bak"))
+      (build-application-path))
+     (lambda (a b)
+       (bytes<? (path->bytes a)
+                (path->bytes b)))))
+
+  (when (> (length all-backups) max-backups)
+    (for-each delete-file (drop-right all-backups max-backups))))
+
 (define (backup-database!)
   (define database-path (build-application-path "remember.sqlite3"))
   (when (file-exists? database-path)
     (define backup-suffix (~a "-" (~t (today) "yyyy-MM-dd") ".bak"))
     (define backup-path (path-add-extension database-path (string->bytes/utf-8 backup-suffix)))
-    (copy-file database-path backup-path #t)))
+    (copy-file database-path backup-path #t)
+    (delete-old-backups!)))
