@@ -33,6 +33,7 @@
 		43983BE423BA279E0064C527 /* EntryListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE323BA279E0064C527 /* EntryListItem.swift */; };
 		439B9CF823CB3D09001F91A2 /* AutoUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439B9CF723CB3D09001F91A2 /* AutoUpdater.swift */; };
 		439B9CFA23CB58BB001F91A2 /* Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439B9CF923CB58BB001F91A2 /* Updates.swift */; };
+		43D680FD23D71AF900659FCA /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D680FC23D71AF900659FCA /* Onboarding.swift */; };
 		43E6B94323B61CAD00F7ACE1 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94223B61CAD00F7ACE1 /* Store.swift */; };
 		43E6B94523B6660200F7ACE1 /* EntryDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B94423B6660200F7ACE1 /* EntryDB.swift */; };
 		43E6B94823B6722B00F7ACE1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43E6B94723B6722B00F7ACE1 /* Carbon.framework */; };
@@ -96,6 +97,7 @@
 		439B9CF723CB3D09001F91A2 /* AutoUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoUpdater.swift; sourceTree = "<group>"; };
 		439B9CF923CB58BB001F91A2 /* Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updates.swift; sourceTree = "<group>"; };
 		43A60B9E23BD5ED600160E3E /* remember-core.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "remember-core.entitlements"; sourceTree = "<group>"; };
+		43D680FC23D71AF900659FCA /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 		43E6B94223B61CAD00F7ACE1 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		43E6B94423B6660200F7ACE1 /* EntryDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDB.swift; sourceTree = "<group>"; };
 		43E6B94723B6722B00F7ACE1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -198,6 +200,7 @@
 				4355FC3923BA621F000463B6 /* KeyboardShortcutField.swift */,
 				43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */,
 				43E6B95B23B6878600F7ACE1 /* Notifications.swift */,
+				43D680FC23D71AF900659FCA /* Onboarding.swift */,
 				4385BC5923B4F1DF0086A98F /* Parser.swift */,
 				4355FC3723BA4E0D000463B6 /* Preferences.swift */,
 				43E6B94223B61CAD00F7ACE1 /* Store.swift */,
@@ -449,6 +452,7 @@
 				43983BE423BA279E0064C527 /* EntryListItem.swift in Sources */,
 				43E6B95A23B6775B00F7ACE1 /* DDHotKeyTextField.m in Sources */,
 				433DB90F23B134B40027268A /* VisualEffectBackground.swift in Sources */,
+				43D680FD23D71AF900659FCA /* Onboarding.swift in Sources */,
 				43E6B95823B6775B00F7ACE1 /* DDHotKeyUtilities.m in Sources */,
 				43E6B95923B6775B00F7ACE1 /* DDHotKeyCenter.m in Sources */,
 				4355FC3823BA4E0D000463B6 /* Preferences.swift in Sources */,

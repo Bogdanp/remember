@@ -72,6 +72,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if !NSApp.isActive {
             NSApp.activate(ignoringOtherApps: true)
         }
+
+        OnboardingManager.shared.show()
     }
 
     func applicationWillBecomeActive(_ notification: Notification) {
@@ -124,6 +126,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     /// Called whenever the user presses ⌘,
     @IBAction func showPreferences(_ sender: Any) {
         PreferencesManager.shared.show()
+    }
+
+    /// Called whenever the user presses ⌘?
+    @IBAction func showHelp(_ sender: Any) {
+        OnboardingManager.shared.show(force: true)
     }
 }
 
