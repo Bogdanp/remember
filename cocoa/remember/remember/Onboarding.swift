@@ -18,8 +18,8 @@ class OnboardingManager: NSObject, NSWindowDelegate {
         super.init()
 
         let window = OnboardingWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 400, height: 300),
-            styleMask: [.closable, .titled, .unifiedTitleAndToolbar],
+            contentRect: NSRect(x: 0, y: 0, width: 600, height: 600),
+            styleMask: [.titled],
             backing: .buffered,
             defer: false)
         window.delegate = self
@@ -36,19 +36,37 @@ class OnboardingManager: NSObject, NSWindowDelegate {
         }
     }
 
-    func windowShouldClose(_ sender: NSWindow) -> Bool {
+    func hide() {
         markOnboardingSeen()
         window.orderOut(self)
         window.contentView = nil
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        hide()
         return false
     }
 }
 
-private class OnboardingStore: ObservableObject {
-    @Published var currentStep = OnboardingStep1()
+fileprivate enum Step {
+    case one
+    case two
 }
 
-private struct StepFrame<Content>: View where Content: View {
+fileprivate class OnboardingStore: ObservableObject {
+    @Published var currentStep = Step.one
+
+    func `continue`() {
+        switch currentStep {
+        case .one:
+            currentStep = .two
+        case .two:
+            OnboardingManager.shared.hide()
+        }
+    }
+}
+
+fileprivate struct StepFrame<Content>: View where Content: View {
     private let content: () -> Content
 
     init(_ content: @escaping () -> Content) {
@@ -68,27 +86,162 @@ private struct StepFrame<Content>: View where Content: View {
     }
 }
 
-private struct OnboardingStep1: View {
+fileprivate struct Pill<Content>: View where Content: View {
+    let content: () -> Content
+
+    init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content
+    }
+
+    var body: some View {
+        VStack {
+            content()
+        }
+        .padding(10)
+        .background(Color.init(hue: 1, saturation: 1, brightness: 0, opacity: 0.03))
+        .cornerRadius(5)
+    }
+}
+
+fileprivate struct OnboardingStep1: View {
     var body: some View {
         StepFrame {
-            Text("Welcome to Remember")
-                .font(.largeTitle)
+            VStack {
+                Text("Welcome to Remember")
+                    .font(.largeTitle)
+                Text("Stash distractions away for later.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                VStack(alignment: .center, spacing: 10) {
+                    Pill {
+                        Text("Remember is a keyboard-driven application.  To activate or de-activate it, you can press ") +
+                            Text(KeyboardShortcutDefaults.asString()).bold() +
+                            Text(" at any time.")
+                    }
+
+                    Pill {
+                        HStack {
+                            Text("When the application is active, you can add entries like ") +
+                                Text("buy milk").bold() +
+                                Text(" and press ") +
+                                Text("↩").bold() +
+                                Text(" to save them.")
+
+                            Image("OnboardingStep1-1")
+                                .resizable()
+                                .frame(width: 258, height: 64, alignment: .center)
+                        }
+                    }
+
+                    Pill {
+                        HStack {
+                            Image("OnboardingStep1-2")
+                                .resizable()
+                                .frame(width: 258, height: 64, alignment: .center)
+                            Text("Entries can contain modifiers like ") +
+                                Text("+1d").foregroundColor(.accentColor) +
+                                Text(" or ") +
+                                Text("@10am").foregroundColor(.accentColor) +
+                                Text(" that tell Remember when it should remind you about them.")
+                        }
+                    }
+
+                    Pill {
+                        HStack {
+                            Text("You can use the arrow keys to navigate through your pending entries and ") +
+                                Text("⌫").bold() +
+                                Text(" to archive any of the ones you're done with.")
+
+                            Image("OnboardingStep1-3")
+                                .resizable()
+                                .frame(width: 335, height: 128, alignment: .center)
+                        }
+                    }
+                }
+                .padding(.top, 10)
+                .padding(.bottom, 10)
+            }
         }
     }
 }
 
-private struct OnboardingView: View {
+fileprivate struct OnboardingStep2: View {
+    var body: some View {
+        StepFrame {
+            VStack {
+                Text("Welcome to Remember")
+                    .font(.largeTitle)
+                Text("Stash distractions away for later.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Spacer()
+
+                VStack(alignment: .center, spacing: 10) {
+                    Pill {
+                        VStack {
+                            HStack {
+                                Text("You can create repeating entries by using modifiers like ") +
+                                    Text("*weekly*").foregroundColor(.green) +
+                                    Text(" or ") +
+                                    Text("*every two days*").foregroundColor(.green) +
+                                    Text(".  These entries update their due date whenever you archive them.")
+
+                                Image("OnboardingStep2-1")
+                                    .resizable()
+                                    .frame(width: 258.5, height: 64, alignment: .center)
+                            }
+
+                            Image("OnboardingStep2-2")
+                                .resizable()
+                                .frame(width: 301, height: 128, alignment: .center)
+                        }
+                    }
+
+                    Pill {
+                        Text("Press ") +
+                            Text("⌘,").bold() +
+                            Text(" to bring up the Preferences window where you can change the default key binding and make Remember launch at login.")
+                    }
+
+                    Pill {
+                        Text("Press ") +
+                            Text("⌘/").bold() +
+                            Text(" to go through this guide again whenever you need a refresher on how Remember works.")
+                    }
+
+                    Pill {
+                        Text("I sincerely hope you'll find Remember to be a useful addition to your workflow!")
+                    }
+                }
+
+                Spacer()
+            }
+        }
+    }
+}
+
+fileprivate struct OnboardingView: View {
     @ObservedObject var store: OnboardingStore
 
     var body: some View {
         VStack {
-            store.currentStep
+            if store.currentStep == .one {
+                OnboardingStep1()
+            } else if store.currentStep == .two {
+                OnboardingStep2()
+            }
 
             HStack(alignment: .center, spacing: nil) {
                 Button(action: {
-
+                    withAnimation {
+                        self.store.continue()
+                    }
                 }, label: {
-                    Text("Continue")
+                    Text(store.currentStep == .one ? "Continue" : "Get Started")
                         .padding(.leading, 20)
                         .padding(.trailing, 20)
                 })
@@ -99,7 +252,7 @@ private struct OnboardingView: View {
     }
 }
 
-private class OnboardingWindow: NSWindow {
+fileprivate class OnboardingWindow: NSWindow {
 
 }
 

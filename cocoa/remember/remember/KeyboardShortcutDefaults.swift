@@ -41,4 +41,9 @@ struct KeyboardShortcutDefaults: Codable {
             keyCode: Keycode.space,
             modifierFlags: NSEvent.ModifierFlags.option.rawValue)
     }
+
+    static func asString() -> String {
+        let defaults = load()
+        return DDStringFromKeyCode(defaults.keyCode, defaults.modifierFlags)
+    }
 }

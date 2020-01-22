@@ -61,7 +61,7 @@ class AutoUpdater {
     func performUpdate(toRelease release: Release, withCompletionHandler handler: @escaping (UpdateResult) -> Void) {
         fetchRelease(release) { res in
             switch res {
-            case .ok(let fileURL):
+            case .ok(_):
                 handler(.ok)
             case .error(let message):
                 handler(.error(message))
