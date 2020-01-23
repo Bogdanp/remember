@@ -67,6 +67,8 @@ fileprivate class OnboardingStore: ObservableObject {
 }
 
 fileprivate struct StepFrame<Content>: View where Content: View {
+    @Environment(\.colorScheme) var colorScheme
+
     private let content: () -> Content
 
     init(_ content: @escaping () -> Content) {
@@ -80,13 +82,15 @@ fileprivate struct StepFrame<Content>: View where Content: View {
         }
         .padding(25)
         .frame(width: 600, height: nil, alignment: .top)
-        .background(Color.white)
+        .background(colorScheme == .dark ? Color.black : Color.white)
         .clipped()
         .shadow(radius: 2)
     }
 }
 
 fileprivate struct Pill<Content>: View where Content: View {
+    @Environment(\.colorScheme) var colorScheme
+
     let content: () -> Content
 
     init(@ViewBuilder content: @escaping () -> Content) {
@@ -98,7 +102,7 @@ fileprivate struct Pill<Content>: View where Content: View {
             content()
         }
         .padding(10)
-        .background(Color.init(hue: 1, saturation: 1, brightness: 0, opacity: 0.03))
+        .background(colorScheme == .dark ? Color.gray.opacity(0.3) : Color.gray.opacity(0.05))
         .cornerRadius(5)
     }
 }
