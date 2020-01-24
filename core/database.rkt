@@ -125,6 +125,46 @@
         (lambda ()
           (query-exec conn "attach ? as newer_db" path))
         (lambda ()
-          (void))
+          (call-with-transaction conn
+            (lambda ()
+              (query-exec conn #<<QUERY
+INSERT INTO entries
+  SELECT *
+    FROM newer_db.entries
+    WHERE true
+  ON CONFLICT(id)
+  DO UPDATE SET
+      title=excluded.title,
+      body=excluded.body,
+      status=excluded.status,
+      due_at=excluded.due_at,
+      next_recurrence_at=excluded.next_recurrence_at,
+      recurrence_delta=excluded.recurrence_delta,
+      recurrence_modifier=excluded.recurrence_modifier,
+      created_at=excluded.created_at,
+      updated_at=excluded.updated_at
+    WHERE DATETIME(excluded.updated_at) > DATETIME(updated_at)
+QUERY
+                          )
+
+              (query-exec conn #<<QUERY
+INSERT INTO tags
+  SELECT *
+    FROM newer_db.tags
+    WHERE true
+  ON CONFLICT(id)
+  DO NOTHING
+QUERY
+                          )
+
+              (query-exec conn #<<QUERY
+INSERT INTO entry_tags
+  SELECT *
+    FROM newer_db.entry_tags
+    WHERE true
+  ON CONFLICT(entry_id, tag_id)
+  DO NOTHING
+QUERY
+                          ))))
         (lambda ()
           (query-exec conn "detach newer_db"))))))

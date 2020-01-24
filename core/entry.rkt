@@ -45,7 +45,12 @@
    [next-recurrence-at datetime/f #:nullable]
    [recurrence-delta integer/f #:nullable]
    [recurrence-modifier symbol/f #:nullable #:contract recurrence-modifier/c]
-   [(created-at (now)) datetime/f])
+   [(created-at (now)) datetime/f]
+   [(updated-at (now)) datetime/f])
+
+  #:pre-persist-hook
+  (lambda (e)
+    (set-entry-updated-at e (now)))
 
   #:methods gen:to-jsexpr
   [(define (->jsexpr e)
