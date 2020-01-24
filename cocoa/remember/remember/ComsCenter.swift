@@ -37,6 +37,10 @@ class ComsCenter {
     private var asyncNotificationListeners = [(AsyncNotification) -> Void]()
 
     init(withCoreURL coreURL: URL) throws {
+        var env = ProcessInfo.processInfo.environment
+        env["PLT_INCREMENTAL_GC"] = "1"
+
+        process.environment = env
         process.executableURL = coreURL
         process.standardInput = wEnd
         process.standardOutput = rEnd
