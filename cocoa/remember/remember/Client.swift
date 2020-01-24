@@ -110,4 +110,10 @@ class Client: AsyncNotifier & Parser & EntryDB {
             }
         }
     }
+
+    func mergeDatabaseCopy(from path: URL, withCompletionHandler handler: @escaping () -> Void) {
+        return rpc.call("merge-database-copy!", [path.relativePath]) { (res: RPCResult<RPCUnit>) in
+            handler()
+        }
+    }
 }

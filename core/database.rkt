@@ -19,7 +19,8 @@
  call-with-database-transaction
  sql->
  backup-database!
- create-database-copy!)
+ create-database-copy!
+ merge-database-copy!)
 
 (define id/c
   exact-nonnegative-integer?)
@@ -116,3 +117,14 @@
     (call-with-database-connection
       (lambda (conn)
         (query-exec conn "vacuum into ?" path)))))
+
+(define (merge-database-copy! path)
+  (call-with-database-connection
+    (lambda (conn)
+      (dynamic-wind
+        (lambda ()
+          (query-exec conn "attach ? as newer_db" path))
+        (lambda ()
+          (void))
+        (lambda ()
+          (query-exec conn "detach newer_db"))))))

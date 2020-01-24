@@ -16,7 +16,6 @@
 (backup-database!)
 (migrate!)
 (register-rpc
- create-database-copy!
  [parse-command parse-command/jsexpr]
  [commit! (compose1 ->jsexpr commit!)]
  [update! (compose1 ->jsexpr update!)]
@@ -24,7 +23,9 @@
  [snooze-entry! (compose1 unit snooze-entry!)]
  [delete-entry! (compose1 unit delete-entry!)]
  [find-pending-entries (compose1 ->jsexpr find-pending-entries)]
- [undo! (compose1 unit undo!)])
+ [undo! (compose1 unit undo!)]
+ create-database-copy!
+ [merge-database-copy! (compose1 unit merge-database-copy!)])
 
 (define-listener (entries-did-change)
   (channel-put notifications (hasheq 'type "entries-did-change")))
