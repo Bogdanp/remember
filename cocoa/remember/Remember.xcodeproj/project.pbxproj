@@ -43,6 +43,7 @@
 		43E6B95C23B6878600F7ACE1 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95B23B6878600F7ACE1 /* Notifications.swift */; };
 		43E6B95E23B68F4A00F7ACE1 /* Keycode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */; };
 		43E6B96023B6A33600F7ACE1 /* AsyncNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95F23B6A33600F7ACE1 /* AsyncNotification.swift */; };
+		43F0F39923DAF59000D3D97C /* FolderSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F0F39823DAF59000D3D97C /* FolderSync.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -111,6 +112,7 @@
 		43E6B95B23B6878600F7ACE1 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keycode.swift; sourceTree = "<group>"; };
 		43E6B95F23B6A33600F7ACE1 /* AsyncNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncNotification.swift; sourceTree = "<group>"; };
+		43F0F39823DAF59000D3D97C /* FolderSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSync.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +196,7 @@
 				43E6B94423B6660200F7ACE1 /* EntryDB.swift */,
 				43983BE123BA19EC0064C527 /* EntryList.swift */,
 				43983BE323BA279E0064C527 /* EntryListItem.swift */,
+				43F0F39823DAF59000D3D97C /* FolderSync.swift */,
 				4385BC5323B4CAEA0086A98F /* JSONChunker.swift */,
 				4355FC3D23BA7B3A000463B6 /* KeyboardShortcut.swift */,
 				4355FC3B23BA73A8000463B6 /* KeyboardShortcutDefaults.swift */,
@@ -470,6 +473,7 @@
 				43E6B94323B61CAD00F7ACE1 /* Store.swift in Sources */,
 				43983BDE23B794300064C527 /* UserNotifications.swift in Sources */,
 				4355FC3E23BA7B3A000463B6 /* KeyboardShortcut.swift in Sources */,
+				43F0F39923DAF59000D3D97C /* FolderSync.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

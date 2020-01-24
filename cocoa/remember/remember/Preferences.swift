@@ -21,7 +21,7 @@ class PreferencesManager: NSObject, NSWindowDelegate {
         super.init()
 
         let window = PreferencesWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 400, height: 300),
+            contentRect: NSRect(x: 0, y: 0, width: 500, height: 300),
             styleMask: [.closable, .titled, .unifiedTitleAndToolbar],
             backing: .buffered,
             defer: false)
@@ -65,6 +65,31 @@ private struct GeneralPreferencesView : View {
                         KeyboardShortcutDefaults(fromHotKey: hk).save()
                     }
                 }
+                Preference("Sync:") {
+                    VStack(alignment: .leading, spacing: nil) {
+                        if self.store.syncFolder != nil {
+                            Text("Syncing to: ")
+                            Text(self.store.syncFolder!.relativePath)
+                                .foregroundColor(.secondary)
+                                .padding(.top, 5)
+                        }
+
+                        Button(action: {
+                            let panel = NSOpenPanel()
+                            panel.prompt = "Set Sync Folder"
+                            panel.allowsMultipleSelection = false
+                            panel.canChooseFiles = false
+                            panel.canChooseDirectories = true
+                            panel.canCreateDirectories = true
+
+                            if panel.runModal() == .OK {
+                                self.store.syncFolder = panel.urls[0]
+                            }
+                        }, label: {
+                            Text("Set Sync Folder...")
+                        })
+                    }
+                }
             }
         }
         .padding(15)
@@ -73,14 +98,22 @@ private struct GeneralPreferencesView : View {
 
 private class PreferencesStore: NSObject, ObservableObject {
     @Published var launchAtLogin = LaunchAtLogin.isEnabled
+    @Published var syncFolder = FolderSyncDefaults.load()
 
     private var launchAtLoginCancellable: AnyCancellable?
+    private var syncFolderCancellable: AnyCancellable?
 
     override init() {
         super.init()
 
         launchAtLoginCancellable = $launchAtLogin.sink {
             LaunchAtLogin.isEnabled = $0
+        }
+
+        syncFolderCancellable = $syncFolder.sink {
+            if let path = $0 {
+                FolderSyncDefaults.save(path: path)
+            }
         }
     }
 }
@@ -95,7 +128,7 @@ private struct Preference<Content: View> : View {
     }
 
     var body: some View {
-        HStack {
+        HStack(alignment: .top, spacing: nil) {
             Text(label)
                 .frame(width: 150, height: nil, alignment:  .trailing)
             content
