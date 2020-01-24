@@ -18,4 +18,8 @@ class FolderSyncDefaults {
     static func save(path: URL) {
         UserDefaults.standard.set(path, forKey: KEY)
     }
+
+    static func clear() {
+        UserDefaults.standard.removeObject(forKey: KEY)
+    }
 }

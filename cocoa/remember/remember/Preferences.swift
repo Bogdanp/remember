@@ -74,20 +74,30 @@ private struct GeneralPreferencesView : View {
                                 .padding(.top, 5)
                         }
 
-                        Button(action: {
-                            let panel = NSOpenPanel()
-                            panel.prompt = "Set Sync Folder"
-                            panel.allowsMultipleSelection = false
-                            panel.canChooseFiles = false
-                            panel.canChooseDirectories = true
-                            panel.canCreateDirectories = true
+                        HStack {
+                            Button(action: {
+                                let panel = NSOpenPanel()
+                                panel.prompt = "Set Sync Folder"
+                                panel.allowsMultipleSelection = false
+                                panel.canChooseFiles = false
+                                panel.canChooseDirectories = true
+                                panel.canCreateDirectories = true
 
-                            if panel.runModal() == .OK {
-                                self.store.syncFolder = panel.urls[0]
+                                if panel.runModal() == .OK {
+                                    self.store.syncFolder = panel.urls[0]
+                                }
+                            }, label: {
+                                Text("Set Sync Folder...")
+                            })
+
+                            if self.store.syncFolder != nil {
+                                Button(action: {
+                                    self.store.syncFolder = nil
+                                }, label: {
+                                    Text("Stop Syncing")
+                                })
                             }
-                        }, label: {
-                            Text("Set Sync Folder...")
-                        })
+                        }
                     }
                 }
             }
@@ -113,6 +123,8 @@ private class PreferencesStore: NSObject, ObservableObject {
         syncFolderCancellable = $syncFolder.sink {
             if let path = $0 {
                 FolderSyncDefaults.save(path: path)
+            } else {
+                FolderSyncDefaults.clear()
             }
         }
     }
