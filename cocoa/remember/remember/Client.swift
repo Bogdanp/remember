@@ -99,4 +99,15 @@ class Client: AsyncNotifier & Parser & EntryDB {
             handler()
         }
     }
+
+    func createDatabaseCopy(withCompletionHandler handler: @escaping (URL) -> Void) {
+        return rpc.call("create-database-copy!", []) { (res: RPCResult<URL>) in
+            switch res {
+            case .ok(let p):
+                handler(p)
+            case .error(let e):
+                os_log("failed to create database copy: %s", type: .error, "\(e)")
+            }
+        }
+    }
 }

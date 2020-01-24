@@ -20,6 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var rpc: ComsCenter!
     private var client: Client!
     private var updater: AutoUpdater!
+    private var syncer: FolderSyncer!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         guard let coreURL = Bundle.main.url(forResource: "core/bin/remember-core", withExtension: nil) else {
@@ -39,6 +40,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //                UpdatesManager.shared.show(withChangelog: changes, andRelease: version)
 //            }
 //        }
+
+        syncer = FolderSyncer(withEntryDB: client)
+        syncer.start()
 
         let contentView = ContentView(
             asyncNotifier: client,

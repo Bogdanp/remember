@@ -108,7 +108,7 @@ private struct GeneralPreferencesView : View {
 
 private class PreferencesStore: NSObject, ObservableObject {
     @Published var launchAtLogin = LaunchAtLogin.isEnabled
-    @Published var syncFolder = FolderSyncDefaults.load()
+    @Published var syncFolder = try! FolderSyncDefaults.load()
 
     private var launchAtLoginCancellable: AnyCancellable?
     private var syncFolderCancellable: AnyCancellable?
@@ -122,7 +122,13 @@ private class PreferencesStore: NSObject, ObservableObject {
 
         syncFolderCancellable = $syncFolder.sink {
             if let path = $0 {
-                FolderSyncDefaults.save(path: path)
+                if path.startAccessingSecurityScopedResource() {
+                    defer {
+                        path.stopAccessingSecurityScopedResource()
+                    }
+
+                    try! FolderSyncDefaults.save(path: path)
+                }
             } else {
                 FolderSyncDefaults.clear()
             }

@@ -40,4 +40,5 @@ protocol EntryDB {
     func deleteEntry(byId: Entry.Id, withCompletionHandler: @escaping () -> Void)
     func findPendingEntries(withCompletionHandler: @escaping ([Entry]) -> Void)
     func undo(withCompletionHandler: @escaping () -> Void)
+    func createDatabaseCopy(withCompletionHandler: @escaping (URL) -> Void)
 }
