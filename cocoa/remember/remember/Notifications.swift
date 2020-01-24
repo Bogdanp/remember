@@ -13,6 +13,20 @@ struct Notifications {
         NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil, using: handler)
     }
 
+    static func didToggleStatusItem(show: Bool) {
+        NotificationCenter.default.post(
+            name: .didToggleStatusItem,
+            object: show)
+    }
+
+    static func observeDidToggleStatusItem(withCompletionHandler handler: @escaping (Bool) -> Void) {
+        observe(.didToggleStatusItem) { notification in
+            if let show = notification.object as? Bool {
+                handler(show)
+            }
+         }
+    }
+
     static func willHideWindow() {
         NotificationCenter.default.post(
             name: .willHideWindow,
@@ -69,6 +83,7 @@ struct Notifications {
 }
 
 extension Notification.Name {
+    static let didToggleStatusItem = Notification.Name("io.defn.remember.didToggleStatusItem")
     static let willHideWindow = Notification.Name("io.defn.remember.willHideWindow")
     static let willArchiveEntry = Notification.Name("io.defn.remember.willArchiveEntry")
     static let willSelectEntry = Notification.Name("io.defn.remember.willSelectEntry")

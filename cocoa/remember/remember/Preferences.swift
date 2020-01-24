@@ -60,11 +60,15 @@ private struct GeneralPreferencesView : View {
                 Preference("Startup:") {
                     Toggle("Launch Remember at Login", isOn: $store.launchAtLogin)
                 }
-                Preference("Keyboard Shortcut:") {
+                Preference("Behavior:") {
+                    Toggle("Show Menu Bar Icon", isOn: $store.showStatusIcon)
+                }
+                Preference("Show Remember:") {
                     KeyboardShortcutField { hk in
                         KeyboardShortcutDefaults(fromHotKey: hk).save()
                     }
                 }
+                .padding([.top, .bottom], 10)
                 Preference("Sync:") {
                     VStack(alignment: .leading, spacing: nil) {
                         if self.store.syncFolder != nil {
@@ -106,9 +110,11 @@ private struct GeneralPreferencesView : View {
 
 private class PreferencesStore: NSObject, ObservableObject {
     @Published var launchAtLogin = LaunchAtLogin.isEnabled
+    @Published var showStatusIcon = StatusItemDefaults.shouldShow()
     @Published var syncFolder = try! FolderSyncDefaults.load()
 
     private var launchAtLoginCancellable: AnyCancellable?
+    private var showStatusIconCancellable: AnyCancellable?
     private var syncFolderCancellable: AnyCancellable?
 
     override init() {
@@ -116,6 +122,10 @@ private class PreferencesStore: NSObject, ObservableObject {
 
         launchAtLoginCancellable = $launchAtLogin.sink {
             LaunchAtLogin.isEnabled = $0
+        }
+
+        showStatusIconCancellable = $showStatusIcon.sink {
+            Notifications.didToggleStatusItem(show: $0)
         }
 
         syncFolderCancellable = $syncFolder.sink {

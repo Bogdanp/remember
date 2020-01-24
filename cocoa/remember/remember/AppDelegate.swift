@@ -113,6 +113,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func setupStatusItem() {
+        if StatusItemDefaults.shouldShow() {
+            showStatusItem()
+        }
+
+        Notifications.observeDidToggleStatusItem { show in
+            if show {
+                StatusItemDefaults.show()
+                self.showStatusItem()
+            } else {
+                StatusItemDefaults.hide()
+                self.hideStatusItem()
+            }
+        }
+    }
+
+    private func showStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
             button.image = NSImage(named: NSImage.Name("StatusBarIcon"))
@@ -127,6 +143,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit Remember", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         statusItem?.menu = menu
+    }
+
+    private func hideStatusItem() {
+        if let item = statusItem {
+            NSStatusBar.system.removeStatusItem(item)
+        }
     }
 
     @objc private func showApplicationFromStatusItem(_ sender: Any) {
