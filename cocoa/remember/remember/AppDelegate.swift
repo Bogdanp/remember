@@ -131,7 +131,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private func showStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem?.button {
-            button.image = NSImage(named: NSImage.Name("StatusBarIcon"))
+            let icon = NSImage(named: NSImage.Name("StatusBarIcon"))
+            icon?.isTemplate = true
+            button.image = icon
             button.action = nil
         }
 
