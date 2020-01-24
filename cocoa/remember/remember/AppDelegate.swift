@@ -15,7 +15,8 @@ import os
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow!
-    private var windowDelegate: NSWindowDelegate = WindowDelegate()
+
+    private var statusItem: NSStatusItem?
 
     private var rpc: ComsCenter!
     private var client: Client!
@@ -57,7 +58,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             backing: .buffered,
             defer: false
         )
-        window.delegate = windowDelegate
         window.collectionBehavior = .canJoinAllSpaces
         window.setFrameAutosaveName("Remember")
         window.backgroundColor = .clear
@@ -68,6 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.titlebarAppearsTransparent = true
         window.makeKeyAndOrderFront(nil)
 
+        setupStatusItem()
         setupHotKey()
         setupHidingListener()
         setupUserNotifications()
@@ -111,6 +112,37 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    private func setupStatusItem() {
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        if let button = statusItem?.button {
+            button.image = NSImage(named: NSImage.Name("StatusBarIcon"))
+            button.action = nil
+        }
+
+        let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "Show Remember", action: #selector(showApplicationFromStatusItem(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Help...", action: #selector(showHelpFromStatusItem(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Preferences...", action: #selector(showPreferencesFromStatusItem(_:)), keyEquivalent: ","))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Quit Remember", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        statusItem?.menu = menu
+    }
+
+    @objc private func showApplicationFromStatusItem(_ sender: Any) {
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func showHelpFromStatusItem(_ sender: Any) {
+        NSApp.activate(ignoringOtherApps: true)
+        showHelp(sender)
+    }
+
+    @objc private func showPreferencesFromStatusItem(_ sender: Any) {
+        NSApp.activate(ignoringOtherApps: true)
+        showPreferences(sender)
+    }
+
     private func setupHotKey() {
         KeyboardShortcut.register()
     }
@@ -135,15 +167,5 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     /// Called whenever the user presses ⌘?
     @IBAction func showHelp(_ sender: Any) {
         OnboardingManager.shared.show(force: true)
-    }
-}
-
-fileprivate class WindowDelegate: NSObject, NSWindowDelegate {
-    // This hack ensures that the application becomes active after being started with Spotlight.
-    // It's weird that this would be necessary, but whatevs.  Maybe there's a better way...
-    func windowDidBecomeKey(_ notification: Notification) {
-        if !NSApp.isActive {
-            NSApp.activate(ignoringOtherApps: true)
-        }
     }
 }
