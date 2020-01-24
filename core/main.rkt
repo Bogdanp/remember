@@ -16,6 +16,7 @@
 (backup-database!)
 (migrate!)
 (register-rpc
+ create-database-copy!
  [parse-command parse-command/jsexpr]
  [commit! (compose1 ->jsexpr commit!)]
  [update! (compose1 ->jsexpr update!)]

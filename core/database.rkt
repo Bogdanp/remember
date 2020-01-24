@@ -18,7 +18,8 @@
  call-with-database-connection
  call-with-database-transaction
  sql->
- backup-database!)
+ backup-database!
+ create-database-copy!)
 
 (define id/c
   exact-nonnegative-integer?)
@@ -107,3 +108,11 @@
     (define backup-path (path-add-extension database-path (string->bytes/utf-8 backup-suffix)))
     (copy-file database-path backup-path #t)
     (delete-old-backups!)))
+
+(define (create-database-copy!)
+  (define path (path->string (make-temporary-file)))
+  (begin0 path
+    (delete-file path)
+    (call-with-database-connection
+      (lambda (conn)
+        (query-exec conn "vacuum into ?" path)))))
