@@ -68,10 +68,8 @@ private struct GeneralPreferencesView : View {
                 Preference("Sync:") {
                     VStack(alignment: .leading, spacing: nil) {
                         if self.store.syncFolder != nil {
-                            Text("Syncing to: ")
                             Text(self.store.syncFolder!.relativePath)
                                 .foregroundColor(.secondary)
-                                .padding(.top, 5)
                         }
 
                         HStack {
