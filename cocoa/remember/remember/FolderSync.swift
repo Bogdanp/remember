@@ -88,9 +88,9 @@ class FolderSyncer {
                 try manager.removeItem(at: destURL)
             }
 
-            try manager.copyItem(at: sourceURL, to: destURL)
+            try manager.moveItem(at: sourceURL, to: destURL)
         } catch {
-            os_log("failed to copy database to sync folder: %s", type: .error, "\(error)")
+            os_log("failed to save database to sync folder: %s", type: .error, "\(error)")
         }
     }
 
