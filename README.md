@@ -29,7 +29,7 @@ In that vein, you're free to read, build and run the application
 yourself, on your own devices, but please don't share any built
 artifacts with others.
 
-[buying a copy]: https://gumroad.com/l/rememberapp
+[buying a copy]: https://remember.defn.io
 
 ## Build
 
