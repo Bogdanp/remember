@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Remember for macOS</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --fg-color: #000000;
+        --fg-color--secondary: #151515;
+        --bg-color: #ffffff;
+        --bg-color-alt: #fafafa;
+      }
+
+      body {
+        background: var(--bg-color);
+        color: var(--fg-color);
+        font: 62.5%/1.4 sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+      }
+
+      section {
+        padding: 64px 24px;
+      }
+
+      section.feature {
+        opacity: 1;
+        transition: opacity 0.1s;
+      }
+
+      section.alt {
+        background: var(--bg-color-alt);
+        box-shadow: 0 0 25px 10px rgba(0, 0, 0, 0.02) inset;
+        min-height: 100px;
+      }
+
+      p {
+        color: var(--fg-color--secondary);
+        font-size: 1rem;
+        font-weight: 300;
+      }
+
+      video {
+        display: block;
+        border-radius: 5px;
+        box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+        width: 90%;
+      }
+
+      a {
+        color: inherit;
+        font: inherit;
+        font-size: 1rem;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .container {
+        margin: 0 auto;
+      }
+
+      .hero {
+        padding: 96px 24px;
+      }
+
+      .hero__info {
+      }
+
+      .logo {
+        width: 128px;
+        height: auto;
+      }
+
+      .title {
+        font-size: 2rem;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        color: var(--fg-color--secondary);
+        font-size: 1.4rem;
+        font-weight: 300;
+      }
+
+      .binding {
+        display: inline-block;
+        padding: 3px 7px;
+        background: #fff;
+        border-radius: 3px;
+        box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.05);
+        font-size: 0.9rem;
+      }
+
+      .modifier {
+        display: inline-block;
+        padding: 3px 7px;
+        background: #fff;
+        border-radius: 3px;
+        box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.05);
+        color: #0c60ff;
+        font-size: 0.9rem;
+      }
+
+      .col {
+        padding: 12px 0;
+        text-align: center;
+      }
+
+      .col p {
+        margin: 0 auto;
+        max-width: 320px;
+      }
+
+      .footer {
+        margin: 32px 0 0 0;
+      }
+
+      .footer__links {
+        list-style: none;
+        display: grid;
+        grid-auto-flow: column;
+        text-align: center;
+      }
+
+      .footer__link {
+        display: block;
+      }
+
+      .footer__copyright {
+        display: block;
+        margin: 32px 0 0 0;
+        text-align: center;
+      }
+
+      @media screen and (min-width: 960px) {
+        video {
+          width: 520px;
+        }
+
+        .row {
+          display: grid;
+          grid-template-columns: 2fr 2fr;
+          align-items: center;
+        }
+
+        .row.prefer-left {
+          grid-template-columns: 1.5fr 1fr;
+        }
+
+        .row.prefer-right {
+          grid-template-columns: 1fr 1.5fr;
+        }
+
+        .col {
+          padding: 0 12px;
+          text-align: left;
+        }
+
+        .col p {
+          margin: 0 0;
+          max-width: auto;
+          text-align: left;
+        }
+
+        .container {
+          width: 960px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="hero">
+      <div class="container">
+        <div class="row prefer-left">
+          <div class="col">
+            <video src="/assets/demo.mp4" height="auto" autoplay loop controls></video>
+          </div>
+          <div class="col hero__info">
+            <a href="https://remember.defn.io/">
+              <img class="logo" src="assets/logo.png">
+            </a>
+            <h1 class="title">Remember</h1>
+            <h2 class="subtitle">Stash distractions away for later.</h2>
+
+            <br/>
+            <a class="gumroad-button" href="https://gum.co/rememberapp" target="_blank">Pay What You Want</a>
+
+            <br/>
+            <br/>
+            <br/>
+            <p>
+              <small>
+                <strong>Supported platforms:</strong>
+                macOS Catalina and higher <br/>
+                Windows support coming soon!
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature alt">
+      <div class="container">
+        <div class="row prefer-right">
+          <div class="col">
+            <h1 class="title">Add Reminders</h1>
+            <p>
+              Activate Remember by hitting <strong class="binding"
+              title="command-space">⌥⎵</strong>,
+              type whatever it is you need to keep track of, hit
+              return and then go about your business.
+            </p>
+          </div>
+          <div class="col">
+            <video src="/assets/demo-adding.mp4" height="auto" autoplay loop controls></video>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature">
+      <div class="container">
+        <div class="row prefer-left">
+          <div class="col">
+            <video src="/assets/demo-listing.mp4" height="auto" autoplay loop controls></video>
+          </div>
+          <div class="col">
+            <h1 class="title">Manage Your Entries</h1>
+            <p>
+              Use the arrow keys to navigate through your pending
+              entries and archive ones you've completed with <strong
+              class="binding" title="backspace">⌫</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature alt">
+      <div class="container">
+        <div class="row prefer-right">
+          <div class="col">
+            <h1 class="title">Get Notified</h1>
+            <p>
+              Add due dates to your entries using intuitive modifiers
+              (like <span class="modifier">+1d</span> or <span
+              class="modifier">@10am mon</span>) to get notified when
+              they're due.
+            </p>
+          </div>
+          <div class="col">
+            <video src="/assets/demo-notify.mp4" height="auto" autoplay loop controls></video>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="footer">
+      <div class="container">
+        <ul class="footer__links">
+          <li class="footer__link">
+            <a href="https://remember.defn.io/versions/changelog.txt">Changelog</a>
+          </li>
+          <li class="footer__link">
+            <a href="https://twitter.com/Bogdanp">Twitter</a>
+          </li>
+          <li class="footer__link">
+            <a href="mailto:bogdan@defn.io">Contact Me</a>
+          </li>
+        </ul>
+
+        <p class="footer__copyright">
+          &copy; 2020 CLEARTYPE SRL
+        </p>
+      </div>
+    </section>
+
+    <script>
+      (function(n, e, m, E, a, $) {
+        n[E]=n[E]||function(){(n[E].q=n[E].q||[]).push(arguments)};$=e.createElement(m);
+        $.id=E;$.src=a;$.async=1;m=e.getElementsByTagName(m)[0];m.parentNode.insertBefore($,m)
+      })(window, document, "script", "nemea", "https://remember-app.nemea.co/track.js");
+
+      nemea("view");
+    </script>
+
+    <script src="https://gumroad.com/js/gumroad.js"></script>
+  </body>
+</html>
