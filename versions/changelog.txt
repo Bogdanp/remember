@@ -1,4 +1,15 @@
-# 2020.10.12
+# 2020.01.25
 ## Added:
 
 * Support for auto-updates!
+
+# 2020.01.24
+## Added:
+
+* Support for syncing the database between computers.
+* Support for a status bar icon.
+
+# 2020.01.23
+## Fixed:
+
+* Dark mode support during onboarding.

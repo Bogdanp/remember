@@ -35,12 +35,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.rpc = rpc
         client = Client(rpc)
 
-//        self.updater = AutoUpdater()
-//        self.updater.start(withInterval: 3600 * 4) { changes, version in
-//            RunLoop.main.schedule {
-//                UpdatesManager.shared.show(withChangelog: changes, andRelease: version)
-//            }
-//        }
+        updater = AutoUpdater()
+        updater.start(withInterval: 3600 * 4) { changes, version in
+            RunLoop.main.schedule {
+                UpdatesManager.shared.show(withChangelog: changes, andRelease: version)
+            }
+        }
 
         syncer = FolderSyncer(withEntryDB: client)
         syncer.start()

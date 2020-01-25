@@ -1,14 +1,20 @@
 TEMP_DIR=temp
 BUILD_DIR=build
 
+COCOA_CORE_DIR=cocoa/remember/Resources/core
+
+.PHONY: all
+all: $(COCOA_CORE_DIR)/bin/remember-core
+
+
+## Core ################################################################
+
 CORE_SRC_DIR=core
 CORE_OBJ_DIR=core/compiled
 
-COCOA_OBJ_DIR=cocoa/remember/Resources/core
-
-$(COCOA_OBJ_DIR)/bin/remember-core: $(BUILD_DIR)/bin/remember-core
-	rm -fr $(COCOA_OBJ_DIR) && mkdir -p $(COCOA_OBJ_DIR)
-	cp -r $(BUILD_DIR)/* $(COCOA_OBJ_DIR)/
+$(COCOA_CORE_DIR)/bin/remember-core: $(BUILD_DIR)/bin/remember-core
+	rm -fr $(COCOA_CORE_DIR) && mkdir -p $(COCOA_CORE_DIR)
+	cp -r $(BUILD_DIR)/* $(COCOA_CORE_DIR)/
 
 $(BUILD_DIR)/bin/remember-core: $(TEMP_DIR)/remember-core
 	rm -fr $(BUILD_DIR) && mkdir -p $(BUILD_DIR)
@@ -23,6 +29,9 @@ $(CORE_OBJ_DIR)/main_rkt.zo: core/*.rkt
 $(CORE_OBJ_DIR)/%_rkt.zo: core/%.rkt
 	raco make $<
 
+
+## Phony ###############################################################
+
 .PHONY: clean
 clean:
-	rm -fr $(CORE_OBJ_DIR) $(COCOA_OBJ_DIR) $(BUILD_DIR) $(TEMP_DIR)
+	rm -fr $(CORE_OBJ_DIR) $(COCOA_CORE_DIR) $(BUILD_DIR) $(TEMP_DIR)

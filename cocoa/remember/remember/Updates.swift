@@ -64,7 +64,7 @@ fileprivate class UpdatesStore: ObservableObject {
 
                 switch res {
                 case .ok:
-                    return
+                    NSApp.terminate(nil)
                 case .error(let message):
                     let alert = NSAlert()
                     alert.messageText = message
@@ -109,9 +109,9 @@ fileprivate struct UpdatesView: View {
                     }, label: {
                         if store.updating {
                             ProgressIndicator()
-                            Text("Installing Updates...")
+                            Text("Downloading Update...")
                         } else {
-                            Text("Install Updates")
+                            Text("Download Update")
                         }
                     })
                         .buttonStyle(BorderedButtonStyle())

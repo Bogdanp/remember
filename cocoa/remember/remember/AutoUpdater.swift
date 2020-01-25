@@ -45,6 +45,10 @@ class AutoUpdater {
     private var timer: Timer?
 
     func start(withInterval interval: Double, andCompletionHandler handler: @escaping (String, Release) -> Void) {
+        #if DEBUG
+        URLCache.shared.removeAllCachedResponses()
+        #endif
+
         stop()
         checkForUpdates(withCompletionHandler: handler)
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
@@ -61,7 +65,16 @@ class AutoUpdater {
     func performUpdate(toRelease release: Release, withCompletionHandler handler: @escaping (UpdateResult) -> Void) {
         fetchRelease(release) { res in
             switch res {
-            case .ok(_):
+            case .ok(let path):
+                let downloadsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
+                let targetURL = downloadsURL.appendingPathComponent("Remember \(release.version).dmg")
+                do {
+                    try FileManager.default.copyItem(at: path, to: targetURL)
+                } catch {
+                    os_log("failed to copy update to downloads folder: %s", type: .error, "\(error)")
+                }
+
+                NSWorkspace.shared.open(targetURL)
                 handler(.ok)
             case .error(let message):
                 handler(.error(message))
