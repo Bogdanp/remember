@@ -31,7 +31,7 @@
       (query-exec conn "create table if not exists schema_migrations(ref text not null unique)")
       (for ([migration-path (in-list migration-paths)])
         (define ref (path->string (last (explode-path migration-path))))
-        (unless (query-maybe-value conn "select true from schema_migrations where ref = $1" ref)
+        (unless (query-maybe-value conn "select 1 from schema_migrations where ref = $1" ref)
           ;; This is pretty piggy but db-lib doesn't support multiple statements per query.
           (define migration (file->string migration-path))
           (define statements (string-split migration ";\n"))

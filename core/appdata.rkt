@@ -17,6 +17,13 @@
       "Application Support"
       app-id)]
 
+    [(windows)
+     (build-path
+      (find-system-path 'home-dir)
+      "AppData"
+      "Roaming"
+      app-id)]
+
     [else
      (error 'current-application-data-directory "not implemented")]))
 
