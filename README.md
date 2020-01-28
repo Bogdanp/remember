@@ -35,21 +35,35 @@ artifacts with others.
 
 ### Requirements
 
+#### For macOS
+
 * [Racket 7.5+](https://racket-lang.org/)
 * macOS Catalina
 * Xcode 11+
 * [Carthage](https://github.com/Carthage/Carthage)
 
+#### For Windows
+
+* [Racket 7.5+](https://racket-lang.org/)
+* Windows 10
+* Visual Studio 2019
+
 ### First-time Setup
 
     $ raco pkg install --name remember core/
-    $ $(cd cocoa/remember && carthage update)
+    $ $(cd cocoa/remember && carthage update)  # on macOS
 
 ### Building
+
+#### For macOS
 
     $ make
     $ $(cd cocoa/remember && xcodebuild)
 
+#### For Windows
+
+    $ .\make.ps1
+
 ## License
 
-    Copyright 2019 CLEARTYPE SRL.  All rights reserved.
+    Copyright 2019,2020 CLEARTYPE SRL.  All rights reserved.
