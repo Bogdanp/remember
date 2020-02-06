@@ -92,6 +92,17 @@
         font-weight: 300;
       }
 
+      .ctas {
+        display: grid;
+        grid-auto-flow: column;
+        align-items: center;
+      }
+
+      .ctas__sep {
+        display: block;
+        text-align: center;
+      }
+
       .binding {
         display: inline-block;
         padding: 3px 7px;
@@ -172,6 +183,10 @@
           text-align: left;
         }
 
+        p.ctas__sep {
+          text-align: center;
+        }
+
         .container {
           width: 960px;
         }
@@ -193,7 +208,17 @@
             <h2 class="subtitle">Stash distractions away for later.</h2>
 
             <br/>
-            <a class="gumroad-button" href="https://gum.co/rememberapp?wanted=true" target="_blank">Buy Now</a>
+            <div class="ctas">
+              <a class="gumroad-button" href="https://gum.co/rememberapp?wanted=true" target="_blank">Buy Now</a>
+
+              <p class="ctas__sep">
+                or
+              </p>
+
+              <a class="mac-app-store-button" href="https://apps.apple.com/ro/app/remember-quick-reminders/id1493354028?mt=12" target="_blank">
+                <img src="assets/app-store.svg" />
+              </a>
+            </div>
 
             <br/>
             <br/>
