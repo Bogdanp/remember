@@ -128,7 +128,8 @@
 (define PREFIX-CHARS '(#\+ #\* #\@ #\#))
 (define RELATIVE-TIME-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
 (define NAMED-DATE-RE #px"^@(tmw|tomorrow|mon|tue|wed|thu|fri|sat|sun)")
-(define NAMED-DATETIME-RE #px"^@(([1-9]|10|11|12)(:(0[0-9]|[1-9][0-9]))?(am|pm)) ?(tmw|tomorrow|mon|tue|wed|thu|fri|sat|sun)?")
+(define NAMED-DATETIME-RE #px"^@((0?[1-9]|10|11|12)(:(0[0-9]|[1-5][0-9]))?(am|pm)) ?(tmw|tomorrow|mon|tue|wed|thu|fri|sat|sun)?")
+(define NAMED-DATETIME/MT-RE #px"^@((2[0-3]|1[0-9]|0?[0-9])(:(0[0-9]|[1-5][0-9]))?) ?(tmw|tomorrow|mon|tue|wed|thu|fri|sat|sun)?")
 (define RECURRENCE-RE #px"^\\*(hourly|daily|weekly|monthly|yearly|every ([1-9][0-9]*) (hours|days|weeks|months|years))\\*")
 (define TAG-RE #px"^#([^ ]+)")
 
@@ -204,15 +205,14 @@
   (define (make-time hour:bs minute:bs period)
     (time (modulo (+ (bytes->number hour:bs)
                      (case period
-                       [(#"am") 0]
-                       [(#"pm") 12]))
+                       [(#"am" #f) 0]
+                       [(#"pm")    12]))
                   24)
           (or (and minute:bs (bytes->number minute:bs))
               0)))
 
-  (define start-loc (port-location in))
-  (match (regexp-try-match NAMED-DATETIME-RE in)
-    [(list text _ hour sep minute period #f)
+  (define/match (prepare text hour minute period weekday)
+    [(text hour minute period #f)
      (named-datetime (bytes->string/utf-8 text)
                      (span start-loc (port-location in))
                      (let ([t (make-time hour minute period)])
@@ -220,17 +220,26 @@
                            (at-time (+days (today) 1) t)
                            (at-time (today) t))))]
 
-    [(list text _ hour sep minute period (or #"tmw" #"tomorrow"))
+    [(text hour minute period (or #"tmw" #"tomorrow"))
      (named-datetime (bytes->string/utf-8 text)
                      (span start-loc (port-location in))
                      (at-time (+days (today) 1)
                               (make-time hour minute period)))]
 
-    [(list text _ hour sep minute period weekday)
+    [(text hour minute period weekday)
      (named-datetime (bytes->string/utf-8 text)
                      (span start-loc (port-location in))
                      (at-time (weekday->date weekday)
-                              (make-time hour minute period)))]
+                              (make-time hour minute period)))])
+
+  (define start-loc (port-location in))
+  (match (or (regexp-try-match NAMED-DATETIME-RE in)
+             (regexp-try-match NAMED-DATETIME/MT-RE in))
+    [(list text _ hour _ minute period weekday)
+     (prepare text hour minute period weekday)]
+
+    [(list text _ hour _ minute weekday)
+     (prepare text hour minute #f weekday)]
 
     [_ #f]))
 
@@ -499,4 +508,20 @@
                (span . ((1 22 22)
                         (1 37 37)))
                (delta . 2)
-               (modifier . "week"))))))
+               (modifier . "week"))))
+
+    (define-check (check-named-datetime command expected)
+      (define res (parse-command/jsexpr command))
+      (check-equal? (hash-ref (car res) 'datetime #f) expected))
+
+    (check-named-datetime "@9am" "1970-01-01T09:00:00")
+    (check-named-datetime "@09am" "1970-01-01T09:00:00")
+    (check-named-datetime "@10pm" "1970-01-01T22:00:00")
+    (check-named-datetime "@10:35pm" "1970-01-01T22:35:00")
+    (check-named-datetime "@10:35pm tmw" "1970-01-02T22:35:00")
+    (check-named-datetime "@09" "1970-01-01T09:00:00")
+    (check-named-datetime "@09:59 mon" "1970-01-05T09:59:00")
+    (check-named-datetime "@22" "1970-01-01T22:00:00")
+    (check-named-datetime "@22:35" "1970-01-01T22:35:00")
+    (check-named-datetime "@22:35 tmw" "1970-01-02T22:35:00")
+    (check-named-datetime "@25:59 mon" "1970-01-01T02:00:00")))
