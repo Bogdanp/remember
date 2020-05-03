@@ -2,16 +2,6 @@
 
 set -euo pipefail
 
-RACKET_VERSION="7.5_3m"
-
-codesign --force \
-    --timestamp \
-    --entitlements="${PROJECT_DIR}/remember/remember-core.entitlements" \
-    --sign="$EXPANDED_CODE_SIGN_IDENTITY_NAME" \
-    -i org.racket-lang.Racket \
-    -o runtime \
-    "${PROJECT_DIR}/Resources/core/lib/Racket.framework/Versions/${RACKET_VERSION}/Racket"
-
 codesign --force \
     --timestamp \
     --entitlements="${PROJECT_DIR}/remember/remember-core.entitlements" \
