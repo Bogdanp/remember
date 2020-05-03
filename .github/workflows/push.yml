@@ -10,7 +10,7 @@ jobs:
           architecture: 'x64'
           distribution: 'full'
           variant: 'regular'
-          version: '7.5'
+          version: '7.7'
       - run: sudo raco pkg install --auto --batch --name remember core/
       - run: sudo raco setup --avoid-main --tidy --check-pkg-deps --unused-pkg-deps remember
       - run: sudo raco test core/
