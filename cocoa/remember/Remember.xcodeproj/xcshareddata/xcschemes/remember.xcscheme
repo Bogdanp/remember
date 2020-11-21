@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1130"
+   LastUpgradeVersion = "1210"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -17,7 +17,7 @@
                BlueprintIdentifier = "436BE29023B10D4E00717375"
                BuildableName = "Remember.app"
                BlueprintName = "Remember"
-               ReferencedContainer = "container:remember.xcodeproj">
+               ReferencedContainer = "container:Remember.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -35,7 +35,7 @@
                BlueprintIdentifier = "436BE2A523B10D5000717375"
                BuildableName = "RememberTests.xctest"
                BlueprintName = "RememberTests"
-               ReferencedContainer = "container:remember.xcodeproj">
+               ReferencedContainer = "container:Remember.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -45,7 +45,7 @@
                BlueprintIdentifier = "436BE2B023B10D5000717375"
                BuildableName = "RememberUITests.xctest"
                BlueprintName = "RememberUITests"
-               ReferencedContainer = "container:remember.xcodeproj">
+               ReferencedContainer = "container:Remember.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -67,7 +67,7 @@
             BlueprintIdentifier = "436BE29023B10D4E00717375"
             BuildableName = "Remember.app"
             BlueprintName = "Remember"
-            ReferencedContainer = "container:remember.xcodeproj">
+            ReferencedContainer = "container:Remember.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -84,7 +84,7 @@
             BlueprintIdentifier = "436BE29023B10D4E00717375"
             BuildableName = "Remember.app"
             BlueprintName = "Remember"
-            ReferencedContainer = "container:remember.xcodeproj">
+            ReferencedContainer = "container:Remember.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
