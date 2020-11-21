@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "LaunchAtLogin",
+        "repositoryURL": "https://github.com/sindresorhus/LaunchAtLogin",
+        "state": {
+          "branch": null,
+          "revision": "0f39982b9d6993eef253b81219d3c39ba1e680f3",
+          "version": "4.0.0"
+        }
+      },
+      {
+        "package": "SwiftyAttributes",
+        "repositoryURL": "https://github.com/eddiekaiger/SwiftyAttributes",
+        "state": {
+          "branch": null,
+          "revision": "0fbf992e6e4e1b98954f3d48f8523a67dfa5c8f3",
+          "version": "5.2.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -35,15 +35,13 @@ artifacts with others.
 
 ### Requirements
 
-* [Racket 7.5+](https://racket-lang.org/)
+* [Racket 7.9 CS](https://racket-lang.org/)
 * macOS Catalina
-* Xcode 11+
-* [Carthage](https://github.com/Carthage/Carthage)
+* Xcode 12+
 
 ### First-time Setup
 
     $ raco pkg install --name remember core/
-    $ $(cd cocoa/remember && carthage update)
 
 ### Building
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,7 +13,6 @@
 		4355FC3A23BA621F000463B6 /* KeyboardShortcutField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355FC3923BA621F000463B6 /* KeyboardShortcutField.swift */; };
 		4355FC3C23BA73A8000463B6 /* KeyboardShortcutDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355FC3B23BA73A8000463B6 /* KeyboardShortcutDefaults.swift */; };
 		4355FC3E23BA7B3A000463B6 /* KeyboardShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355FC3D23BA7B3A000463B6 /* KeyboardShortcut.swift */; };
-		4355FC4123BCC2A4000463B6 /* LaunchAtLogin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4355FC4023BCC2A4000463B6 /* LaunchAtLogin.framework */; };
 		436BE29523B10D4E00717375 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE29423B10D4E00717375 /* AppDelegate.swift */; };
 		436BE29723B10D4E00717375 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE29623B10D4E00717375 /* ContentView.swift */; };
 		436BE29923B10D5000717375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436BE29823B10D5000717375 /* Assets.xcassets */; };
@@ -27,7 +26,6 @@
 		4385BC5623B4CCB20086A98F /* JSONChunkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */; };
 		4385BC5823B4E4590086A98F /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5723B4E4590086A98F /* Client.swift */; };
 		4385BC5A23B4F1DF0086A98F /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5923B4F1DF0086A98F /* Parser.swift */; };
-		43983BDC23B78DD90064C527 /* SwiftyAttributes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43983BDB23B78DD90064C527 /* SwiftyAttributes.framework */; };
 		43983BDE23B794300064C527 /* UserNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BDD23B794300064C527 /* UserNotifications.swift */; };
 		43983BE223BA19EC0064C527 /* EntryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE123BA19EC0064C527 /* EntryList.swift */; };
 		43983BE423BA279E0064C527 /* EntryListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE323BA279E0064C527 /* EntryListItem.swift */; };
@@ -45,6 +43,8 @@
 		43E6B95E23B68F4A00F7ACE1 /* Keycode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */; };
 		43E6B96023B6A33600F7ACE1 /* AsyncNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95F23B6A33600F7ACE1 /* AsyncNotification.swift */; };
 		43F0F39923DAF59000D3D97C /* FolderSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F0F39823DAF59000D3D97C /* FolderSync.swift */; };
+		43F199DF2569A18100259849 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 43F199DE2569A18100259849 /* LaunchAtLogin */; };
+		43F199EE2569A40A00259849 /* SwiftyAttributes in Frameworks */ = {isa = PBXBuildFile; productRef = 43F199ED2569A40A00259849 /* SwiftyAttributes */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,7 +71,6 @@
 		4355FC3923BA621F000463B6 /* KeyboardShortcutField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutField.swift; sourceTree = "<group>"; };
 		4355FC3B23BA73A8000463B6 /* KeyboardShortcutDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutDefaults.swift; sourceTree = "<group>"; };
 		4355FC3D23BA7B3A000463B6 /* KeyboardShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcut.swift; sourceTree = "<group>"; };
-		4355FC4023BCC2A4000463B6 /* LaunchAtLogin.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LaunchAtLogin.framework; path = Carthage/Build/Mac/LaunchAtLogin.framework; sourceTree = "<group>"; };
 		436BE29123B10D4E00717375 /* Remember.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Remember.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		436BE29423B10D4E00717375 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		436BE29623B10D4E00717375 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -92,7 +91,6 @@
 		4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONChunkerTests.swift; sourceTree = "<group>"; };
 		4385BC5723B4E4590086A98F /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		4385BC5923B4F1DF0086A98F /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
-		43983BDB23B78DD90064C527 /* SwiftyAttributes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyAttributes.framework; path = Carthage/Build/Mac/SwiftyAttributes.framework; sourceTree = "<group>"; };
 		43983BDD23B794300064C527 /* UserNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotifications.swift; sourceTree = "<group>"; };
 		43983BE123BA19EC0064C527 /* EntryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryList.swift; sourceTree = "<group>"; };
 		43983BE323BA279E0064C527 /* EntryListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryListItem.swift; sourceTree = "<group>"; };
@@ -123,8 +121,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				43E6B94823B6722B00F7ACE1 /* Carbon.framework in Frameworks */,
-				43983BDC23B78DD90064C527 /* SwiftyAttributes.framework in Frameworks */,
-				4355FC4123BCC2A4000463B6 /* LaunchAtLogin.framework in Frameworks */,
+				43F199DF2569A18100259849 /* LaunchAtLogin in Frameworks */,
+				43F199EE2569A40A00259849 /* SwiftyAttributes in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,8 +249,6 @@
 			isa = PBXGroup;
 			children = (
 				43E6B94723B6722B00F7ACE1 /* Carbon.framework */,
-				4355FC4023BCC2A4000463B6 /* LaunchAtLogin.framework */,
-				43983BDB23B78DD90064C527 /* SwiftyAttributes.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -267,7 +263,6 @@
 				436BE28D23B10D4E00717375 /* Sources */,
 				436BE28E23B10D4E00717375 /* Frameworks */,
 				436BE28F23B10D4E00717375 /* Resources */,
-				43E6B94123B5480700F7ACE1 /* ShellScript */,
 				4355FC3F23BCC241000463B6 /* ShellScript */,
 				43A60B9723BD4D7300160E3E /* ShellScript */,
 			);
@@ -276,6 +271,10 @@
 			dependencies = (
 			);
 			name = Remember;
+			packageProductDependencies = (
+				43F199DE2569A18100259849 /* LaunchAtLogin */,
+				43F199ED2569A40A00259849 /* SwiftyAttributes */,
+			);
 			productName = remember;
 			productReference = 436BE29123B10D4E00717375 /* Remember.app */;
 			productType = "com.apple.product-type.application";
@@ -348,6 +347,10 @@
 				Base,
 			);
 			mainGroup = 436BE28823B10D4E00717375;
+			packageReferences = (
+				43F199DD2569A18100259849 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
+				43F199EC2569A40A00259849 /* XCRemoteSwiftPackageReference "SwiftyAttributes" */,
+			);
 			productRefGroup = 436BE29223B10D4E00717375 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -403,7 +406,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PROJECT_DIR}/Carthage/Build/Mac/LaunchAtLogin.framework/Resources/copy-helper.sh\"\n";
+			shellScript = "\"${BUILT_PRODUCTS_DIR}/LaunchAtLogin_LaunchAtLogin.bundle/Contents/Resources/copy-helper-swiftpm.sh\"\n";
 		};
 		43A60B9723BD4D7300160E3E /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -421,27 +424,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PROJECT_DIR}/scripts/coresign\"\n";
-		};
-		43E6B94123B5480700F7ACE1 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/Mac/LaunchAtLogin.framework",
-				"$(SRCROOT)/Carthage/Build/Mac/SwiftyAttributes.framework",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/LaunchAtLogin.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyAttributes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -653,10 +635,6 @@
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				INFOPLIST_FILE = remember/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -684,10 +662,6 @@
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
-				);
 				INFOPLIST_FILE = remember/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -826,6 +800,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		43F199DD2569A18100259849 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+		43F199EC2569A40A00259849 /* XCRemoteSwiftPackageReference "SwiftyAttributes" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/eddiekaiger/SwiftyAttributes";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.2.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		43F199DE2569A18100259849 /* LaunchAtLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43F199DD2569A18100259849 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */;
+			productName = LaunchAtLogin;
+		};
+		43F199ED2569A40A00259849 /* SwiftyAttributes */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43F199EC2569A40A00259849 /* XCRemoteSwiftPackageReference "SwiftyAttributes" */;
+			productName = SwiftyAttributes;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 436BE28923B10D4E00717375 /* Project object */;
 }
