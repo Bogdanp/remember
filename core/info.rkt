@@ -1,6 +1,6 @@
 #lang info
 
-(define version "0.0.0")
+(define version "2020.11.21")
 (define collection "remember")
 (define deps  '("base"
                 "compatibility-lib"
