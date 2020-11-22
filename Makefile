@@ -27,7 +27,7 @@ $(TEMP_DIR)/remember-core: $(CORE_OBJ_DIR)/main_rkt.zo migrations/*.sql
 $(CORE_OBJ_DIR)/main_rkt.zo: core/*.rkt
 
 $(CORE_OBJ_DIR)/%_rkt.zo: core/%.rkt
-	raco make $<
+	raco make -j $(shell nproc) -v $<
 
 
 ## Phony ###############################################################
