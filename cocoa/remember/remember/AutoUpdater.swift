@@ -45,9 +45,7 @@ class AutoUpdater {
     private var timer: Timer?
 
     func start(withInterval interval: Double, andCompletionHandler handler: @escaping (String, Release) -> Void) {
-        #if DEBUG
         URLCache.shared.removeAllCachedResponses()
-        #endif
 
         stop()
         checkForUpdates(withCompletionHandler: handler)
