@@ -48,6 +48,13 @@ artifacts with others.
     $ make
     $ $(cd cocoa/remember && xcodebuild)
 
+### Cross-compiling for iOS
+
+You need a build of Racket BC compiled for your system and a build of
+Racket BC compiled for iOS, then you can run
+
+    $ make RACKET_PREFIX='/path/to/host/racket -C -G /path/to/ios/racket/etc -X /path/to/ios/racket/collects -l-'
+
 ## License
 
     Copyright 2019, 2020 CLEARTYPE SRL.  All rights reserved.
