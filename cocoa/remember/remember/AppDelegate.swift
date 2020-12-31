@@ -66,7 +66,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.contentView = hostingView
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
-        window.makeKeyAndOrderFront(nil)
 
         setupStatusItem()
         setupHotKey()
@@ -83,6 +82,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillBecomeActive(_ notification: Notification) {
         positionWindow()
+        window.makeKeyAndOrderFront(nil)
     }
 
     func applicationWillResignActive(_ notification: Notification) {
@@ -100,7 +100,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Ensures that the window is always positioned in exactly the same spot.  Roughly the same position as Spotlight.
     private func positionWindow() {
-        if let screenFrame = window.screen?.frame {
+        if let screenFrame = NSScreen.main?.frame {
             let screenWidth = screenFrame.size.width
             let screenHeight = screenFrame.size.height
 
@@ -108,6 +108,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let y = (screenHeight * 0.80) - window.frame.size.height
             let f = NSRect(x: x, y: y, width: window.frame.size.width, height: window.frame.size.height)
 
+            window.setFrameOrigin(screenFrame.origin)
             window.setFrame(f, display: true)
         }
     }
