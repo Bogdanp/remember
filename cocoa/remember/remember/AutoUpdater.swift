@@ -15,7 +15,14 @@ let VERSIONS_SERVICE_URL = "http://local.remember/versions/"
 let VERSIONS_SERVICE_URL = "https://remember.defn.io/versions/"
 #endif
 
+#if arch(arm64)
+let ARCH = "arm64"
+#else
+let ARCH = "x86_64"
+#endif
+
 struct Release: Codable {
+    let arch: String
     let version: String
     let macURL: URL
 }
@@ -36,7 +43,7 @@ fileprivate enum ReleaseDownloadResult {
 ///
 /// The service must expose two files under its root URL:
 ///   * `changelog.txt` -- containing plain text describing all of the changes between versions and
-///   * `versions.json` -- containing a JSON array with `{version, macURL}` objects inside it.
+///   * `versions.json` -- containing a JSON array with `{arch, version, macURL}` objects inside it.
 class AutoUpdater {
     private let serviceURL = URL(string: VERSIONS_SERVICE_URL)!
     private let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
@@ -140,7 +147,9 @@ class AutoUpdater {
             }
 
             do {
-                handler(try self.decoder.decode([Release].self, from: data))
+                handler(try self.decoder.decode([Release].self, from: data).filter({ release in
+                    release.arch == ARCH
+                }))
             } catch {
                 os_log("failed to parse versions JSON: %s", type: .error, "\(error)")
             }
