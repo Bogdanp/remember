@@ -69,6 +69,8 @@ struct ContentView: View {
             }
         }
         .visualEffect()
+        .frame(width: 680, height: nil, alignment: .leading)
+        .fixedSize()
         .cornerRadius(8)
     }
 
