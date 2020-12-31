@@ -1,5 +1,15 @@
 [
   {
+    "arch": "arm64",
+    "version": "2020.12.31",
+    "macURL": "https://remember.defn.io/releases/Remember%202020.12.31.arm64.dmg"
+  },
+  {
+    "arch": "x86_64",
+    "version": "2020.12.31",
+    "macURL": "https://remember.defn.io/releases/Remember%202020.12.31.x86_64.dmg"
+  },
+  {
     "arch": "x86_64",
     "version": "2020.11.22",
     "macURL": "https://remember.defn.io/releases/Remember%202020.11.22.dmg"
