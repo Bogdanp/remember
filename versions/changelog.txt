@@ -1,3 +1,15 @@
+# 2020.01.03
+## Added
+
+* Apple M1 support.
+
+## Fixed
+
+* The window now appears in the right position on startup.
+* The window follows the main screen (the screen with the
+  most-recently interacted application).
+* Spacing issues on Big Sur.
+
 # 2020.11.22
 ## Fixed
 
