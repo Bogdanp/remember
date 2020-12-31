@@ -100,15 +100,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Ensures that the window is always positioned in exactly the same spot.  Roughly the same position as Spotlight.
     private func positionWindow() {
-        if let screenFrame = NSScreen.main?.frame {
+        if let screenFrame = NSScreen.main?.visibleFrame {
             let screenWidth = screenFrame.size.width
             let screenHeight = screenFrame.size.height
 
             let x = (screenWidth - window.frame.size.width) / 2
             let y = (screenHeight * 0.80) - window.frame.size.height
             let f = NSRect(x: x, y: y, width: window.frame.size.width, height: window.frame.size.height)
+                .offsetBy(dx: screenFrame.origin.x, dy: screenFrame.origin.y)
 
-            window.setFrameOrigin(screenFrame.origin)
             window.setFrame(f, display: true)
         }
     }
