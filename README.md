@@ -35,7 +35,7 @@ artifacts with others.
 
 ### Requirements
 
-* [Racket 7.9 CS](https://racket-lang.org/)
+* [Racket 8.1 CS](https://racket-lang.org/)
 * macOS Catalina
 * Xcode 12+
 
