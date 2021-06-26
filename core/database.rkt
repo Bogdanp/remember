@@ -46,7 +46,7 @@
    (make-db (lambda _
               (sqlite3-connect #:mode 'create
                                #:database (build-application-path "remember.sqlite3")
-                               #:use-place #f)))))
+                               #:use-place 'os-thread)))))
 
 (define current-connection
   (make-parameter #f))
