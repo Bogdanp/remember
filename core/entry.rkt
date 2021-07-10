@@ -405,7 +405,7 @@
                  (lookup conn (~> (from entry #:as e)
                                   (where (= e.id ,(entry-id the-entry)))))))))
 
-     (snooze-entry! (entry-id the-entry))
+     (snooze-entry! (entry-id the-entry) 45)
      (reload!)
      (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 45)))
 
