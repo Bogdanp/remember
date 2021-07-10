@@ -22,7 +22,7 @@ class PreferencesManager: NSObject, NSWindowDelegate {
 
         let window = PreferencesWindow(
             contentRect: NSRect(x: 0, y: 0, width: 500, height: 300),
-            styleMask: [.closable, .titled, .unifiedTitleAndToolbar],
+            styleMask: [.closable, .titled],
             backing: .buffered,
             defer: false)
         window.delegate = self
@@ -33,6 +33,9 @@ class PreferencesManager: NSObject, NSWindowDelegate {
         toolbar.delegate = toolbarDelegate
         toolbar.selectedItemIdentifier = .general
         window.toolbar = toolbar
+        if #available(macOS 11, *) {
+            window.toolbarStyle = .preference
+        }
 
         self.window = window
     }
@@ -184,7 +187,7 @@ private class PreferencesWindow: NSWindow {
 
 private class PreferencesWindowToolbarDelegate: NSObject, NSToolbarDelegate {
     func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-        return [.flexibleSpace, .general]
+        return [.general]
     }
 
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
