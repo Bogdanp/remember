@@ -43,7 +43,7 @@
 (define/contract current-db
   (parameter/c db?)
   (make-parameter
-   (make-db (lambda _
+   (make-db (lambda ()
               (sqlite3-connect #:mode 'create
                                #:database (build-application-path "remember.sqlite3")
                                #:use-place 'os-thread)))))

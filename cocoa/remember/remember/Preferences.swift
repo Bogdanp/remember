@@ -54,6 +54,13 @@ class PreferencesManager: NSObject, NSWindowDelegate {
 private struct GeneralPreferencesView : View {
     @ObservedObject var store = PreferencesStore()
 
+    let formatter: NumberFormatter = {
+        let fmt = NumberFormatter()
+        fmt.minimum = 1
+        fmt.maximum = 1440
+        return fmt
+    }()
+
     var body: some View {
         Form {
             Section {
@@ -62,6 +69,9 @@ private struct GeneralPreferencesView : View {
                 }
                 Preference("Behavior:") {
                     Toggle("Show Menu Bar Icon", isOn: $store.showStatusIcon)
+                }
+                Preference("Snooze minutes:") {
+                    TextField("", value: $store.snoozeMinutes, formatter: formatter)
                 }
                 Preference("Show Remember:") {
                     KeyboardShortcutField { hk in
@@ -111,10 +121,12 @@ private struct GeneralPreferencesView : View {
 private class PreferencesStore: NSObject, ObservableObject {
     @Published var launchAtLogin = LaunchAtLogin.isEnabled
     @Published var showStatusIcon = StatusItemDefaults.shouldShow()
+    @Published var snoozeMinutes = SnoozeDefaults.get()
     @Published var syncFolder = try! FolderSyncDefaults.load()
 
     private var launchAtLoginCancellable: AnyCancellable?
     private var showStatusIconCancellable: AnyCancellable?
+    private var snoozeMinutesCancelable: AnyCancellable?
     private var syncFolderCancellable: AnyCancellable?
 
     override init() {
@@ -126,6 +138,10 @@ private class PreferencesStore: NSObject, ObservableObject {
 
         showStatusIconCancellable = $showStatusIcon.sink {
             Notifications.didToggleStatusItem(show: $0)
+        }
+
+        snoozeMinutesCancelable = $snoozeMinutes.sink {
+            try! SnoozeDefaults.set($0)
         }
 
         syncFolderCancellable = $syncFolder.sink {

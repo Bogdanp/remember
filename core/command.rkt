@@ -4,7 +4,6 @@
          gregor/time
          json
          racket/contract
-         racket/format
          racket/generic
          racket/match
          racket/port

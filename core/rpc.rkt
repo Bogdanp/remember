@@ -31,7 +31,7 @@
   (->* (symbol?) ((listof any/c)) any/c)
   (apply (hash-ref (current-rpc-registry)
                    name
-                   (lambda _
+                   (lambda ()
                      (error 'dispatch "procedure ~.s not found" name)))
          args))
 

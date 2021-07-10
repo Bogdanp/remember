@@ -63,12 +63,12 @@ class Client: AsyncNotifier & Parser & EntryDB {
         }
     }
 
-    func snoozeEntry(byId id: Entry.Id) {
-        snoozeEntry(byId: id) { }
+    func snoozeEntry(byId id: Entry.Id, forMinutes minutes: Int) {
+        snoozeEntry(byId: id, forMinutes: minutes) { }
     }
 
-    func snoozeEntry(byId id: Entry.Id, withCompletionHandler handler: @escaping () -> Void) {
-        return rpc.call("snooze-entry!", [id]) { (res: RPCResult<RPCUnit>) in
+    func snoozeEntry(byId id: Entry.Id, forMinutes minutes: Int, withCompletionHandler handler: @escaping () -> Void) {
+        return rpc.call("snooze-entry!", [id, minutes]) { (res: RPCResult<RPCUnit>) in
             handler()
         }
     }

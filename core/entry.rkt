@@ -7,7 +7,6 @@
          json
          racket/contract
          racket/format
-         (only-in racket/list remove-duplicates)
          racket/match
          racket/sequence
          racket/string
@@ -308,14 +307,14 @@
                              (update-one! conn (set-entry-status updated-entry 'pending))
                              (notify 'entries-did-change))))))]))))
 
-(define/contract (snooze-entry! id)
-  (-> id/c void?)
+(define/contract (snooze-entry! id amount)
+  (-> id/c exact-positive-integer? void?)
   (define the-entry
     (call-with-database-transaction
       (lambda (conn)
         (and~> (lookup conn (~> (from entry #:as e)
                                 (where (= e.id ,id))))
-               (set-entry-due-at (+minutes (now) 45))
+               (set-entry-due-at (+minutes (now) amount))
                (update-one! conn _)))))
 
   (when the-entry

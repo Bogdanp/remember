@@ -70,7 +70,7 @@ class Store: ObservableObject {
         }
 
         Notifications.observeWillSnoozeEntry {
-            self.entryDB.snoozeEntry(byId: $0) { }
+            self.entryDB.snoozeEntry(byId: $0, forMinutes: SnoozeDefaults.get()) { }
         }
     }
 
