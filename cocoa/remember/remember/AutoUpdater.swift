@@ -47,13 +47,12 @@ fileprivate enum ReleaseDownloadResult {
 class AutoUpdater {
     private let serviceURL = URL(string: VERSIONS_SERVICE_URL)!
     private let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+    private let session = URLSession(configuration: .ephemeral)
     private let decoder = JSONDecoder()
 
     private var timer: Timer?
 
     func start(withInterval interval: Double, andCompletionHandler handler: @escaping (String, Release) -> Void) {
-        URLCache.shared.removeAllCachedResponses()
-
         stop()
         checkForUpdates(withCompletionHandler: handler)
         timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
@@ -103,7 +102,7 @@ class AutoUpdater {
 
     private func fetchChangelog(withCompletionHandler handler: @escaping (String) -> Void) {
         let changelogURL = serviceURL.appendingPathComponent("changelog.txt")
-        let task = URLSession.shared.dataTask(with: changelogURL) { data, response, error in
+        let task = session.dataTask(with: changelogURL) { data, response, error in
             if let error = error {
                 os_log("failed to check for updates: %s", type: .error, "\(error)")
                 return
@@ -128,7 +127,7 @@ class AutoUpdater {
 
     private func fetchReleasesJSON(withCompletionHandler handler: @escaping ([Release]) -> Void) {
         let versionsURL = serviceURL.appendingPathComponent("versions.json")
-        let task = URLSession.shared.dataTask(with: versionsURL) { data, response, error in
+        let task = session.dataTask(with: versionsURL) { data, response, error in
             if let error = error {
                 os_log("failed to check for updates: %s", type: .error, "\(error)")
                 return
@@ -158,7 +157,7 @@ class AutoUpdater {
     }
 
     private func fetchRelease(_ release: Release, withCompletionHandler handler: @escaping (ReleaseDownloadResult) -> Void) {
-        let task = URLSession.shared.downloadTask(with: release.macURL) { fileURL, response, error in
+        let task = session.downloadTask(with: release.macURL) { fileURL, response, error in
             if let error = error {
                 os_log("failed to download release: %s", type: .error, "\(error)")
                 handler(.error("We were unable to retrieve the updated files.  Please check your connection and try again later."))
