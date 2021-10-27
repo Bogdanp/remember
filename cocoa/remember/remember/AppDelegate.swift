@@ -59,13 +59,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             defer: false
         )
         window.collectionBehavior = .canJoinAllSpaces
-        window.setFrameAutosaveName("Remember")
         window.backgroundColor = .clear
         window.isMovableByWindowBackground = true
         window.isOpaque = false
         window.contentView = hostingView
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
+        window.styleMask = [.titled, .fullSizeContentView]
 
         setupStatusItem()
         setupHotKey()
