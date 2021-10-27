@@ -1,3 +1,8 @@
+# 2021.10.27
+## Fixed
+
+* Title bar issue on Monterey.
+
 # 2020.12.31
 ## Added
 
