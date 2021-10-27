@@ -67,50 +67,54 @@ private struct GeneralPreferencesView : View {
     var body: some View {
         Form {
             Section {
-                Preference("Startup:") {
-                    Toggle("Launch Remember at Login", isOn: $store.launchAtLogin)
-                }
-                Preference("Behavior:") {
-                    Toggle("Show Menu Bar Icon", isOn: $store.showStatusIcon)
-                }
-                Preference("Snooze minutes:") {
-                    TextField("", value: $store.snoozeMinutes, formatter: formatter)
-                }
-                Preference("Show Remember:") {
-                    KeyboardShortcutField { hk in
-                        KeyboardShortcutDefaults(fromHotKey: hk).save()
+                VStack {
+                    Preference("Startup:") {
+                        Toggle("Launch Remember at Login", isOn: $store.launchAtLogin)
                     }
-                }
-                .padding([.top, .bottom], 10)
-                Preference("Sync:") {
-                    VStack(alignment: .leading, spacing: nil) {
-                        if self.store.syncFolder != nil {
-                            Text(self.store.syncFolder!.relativePath)
-                                .foregroundColor(.secondary)
+                    Preference("Behavior:") {
+                        Toggle("Show Menu Bar Icon", isOn: $store.showStatusIcon)
+                    }
+                    Preference("Snooze minutes:") {
+                        TextField("", value: $store.snoozeMinutes, formatter: formatter)
+                            .frame(width: 300, height: nil, alignment: .leading)
+                            .offset(x: -8, y: 0)
+                    }
+                    Preference("Show Remember:") {
+                        KeyboardShortcutField { hk in
+                            KeyboardShortcutDefaults(fromHotKey: hk).save()
                         }
-
-                        HStack {
-                            Button(action: {
-                                let panel = NSOpenPanel()
-                                panel.prompt = "Set Sync Folder"
-                                panel.allowsMultipleSelection = false
-                                panel.canChooseFiles = false
-                                panel.canChooseDirectories = true
-                                panel.canCreateDirectories = true
-
-                                if panel.runModal() == .OK {
-                                    self.store.syncFolder = panel.urls[0]
-                                }
-                            }, label: {
-                                Text("Set Sync Folder...")
-                            })
-
+                    }
+                    .padding([.top, .bottom], 10)
+                    Preference("Sync:") {
+                        VStack(alignment: .leading, spacing: nil) {
                             if self.store.syncFolder != nil {
+                                Text(self.store.syncFolder!.relativePath)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            HStack {
                                 Button(action: {
-                                    self.store.syncFolder = nil
+                                    let panel = NSOpenPanel()
+                                    panel.prompt = "Set Sync Folder"
+                                    panel.allowsMultipleSelection = false
+                                    panel.canChooseFiles = false
+                                    panel.canChooseDirectories = true
+                                    panel.canCreateDirectories = true
+
+                                    if panel.runModal() == .OK {
+                                        self.store.syncFolder = panel.urls[0]
+                                    }
                                 }, label: {
-                                    Text("Stop Syncing")
+                                    Text("Set Sync Folder...")
                                 })
+
+                                if self.store.syncFolder != nil {
+                                    Button(action: {
+                                        self.store.syncFolder = nil
+                                    }, label: {
+                                        Text("Stop Syncing")
+                                    })
+                                }
                             }
                         }
                     }
@@ -175,9 +179,10 @@ private struct Preference<Content: View> : View {
     var body: some View {
         HStack(alignment: .top, spacing: nil) {
             Text(label)
-                .frame(width: 150, height: nil, alignment:  .trailing)
+                .frame(width: 150, height: nil, alignment: .trailing)
             content
         }
+        .frame(width: 450, height: nil, alignment: .leading)
     }
 }
 
