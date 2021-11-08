@@ -8,7 +8,7 @@ codesign --force \
     --sign="$EXPANDED_CODE_SIGN_IDENTITY_NAME" \
     -i io.defn.remember.remember-core \
     -o runtime \
-    "${PROJECT_DIR}/Resources/core/bin/remember-core"
+    "${PROJECT_DIR}"/Resources/core/*/bin/remember-core
 
 codesign --force \
     --timestamp \
@@ -16,7 +16,7 @@ codesign --force \
     --sign="$EXPANDED_CODE_SIGN_IDENTITY_NAME" \
     -i org.racket-lang.racket \
     -o runtime \
-    "${PROJECT_DIR}"/Resources/core/lib/Racket.framework/Versions/*/Racket
+    "${PROJECT_DIR}"/Resources/core/*/lib/Racket.framework/Versions/*/Racket
 
 while read -r path; do
     codesign \

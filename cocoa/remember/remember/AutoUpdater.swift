@@ -15,12 +15,6 @@ let VERSIONS_SERVICE_URL = "http://local.remember/versions/"
 let VERSIONS_SERVICE_URL = "https://remember.defn.io/versions/"
 #endif
 
-#if arch(arm64)
-let ARCH = "arm64"
-#else
-let ARCH = "x86_64"
-#endif
-
 struct Release: Codable {
     let arch: String
     let version: String

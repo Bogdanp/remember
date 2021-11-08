@@ -1,7 +1,7 @@
 TEMP_DIR=temp
 BUILD_DIR=build
 
-COCOA_CORE_DIR=cocoa/remember/Resources/core
+COCOA_CORE_DIR=cocoa/remember/Resources/core/$(shell uname -m)
 
 .PHONY: all
 all: $(COCOA_CORE_DIR)/bin/remember-core

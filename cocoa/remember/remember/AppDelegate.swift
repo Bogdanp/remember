@@ -12,6 +12,12 @@ import SwiftUI
 import UserNotifications
 import os
 
+#if arch(arm64)
+let ARCH = "arm64"
+#else
+let ARCH = "x86_64"
+#endif
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow!
@@ -24,7 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var syncer: FolderSyncer!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        guard let coreURL = Bundle.main.url(forResource: "core/bin/remember-core", withExtension: nil) else {
+        guard let coreURL = Bundle.main.url(forResource: "core/\(ARCH)/bin/remember-core", withExtension: nil) else {
             fatalError("failed to find core executable")
         }
 
