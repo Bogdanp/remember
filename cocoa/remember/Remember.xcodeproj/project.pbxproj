@@ -3,11 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		43310AF823B77DAD000B913B /* core in Resources */ = {isa = PBXBuildFile; fileRef = 43310AF723B77DAD000B913B /* core */; };
 		433DB90F23B134B40027268A /* VisualEffectBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433DB90E23B134B40027268A /* VisualEffectBackground.swift */; };
 		4355FC3823BA4E0D000463B6 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355FC3723BA4E0D000463B6 /* Preferences.swift */; };
 		4355FC3A23BA621F000463B6 /* KeyboardShortcutField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355FC3923BA621F000463B6 /* KeyboardShortcutField.swift */; };
@@ -46,6 +45,7 @@
 		43F0F39923DAF59000D3D97C /* FolderSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F0F39823DAF59000D3D97C /* FolderSync.swift */; };
 		43F199DF2569A18100259849 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 43F199DE2569A18100259849 /* LaunchAtLogin */; };
 		43F199EE2569A40A00259849 /* SwiftyAttributes in Frameworks */ = {isa = PBXBuildFile; productRef = 43F199ED2569A40A00259849 /* SwiftyAttributes */; };
+		7F2E71DB273F9FAE00B396EC /* core in Embed Core */ = {isa = PBXBuildFile; fileRef = 43310AF723B77DAD000B913B /* core */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +64,20 @@
 			remoteInfo = remember;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7F2E71DA273F9F9800B396EC /* Embed Core */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				7F2E71DB273F9FAE00B396EC /* core in Embed Core */,
+			);
+			name = "Embed Core";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		43310AF723B77DAD000B913B /* core */ = {isa = PBXFileReference; lastKnownFileType = folder; path = core; sourceTree = "<group>"; };
@@ -267,7 +281,8 @@
 				436BE28E23B10D4E00717375 /* Frameworks */,
 				436BE28F23B10D4E00717375 /* Resources */,
 				4355FC3F23BCC241000463B6 /* ShellScript */,
-				43A60B9723BD4D7300160E3E /* ShellScript */,
+				43A60B9723BD4D7300160E3E /* Codesign Core */,
+				7F2E71DA273F9F9800B396EC /* Embed Core */,
 			);
 			buildRules = (
 			);
@@ -324,7 +339,7 @@
 		436BE28923B10D4E00717375 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1130;
+				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1210;
 				ORGANIZATIONNAME = "CLEARTYPE SRL";
 				TargetAttributes = {
@@ -371,7 +386,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				436BE29F23B10D5000717375 /* Main.storyboard in Resources */,
-				43310AF823B77DAD000B913B /* core in Resources */,
 				436BE29C23B10D5000717375 /* Preview Assets.xcassets in Resources */,
 				436BE29923B10D5000717375 /* Assets.xcassets in Resources */,
 			);
@@ -411,8 +425,9 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${BUILT_PRODUCTS_DIR}/LaunchAtLogin_LaunchAtLogin.bundle/Contents/Resources/copy-helper-swiftpm.sh\"\n";
 		};
-		43A60B9723BD4D7300160E3E /* ShellScript */ = {
+		43A60B9723BD4D7300160E3E /* Codesign Core */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -420,6 +435,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Codesign Core";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -634,7 +650,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3001;
+				CURRENT_PROJECT_VERSION = 3002;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_ASSET_PATHS = "\"remember/Preview Content\"";
 				DEVELOPMENT_TEAM = H3YE679B58;
@@ -663,7 +679,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3001;
+				CURRENT_PROJECT_VERSION = 3002;
 				DEFINES_MODULE = NO;
 				DEVELOPMENT_ASSET_PATHS = "\"remember/Preview Content\"";
 				DEVELOPMENT_TEAM = H3YE679B58;

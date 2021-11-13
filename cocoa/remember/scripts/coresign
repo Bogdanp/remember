@@ -5,7 +5,7 @@ set -euo pipefail
 codesign --force \
     --timestamp \
     --entitlements="${PROJECT_DIR}/remember/remember-core.entitlements" \
-    --sign="$EXPANDED_CODE_SIGN_IDENTITY_NAME" \
+    --sign - \
     -i io.defn.remember.remember-core \
     -o runtime \
     "${PROJECT_DIR}"/Resources/core/*/bin/remember-core
@@ -13,7 +13,7 @@ codesign --force \
 codesign --force \
     --timestamp \
     --entitlements="${PROJECT_DIR}/remember/remember-core.entitlements" \
-    --sign="$EXPANDED_CODE_SIGN_IDENTITY_NAME" \
+    --sign - \
     -i org.racket-lang.racket \
     -o runtime \
     "${PROJECT_DIR}"/Resources/core/*/lib/Racket.framework/Versions/*/Racket
@@ -23,7 +23,7 @@ while read -r path; do
         --force \
         --timestamp \
         --entitlements="${PROJECT_DIR}/remember/remember-core.entitlements" \
-        --sign="$EXPANDED_CODE_SIGN_IDENTITY_NAME" \
+        --sign - \
         -o runtime \
         "$path"
 done < <(find "${PROJECT_DIR}"/Resources/core -name '*.dylib')
