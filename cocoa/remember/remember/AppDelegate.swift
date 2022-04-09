@@ -18,8 +18,6 @@ let ARCH = "arm64"
 let ARCH = "x86_64"
 #endif
 
-let MANUAL_URL = "https://remember.defn.io/manual"
-
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow!
@@ -174,7 +172,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func showManualFromStatusItem(_ sender: Any) {
-        if let url = URL(string: MANUAL_URL) {
+        if let url = Bundle.main.url(forResource: "manual/index", withExtension: "html") {
             NSWorkspace.shared.open(url)
         }
     }

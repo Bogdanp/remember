@@ -1,10 +1,11 @@
 TEMP_DIR=temp
 BUILD_DIR=build
 
+COCOA_MAN_DIR=cocoa/remember/Resources/manual
 COCOA_CORE_DIR=cocoa/remember/Resources/core/$(shell uname -m)
 
 .PHONY: all
-all: $(COCOA_CORE_DIR)/bin/remember-core
+all: $(COCOA_CORE_DIR)/bin/remember-core $(COCOA_MAN_DIR)/index.html
 
 
 ## Core ################################################################
@@ -38,6 +39,9 @@ clean:
 
 
 ## Manual ##############################################################
+
+$(COCOA_MAN_DIR)/index.html: manual/*.scrbl
+	raco scribble --html --dest $(COCOA_MAN_DIR) +m manual/index.scrbl
 
 website/manual/index.html: manual/*.scrbl
 	raco scribble --html --dest website/manual +m manual/index.scrbl

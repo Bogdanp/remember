@@ -224,7 +224,7 @@ fileprivate struct OnboardingStep2: View {
                                 .foregroundColor(Color.accentColor)
                         )
                         .onTapGesture(perform: {
-                            if let url = URL(string: MANUAL_URL) {
+                            if let url = Bundle.main.url(forResource: "manual/index", withExtension: "html") {
                                 NSWorkspace.shared.open(url)
                             }
                         })
