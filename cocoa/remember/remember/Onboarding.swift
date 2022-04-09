@@ -180,29 +180,7 @@ fileprivate struct OnboardingStep2: View {
 
                 VStack(alignment: .center, spacing: 10) {
                     Pill {
-                        VStack {
-                            HStack {
-                                (
-                                    Text("You can create repeating entries by using modifiers like ") +
-                                    Text("\\*daily\\*").foregroundColor(.green) +
-                                    Text(", ") +
-                                    Text("\\*weekly\\*").foregroundColor(.green) +
-                                    Text(" or ") +
-                                    Text("\\*every two days\\*").foregroundColor(.green) +
-                                    Text(".  These entries update their due date whenever you archive them.")
-                                )
-                                .frame(width: nil, height: 88, alignment: .leading)
-                                .lineLimit(nil)
-
-                                Image("OnboardingStep2-1")
-                                    .resizable()
-                                    .frame(width: 258.5, height: 64, alignment: .center)
-                            }
-
-                            Image("OnboardingStep2-2")
-                                .resizable()
-                                .frame(width: 301, height: 128, alignment: .center)
-                        }
+                        OnboardingStep2P1()
                     }
 
                     Pill {
@@ -234,6 +212,39 @@ fileprivate struct OnboardingStep2: View {
                 Spacer()
             }
         }
+    }
+}
+
+// Extracted because Swift can't typecheck it on Xcode 12.5.
+fileprivate struct OnboardingStep2P1: View {
+    var body: some View {
+        VStack {
+            HStack {
+                text
+
+                Image("OnboardingStep2-1")
+                    .resizable()
+                    .frame(width: 258.5, height: 64, alignment: .center)
+            }
+
+            Image("OnboardingStep2-2")
+                .resizable()
+                .frame(width: 301, height: 128, alignment: .center)
+        }
+    }
+
+    var text: some View {
+        (
+            Text("You can create repeating entries by using modifiers like ") +
+                Text("\\*daily\\*").foregroundColor(.green) +
+                Text(", ") +
+                Text("\\*weekly\\*").foregroundColor(.green) +
+                Text(" or ") +
+                Text("\\*every two days\\*").foregroundColor(.green) +
+                Text(".  These entries update their due date whenever you archive them.")
+        )
+        .frame(width: nil, height: 88, alignment: .leading)
+        .lineLimit(nil)
     }
 }
 
