@@ -35,3 +35,9 @@ $(CORE_OBJ_DIR)/%_rkt.zo: core/%.rkt
 .PHONY: clean
 clean:
 	rm -fr $(CORE_OBJ_DIR) $(COCOA_CORE_DIR) $(BUILD_DIR) $(TEMP_DIR)
+
+
+## Manual ##############################################################
+
+website/manual/index.html: manual/*.scrbl
+	raco scribble --html --dest website/manual +m manual/index.scrbl

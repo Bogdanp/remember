@@ -1,3 +1,3 @@
 .PHONY: deploy
 deploy:
-	rsync --exclude Makefile -avh . remember@nemea:~/www/
+	rsync --exclude Makefile -avh . remember:~/www/
