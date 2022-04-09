@@ -1,3 +1,8 @@
+# 2022.04.09
+## Added
+
+* A user manual.  Accessible via the status bar item.
+
 # 2021.10.27
 ## Fixed
 
