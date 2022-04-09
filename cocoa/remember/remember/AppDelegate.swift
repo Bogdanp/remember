@@ -18,6 +18,8 @@ let ARCH = "arm64"
 let ARCH = "x86_64"
 #endif
 
+let MANUAL_URL = "https://remember.defn.io/manual"
+
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
     var window: NSWindow!
@@ -148,6 +150,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem(title: "Show Remember", action: #selector(showApplicationFromStatusItem(_:)), keyEquivalent: ""))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Help...", action: #selector(showHelpFromStatusItem(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Manual...", action: #selector(showManualFromStatusItem(_:)), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Preferences...", action: #selector(showPreferencesFromStatusItem(_:)), keyEquivalent: ","))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: "Quit Remember", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
@@ -167,6 +171,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func showHelpFromStatusItem(_ sender: Any) {
         NSApp.activate(ignoringOtherApps: true)
         showHelp(sender)
+    }
+
+    @objc private func showManualFromStatusItem(_ sender: Any) {
+        if let url = URL(string: MANUAL_URL) {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     @objc private func showPreferencesFromStatusItem(_ sender: Any) {

@@ -218,7 +218,16 @@ fileprivate struct OnboardingStep2: View {
                     }
 
                     Pill {
-                        Text("I sincerely hope you'll find Remember to be a useful addition to your workflow!")
+                        (
+                            Text("Want to learn more? ") +
+                            Text("Read the user manual...")
+                                .foregroundColor(Color.accentColor)
+                        )
+                        .onTapGesture(perform: {
+                            if let url = URL(string: MANUAL_URL) {
+                                NSWorkspace.shared.open(url)
+                            }
+                        })
                     }
                 }
 
