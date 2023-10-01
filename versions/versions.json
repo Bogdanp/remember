@@ -1,6 +1,16 @@
 [
   {
     "arch": "arm64",
+    "version": "2023.10.01",
+    "macURL": "https://remember.defn.io/releases/Remember%202023.10.01.universal.dmg"
+  },
+  {
+    "arch": "x86_64",
+    "version": "2023.10.01",
+    "macURL": "https://remember.defn.io/releases/Remember%202023.10.01.universal.dmg"
+  },
+  {
+    "arch": "arm64",
     "version": "2022.04.09",
     "macURL": "https://remember.defn.io/releases/Remember%202022.04.09.universal.dmg"
   },
