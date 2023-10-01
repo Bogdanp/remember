@@ -64,7 +64,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             backing: .buffered,
             defer: false
         )
-        window.collectionBehavior = .canJoinAllSpaces
+        window.collectionBehavior = .moveToActiveSpace
         window.backgroundColor = .clear
         window.isMovableByWindowBackground = true
         window.isOpaque = false
