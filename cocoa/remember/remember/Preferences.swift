@@ -80,9 +80,7 @@ private struct GeneralPreferencesView : View {
                             .offset(x: -8, y: 0)
                     }
                     Preference("Show Remember:") {
-                        KeyboardShortcutField { hk in
-                            KeyboardShortcutDefaults(fromHotKey: hk).save()
-                        }
+                        KeyboardShortcutField()
                     }
                     .padding([.top, .bottom], 10)
                     Preference("Sync:") {

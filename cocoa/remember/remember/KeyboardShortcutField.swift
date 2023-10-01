@@ -9,14 +9,8 @@
 import Foundation
 import SwiftUI
 
-final class KeyboardShortcutField: NSViewRepresentable {
+struct KeyboardShortcutField: NSViewRepresentable {
     typealias NSViewType = DDHotKeyTextField
-
-    private var handler: ((DDHotKey) -> Void)?
-
-    init(withCompletionHandler handler: @escaping (DDHotKey) -> Void) {
-        self.handler = handler
-    }
 
     func makeNSView(context: NSViewRepresentableContext<KeyboardShortcutField>) -> NSViewType {
         return DDHotKeyTextField()
@@ -29,13 +23,7 @@ final class KeyboardShortcutField: NSViewRepresentable {
             keyCode: defaults.keyCode,
             modifierFlags: defaults.modifierFlags,
             task: { _ in })
-        nsView.target = self
-        nsView.action = #selector(didChange(_:))
-    }
-
-    @objc func didChange(_ sender: DDHotKeyTextField) {
-        if let handler = self.handler {
-            handler(sender.hotKey)
-        }
+        nsView.target = NSApplication.shared.delegate
+        nsView.action = #selector(AppDelegate.didChangeHotKey(_:))
     }
 }

@@ -207,4 +207,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBAction func showHelp(_ sender: Any) {
         OnboardingManager.shared.show(force: true)
     }
+
+    /// Called whenever the global hot key changes.
+    @objc func didChangeHotKey(_ sender: DDHotKeyTextField) {
+        KeyboardShortcutDefaults(fromHotKey: sender.hotKey).save()
+    }
 }
