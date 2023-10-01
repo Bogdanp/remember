@@ -1,3 +1,8 @@
+# 2023.10.01
+# Fixed
+
+* An issue with multiple spaces on macOS Ventura.
+
 # 2022.04.09
 ## Added
 
