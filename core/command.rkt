@@ -3,7 +3,7 @@
 (require gregor
          gregor/time
          json
-         racket/contract
+         racket/contract/base
          racket/generic
          racket/match
          racket/port
@@ -21,10 +21,12 @@
  (struct-out named-date)
  (struct-out named-datetime)
  (struct-out recurrence)
- recurrence-next
+ (contract-out
+  [recurrence-next (-> recurrence? datetime-provider? datetime-provider?)])
  (struct-out tag)
- parse-command
- parse-command/jsexpr)
+ (contract-out
+  [parse-command (-> non-empty-string? (listof token?))]
+  [parse-command/jsexpr (-> non-empty-string? (non-empty-listof jsexpr?))]))
 
 (struct location (line column offset)
   #:transparent
@@ -99,8 +101,7 @@
          (hash-set 'delta (recurrence-delta t))
          (hash-set 'modifier (symbol->string (recurrence-modifier t)))))])
 
-(define/contract (recurrence-next r dt)
-  (-> recurrence? datetime-provider? datetime-provider?)
+(define (recurrence-next r dt)
   (define adder
     (case (recurrence-modifier r)
       [(hour)  +hours]
@@ -137,7 +138,7 @@
 
 (define (port-location in)
   (call-with-values
-   (lambda _
+   (lambda ()
      (port-next-location in))
    (lambda (line col next-offset)
      (location line col (sub1 next-offset)))))
@@ -312,12 +313,10 @@
          (loop (cons token tokens)
                (peek-char))]))))
 
-(define/contract (parse-command s)
-  (-> non-empty-string? (listof token?))
+(define (parse-command s)
   (call-with-input-string s read-command))
 
-(define/contract (parse-command/jsexpr s)
-  (-> non-empty-string? (non-empty-listof jsexpr?))
+(define (parse-command/jsexpr s)
   (->jsexpr (parse-command s)))
 
 (module+ test
@@ -384,7 +383,7 @@
                       (1 23 23)))
              (name . "groceries"))))
 
-  (parameterize ([current-clock (lambda _ 0)])
+  (parameterize ([current-clock (lambda () 0)])
     (check-equal?
      (parse-command/jsexpr "buy milk @mon #groceries")
      '(#hasheq((type . "chunk")

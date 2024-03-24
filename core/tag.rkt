@@ -2,15 +2,15 @@
 
 (require db
          deta
-         racket/contract
-         (only-in racket/list remove-duplicates)
+         racket/contract/base
          racket/string
          threading
          "database.rkt")
 
 (provide
- assign-tags!
- find-tags-by-entry-id)
+ (contract-out
+  [assign-tags! (-> id/c (listof non-empty-string?) void?)]
+  [find-tags-by-entry-id (-> connection? id/c (listof non-empty-string?))]))
 
 (define-schema tag
   #:table "tags"
@@ -22,8 +22,7 @@
   ([entry-id id/f]
    [tag-id id/f]))
 
-(define/contract (assign-tags! entry-id tags)
-  (-> id/c (listof non-empty-string?) void?)
+(define (assign-tags! entry-id tags)
   (unless (null? tags)
     (call-with-database-transaction
       (lambda (conn)
@@ -40,8 +39,7 @@
             (insert! conn (make-entry-tag #:entry-id entry-id
                                           #:tag-id (tag-id t)))))))))
 
-(define/contract (find-tags-by-entry-id conn id)
-  (-> connection? id/c (listof non-empty-string?))
+(define (find-tags-by-entry-id conn id)
   (query-list conn (~> (from "entry_tags" #:as et)
                        (join "tags" #:as t #:on (= t.id et.tag-id))
                        (select t.name)

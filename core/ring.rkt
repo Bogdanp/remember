@@ -1,29 +1,28 @@
 #lang racket/base
 
-(require racket/contract)
+(require racket/contract/base)
 
 (provide
- make-ring
- ring?
- ring-push!
- ring-pop!
- ring-size)
+ (contract-out
+  [make-ring (-> exact-positive-integer? ring?)]
+  [ring? (-> any/c boolean?)]
+  [ring-push! (-> ring? any/c void?)]
+  [ring-pop! (-> ring? (or/c #f any/c))]
+  [ring-size (-> ring? exact-nonnegative-integer?)]))
 
 (struct ring (sema vs cap [pos #:mutable] [size #:mutable])
   #:transparent)
 
-(define/contract (make-ring cap)
-  (-> exact-positive-integer? ring?)
+(define (make-ring cap)
   (ring (make-semaphore 1)
         (make-vector cap #f)
         cap
         0
         0))
 
-(define/contract (ring-push! r v)
-  (-> ring? any/c void?)
+(define (ring-push! r v)
   (call-with-semaphore (ring-sema r)
-    (lambda _
+    (lambda ()
       (define vs (ring-vs r))
       (define cap (ring-cap r))
       (define pos (ring-pos r))
@@ -31,10 +30,9 @@
       (set-ring-pos! r (modulo (add1 pos) cap))
       (set-ring-size! r (min cap (add1 (ring-size r)))))))
 
-(define/contract (ring-pop! r)
-  (-> ring? (or/c false/c any/c))
+(define (ring-pop! r)
   (call-with-semaphore (ring-sema r)
-    (lambda _
+    (lambda ()
       (cond
         [(zero? (ring-size r)) #f]
         [else

@@ -1,20 +1,23 @@
 #lang racket/base
 
 (require (for-syntax racket/base
-                     syntax/parse)
-         racket/contract)
+                     syntax/parse/pre)
+         racket/contract/base)
 
 (provide
- current-rpc-registry
  register-rpc
- dispatch)
+ (contract-out
+  [current-rpc-registry
+   (parameter/c (and/c hash-eq? (not/c immutable?)))]
+  [dispatch
+   (->* [symbol?]
+        [(listof any/c)]
+        any/c)]))
 
-(define/contract current-rpc-registry
-  (parameter/c (and/c hash-eq? (not/c immutable?)))
+(define current-rpc-registry
   (make-parameter (make-hasheq)))
 
-(define/contract (register! name fn)
-  (-> symbol? procedure? void?)
+(define (register! name fn)
   (hash-set! (current-rpc-registry) name fn))
 
 (define-syntax (register-rpc stx)
@@ -27,8 +30,7 @@
      #'(begin
          (register! 'command.id command.e) ...)]))
 
-(define/contract (dispatch name [args null])
-  (->* (symbol?) ((listof any/c)) any/c)
+(define (dispatch name [args null])
   (apply (hash-ref (current-rpc-registry)
                    name
                    (lambda ()
@@ -40,8 +42,7 @@
 
   (parameterize ([current-rpc-registry (make-hasheq)])
     (register-rpc add1
-                  [ping (lambda _
-                          "PONG")])
+                  [ping (λ () "PONG")])
 
     (check-eqv? (dispatch 'add1 '(1)) 2)
     (check-equal? (dispatch 'ping '()) "PONG")
@@ -49,5 +50,5 @@
      (lambda (e)
        (and (exn:fail? e)
             (check-regexp-match "procedure foo not found" (exn-message e))))
-     (lambda _
+     (lambda ()
        (dispatch 'foo '())))))

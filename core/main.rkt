@@ -33,7 +33,7 @@
 (module+ main
   (define scheduler
     (thread
-     (lambda _
+     (lambda ()
        (let loop ()
          (define deadline (+ (current-inexact-milliseconds) 30000))
          (define entries (find-due-entries))
@@ -54,7 +54,7 @@
   (define-values (server stop-server)
     (serve in out notifications))
   (with-handlers ([exn:break?
-                   (lambda _
+                   (lambda ()
                      (stop-server)
                      (stop-logger))])
     (sync/enable-break server)))

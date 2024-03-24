@@ -1,25 +1,23 @@
 #lang racket/base
 
-(require racket/contract
+(require racket/contract/base
          "ring.rkt")
 
 (provide
- current-undo-ring
- push-undo!
- undo!)
+ (contract-out
+  [current-undo-ring (parameter/c ring?)]
+  [push-undo! (-> (-> any) void?)]
+  [undo! (-> void?)]))
 
-(define/contract current-undo-ring
-  (parameter/c ring?)
+(define current-undo-ring
   (make-parameter (make-ring 128)))
 
-(define/contract (push-undo! f)
-  (-> (-> any) void?)
-  (ring-push! (current-undo-ring) f))
+(define (push-undo! proc)
+  (ring-push! (current-undo-ring) proc))
 
-(define/contract (undo!)
-  (-> void?)
-  (define f (ring-pop! (current-undo-ring)))
-  (when f (void (f))))
+(define (undo!)
+  (define proc (ring-pop! (current-undo-ring)))
+  (when proc (void (proc))))
 
 (module+ test
   (require rackunit)
@@ -27,9 +25,9 @@
   (parameterize ([current-undo-ring (make-ring 128)])
     (define x #f)
 
-    (push-undo! (lambda _ (set! x 1)))
-    (push-undo! (lambda _ (set! x 2)))
-    (push-undo! (lambda _ (set! x 3)))
+    (push-undo! (lambda () (set! x 1)))
+    (push-undo! (lambda () (set! x 2)))
+    (push-undo! (lambda () (set! x 3)))
 
     (undo!)
     (check-eqv? x 3)

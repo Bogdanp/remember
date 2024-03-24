@@ -2,7 +2,7 @@
 
 (require db
          gregor
-         racket/contract
+         racket/contract/base
          racket/file
          racket/format
          racket/list
@@ -13,10 +13,18 @@
  id/c
  isolation-level/c
 
- make-db
- current-db
- call-with-database-connection
- call-with-database-transaction
+ (contract-out
+  [make-db (-> (-> connection?) db?)]
+  [current-db (parameter/c db?)]
+  [call-with-database-connection
+    (->* [(-> connection? any)]
+         [#:db db?]
+         any)]
+  [call-with-database-transaction
+    (->* [(-> connection? any)]
+         [#:db db?
+          #:isolation isolation-level/c]
+         any)])
  sql->
  backup-database!
  create-database-copy!
@@ -26,7 +34,7 @@
   exact-nonnegative-integer?)
 
 (define isolation-level/c
-  (or/c false/c
+  (or/c #f
         'serializable
         'repeatable-read
         'read-committed
@@ -35,13 +43,11 @@
 (struct db (conn sem)
   #:transparent)
 
-(define/contract (make-db connector)
-  (-> (-> connection?) db?)
+(define (make-db connector)
   (db (connector)
       (make-semaphore 1)))
 
-(define/contract current-db
-  (parameter/c db?)
+(define current-db
   (make-parameter
    (make-db (lambda ()
               (sqlite3-connect #:mode 'create
@@ -51,25 +57,19 @@
 (define current-connection
   (make-parameter #f))
 
-(define/contract (call-with-database-connection f #:db [the-db (current-db)])
-  (->* ((-> connection? any)) (#:db db?) any)
+(define (call-with-database-connection proc #:db [the-db (current-db)])
   (call-with-semaphore (db-sem the-db)
-    (lambda _
-      (f (db-conn the-db)))))
+    (λ () (proc (db-conn the-db)))))
 
-(define/contract (call-with-database-transaction f
+(define (call-with-database-transaction proc
                    #:db [the-db (current-db)]
                    #:isolation [isolation #f])
-  (->* ((-> connection? any))
-       (#:db db?
-        #:isolation isolation-level/c)
-       any)
   (cond
     [(current-connection)
      => (lambda (conn)
           (call-with-transaction conn
-            (lambda _
-              (f conn))))]
+            (lambda ()
+              (proc conn))))]
 
     [else
      (call-with-database-connection
@@ -78,8 +78,8 @@
          (parameterize ([current-connection conn])
            (call-with-transaction conn
              #:isolation isolation
-             (lambda _
-               (f conn))))))]))
+             (lambda ()
+               (proc conn))))))]))
 
 (define (sql-> v)
   (cond

@@ -5,7 +5,7 @@
          gregor
          gregor/time
          json
-         racket/contract
+         racket/contract/base
          racket/format
          racket/match
          racket/sequence
@@ -20,13 +20,14 @@
 
 (provide
  (schema-out entry)
- commit!
- update!
- archive-entry!
- snooze-entry!
- delete-entry!
- find-pending-entries
- find-due-entries)
+ (contract-out
+  [commit! (-> string? entry?)]
+  [update! (-> id/c string? entry?)]
+  [archive-entry! (-> id/c (or/c #f entry?))]
+  [snooze-entry! (-> id/c exact-positive-integer? void?)]
+  [delete-entry! (-> id/c void?)]
+  [find-pending-entries (-> (listof entry?))]
+  [find-due-entries (-> (listof entry?))]))
 
 (define entry-status/c
   (or/c 'pending 'archived 'deleted))
@@ -162,8 +163,7 @@
           rec
           tags))
 
-(define/contract (commit! command)
-  (-> string? entry?)
+(define (commit! command)
   (define-values (title due rec tags)
     (process-command command))
 
@@ -188,8 +188,7 @@
         (assign-tags! (entry-id the-entry) tags)
         (notify 'entries-did-change)))))
 
-(define/contract (update! id command)
-  (-> id/c string? entry?)
+(define (update! id command)
   (call-with-database-transaction
     (lambda (conn)
       (cond
@@ -241,7 +240,7 @@
               (begin0 updated-entry
                 (assign-tags! id tags)
                 (notify 'entries-did-change)
-                (push-undo! (lambda _
+                (push-undo! (lambda ()
                               ;; TODO: undo tag changes!
                               (update-one! conn (~> updated-entry
                                                     (set-entry-title (entry-title the-entry))
@@ -261,8 +260,7 @@
                   (< (datetime e.due-at)
                      (datetime "now" "localtime"))))))
 
-(define/contract (archive-entry! id)
-  (-> id/c (or/c false/c entry?))
+(define (archive-entry! id)
   (call-with-database-transaction
     (lambda (conn)
       (define the-entry
@@ -288,7 +286,7 @@
                                  (set-entry-next-recurrence-at new-rec-at))))
          (begin0 updated-entry
            (notify 'entries-did-change)
-           (push-undo! (lambda _
+           (push-undo! (lambda ()
                          (call-with-database-connection
                            (lambda (conn)
                              (update-one! conn (~> updated-entry
@@ -301,14 +299,13 @@
            (update-one! conn (set-entry-status the-entry 'archived)))
          (begin0 updated-entry
            (notify 'entries-did-change)
-           (push-undo! (lambda _
+           (push-undo! (lambda ()
                          (call-with-database-connection
                            (lambda (conn)
                              (update-one! conn (set-entry-status updated-entry 'pending))
                              (notify 'entries-did-change))))))]))))
 
-(define/contract (snooze-entry! id amount)
-  (-> id/c exact-positive-integer? void?)
+(define (snooze-entry! id amount)
   (define the-entry
     (call-with-database-transaction
       (lambda (conn)
@@ -320,8 +317,7 @@
   (when the-entry
     (void (notify 'entries-did-change))))
 
-(define/contract (delete-entry! id)
-  (-> id/c void?)
+(define (delete-entry! id)
   (define the-entry
     (call-with-database-transaction
       (lambda (conn)
@@ -332,21 +328,19 @@
 
   (when the-entry
     (notify 'entries-did-change)
-    (push-undo! (lambda _
+    (push-undo! (lambda ()
                   (call-with-database-connection
                     (lambda (conn)
                       (update-one! conn (set-entry-status the-entry 'pending))))))))
 
-(define/contract (find-pending-entries)
-  (-> (listof entry?))
+(define (find-pending-entries)
   (call-with-database-connection
     (lambda (conn)
       (sequence->list (in-entities conn
                                    (~> pending-entries
                                        (order-by ([(datetime e.due-at)]))))))))
 
-(define/contract (find-due-entries)
-  (-> (listof entry?))
+(define (find-due-entries)
   (call-with-database-connection
     (lambda (conn)
       (sequence->list (in-entities conn due-entries)))))
@@ -354,11 +348,10 @@
 (module+ test
   (require rackunit
            "ring.rkt"
-           "schema.rkt"
            "testing.rkt")
 
   (call-with-empty-database
-   (lambda _
+   (lambda ()
      (define the-entry
        (commit! "buy milk"))
 
@@ -372,7 +365,7 @@
                               (map entry-id (find-pending-entries))))))
 
   (call-with-empty-database
-   (lambda _
+   (lambda ()
      (define t0 (now))
      (define the-entry
        (commit! "buy milk +1h"))
@@ -393,7 +386,7 @@
                           (map entry-id (find-pending-entries))))))
 
   (call-with-empty-database
-   (lambda _
+   (lambda ()
      (define t0 (now))
      (define the-entry
        (commit! "buy milk +1h"))
@@ -410,16 +403,16 @@
      (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 45)))
 
   (call-with-empty-database
-   (lambda _
+   (lambda ()
      (define t0 (now))
      (define the-entry
        (commit! "buy milk +1h +15m"))
 
      (check-eqv? (minutes-between t0 (entry-due-at the-entry)) 75)))
 
-  (parameterize ([current-clock (lambda _ 0)])
+  (parameterize ([current-clock (lambda () 0)])
     (call-with-empty-database
-     (lambda _
+     (lambda ()
        (define the-entry
          (commit! "buy milk @mon +1h +15m"))
 
@@ -428,7 +421,7 @@
 
   (parameterize ([current-undo-ring (make-ring 128)])
     (call-with-empty-database
-     (lambda _
+     (lambda ()
        (define the-entry
          (commit! "buy milk +1h +15m"))
 
@@ -451,7 +444,7 @@
                      'pending))))
 
   (call-with-empty-database
-   (lambda _
+   (lambda ()
      (define the-entry
        (commit! "buy milk +1d"))
 
@@ -464,7 +457,7 @@
 
   (parameterize ([current-undo-ring (make-ring 128)])
     (call-with-empty-database
-     (lambda _
+     (lambda ()
        (define the-entry
          (commit! "buy milk +1d"))
 
@@ -483,9 +476,9 @@
        (reload!)
        (check-eq? (entry-status the-entry) 'pending))))
 
-  (parameterize ([current-clock (lambda _ 0)])
+  (parameterize ([current-clock (lambda () 0)])
     (call-with-empty-database
-     (lambda _
+     (lambda ()
        (define the-entry
          (commit! "invoice Tom @10am mon *weekly*"))
 
@@ -526,7 +519,7 @@
                         [recurrence-delta 1]
                         [recurrence-modifier 'week])))
 
-       (parameterize ([current-clock (lambda _
+       (parameterize ([current-clock (lambda ()
                                        (* 14 86400))])
          (archive-entry! (entry-id the-entry))
          (reload!)
@@ -544,9 +537,9 @@
        (reload!)
        (check-true (entry-recurs? the-entry)))))
 
-  (parameterize ([current-clock (lambda _ 0)])
+  (parameterize ([current-clock (lambda () 0)])
     (call-with-empty-database
-     (lambda _
+     (lambda ()
        (define the-entry
          (commit! "invoice Tom @10am mon *weekly*"))
 

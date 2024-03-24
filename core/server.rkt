@@ -2,33 +2,34 @@
 
 (require json
          racket/async-channel
-         racket/contract
+         racket/contract/base
          racket/match
-         racket/port
          "rpc.rkt")
 
 (provide
- serve)
+ (contract-out
+  [serve
+   (->* [input-port? output-port?]
+        [channel?]
+        (values evt? (-> void?)))]))
 
 (define-logger server)
 
-(define/contract (serve in out [notifications-ch (make-channel)])
-  (->* (input-port? output-port?) (channel?) (values evt? (-> void?)))
+(define (serve in out [notifications-ch (make-channel)])
   (define stopped (make-semaphore))
-
   (define writes-ch (make-async-channel 128))
   (define (send response)
     (async-channel-put writes-ch response))
 
   (define thd
     (thread
-     (lambda _
+     (lambda ()
        (let loop ()
          (log-server-debug "waiting for events")
          (sync
           (handle-evt
            stopped
-           (lambda _
+           (lambda ()
              (log-server-debug "received stop event")))
 
           (handle-evt
@@ -47,12 +48,12 @@
 
           (handle-evt
            in
-           (lambda _
+           (lambda ()
              (log-server-debug "received read event")
              (define req (read-json in))
              (unless (eof-object? req)
                (thread
-                (lambda _
+                (lambda ()
                   (log-server-debug "handling request: ~.s" req)
                   (with-handlers ([exn:fail:read?
                                    (lambda (e)

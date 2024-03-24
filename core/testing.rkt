@@ -9,7 +9,7 @@
 
 (define (call-with-empty-database f)
   (parameterize ([current-db (make-db
-                              (lambda _
+                              (lambda ()
                                 (sqlite3-connect #:database 'memory)))])
     (migrate!)
     (f)))

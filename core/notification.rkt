@@ -1,8 +1,8 @@
 #lang racket/base
 
 (require (for-syntax racket/base
-                     syntax/parse)
-         racket/contract)
+                     syntax/parse/pre)
+         racket/contract/base)
 
 (provide
  define-listener
@@ -10,23 +10,17 @@
 
 (define-logger notifications)
 
-(define notifications-registry/c
-  (and/c hash-eq? (hash/c symbol? (listof procedure?)) (not/c immutable?)))
-
-(define/contract current-notifications-registry
-  (parameter/c notifications-registry/c)
+(define current-notifications-registry
   (make-parameter (make-hasheq)))
 
-(define/contract (add-listener! notification f)
-  (-> symbol? procedure? void?)
+(define (add-listener! notification f)
   (hash-update! (current-notifications-registry)
                 notification
                 (lambda (listeners)
                   (cons f listeners))
                 null))
 
-(define/contract (notify notification . args)
-  (-> symbol? any/c ... evt?)
+(define (notify notification . args)
   (define listeners
     (hash-ref (current-notifications-registry)
               notification
@@ -36,11 +30,11 @@
   (define threads
     (for/list ([listener (in-list listeners)])
       (thread
-       (lambda _
+       (lambda ()
          (apply listener args)))))
 
   (thread
-   (lambda _
+   (lambda ()
      (for-each sync threads))))
 
 (define-syntax (define-listener stx)
