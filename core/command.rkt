@@ -30,9 +30,9 @@
    {delta : UVarint}
    {modifier : Symbol}]
   [named-date
-   {date : (StringConverter iso8601->date date->iso8601)}]
+   {date : (StringConvertible iso8601->date date->iso8601)}]
   [named-datetime
-   {datetime : (StringConverter iso8601->datetime datetime->iso8601)}]
+   {datetime : (StringConvertible iso8601->datetime datetime->iso8601)}]
   [recurrence
    {delta : UVarint}
    {modifier : Symbol}]
