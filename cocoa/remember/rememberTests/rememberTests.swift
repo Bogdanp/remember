@@ -3,7 +3,7 @@
 //  rememberTests
 //
 //  Created by Bogdan Popa on 23/12/2019.
-//  Copyright © 2019 CLEARTYPE SRL. All rights reserved.
+//  Copyright © 2019-2024 CLEARTYPE SRL. All rights reserved.
 //
 
 import XCTest

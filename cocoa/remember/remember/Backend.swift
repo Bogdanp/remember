@@ -233,7 +233,7 @@ public class Backend {
     )
   }
 
-  public func getPendingEntries() -> Future<String, [Entry]> {
+  public func getDueEntries() -> Future<String, [Entry]> {
     return impl.send(
       writeProc: { (out: OutputPort) in
         UVarint(0x0004).write(to: out)
@@ -244,12 +244,32 @@ public class Backend {
     )
   }
 
-  public func installCallback(internalWithId id: UVarint, andAddr addr: Varint) -> Future<String, Void> {
+  public func getPendingEntries() -> Future<String, [Entry]> {
     return impl.send(
       writeProc: { (out: OutputPort) in
         UVarint(0x0005).write(to: out)
+      },
+      readProc: { (inp: InputPort, buf: inout Data) -> [Entry] in
+        return [Entry].read(from: inp, using: &buf)
+      }
+    )
+  }
+
+  public func installCallback(internalWithId id: UVarint, andAddr addr: Varint) -> Future<String, Void> {
+    return impl.send(
+      writeProc: { (out: OutputPort) in
+        UVarint(0x0006).write(to: out)
         id.write(to: out)
         addr.write(to: out)
+      },
+      readProc: { (inp: InputPort, buf: inout Data) -> Void in }
+    )
+  }
+
+  public func markReadyForChanges() -> Future<String, Void> {
+    return impl.send(
+      writeProc: { (out: OutputPort) in
+        UVarint(0x0007).write(to: out)
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
@@ -258,7 +278,7 @@ public class Backend {
   public func mergeDatabaseCopy(atPath path: String) -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
-        UVarint(0x0006).write(to: out)
+        UVarint(0x0008).write(to: out)
         path.write(to: out)
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
@@ -268,7 +288,7 @@ public class Backend {
   public func parse(command s: String) -> Future<String, [Token]> {
     return impl.send(
       writeProc: { (out: OutputPort) in
-        UVarint(0x0007).write(to: out)
+        UVarint(0x0009).write(to: out)
         s.write(to: out)
       },
       readProc: { (inp: InputPort, buf: inout Data) -> [Token] in
@@ -280,9 +300,18 @@ public class Backend {
   public func snooze(entryWithId id: UVarint, forMinutes minutes: UVarint) -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
-        UVarint(0x0008).write(to: out)
+        UVarint(0x000a).write(to: out)
         id.write(to: out)
         minutes.write(to: out)
+      },
+      readProc: { (inp: InputPort, buf: inout Data) -> Void in }
+    )
+  }
+
+  public func startScheduler() -> Future<String, Void> {
+    return impl.send(
+      writeProc: { (out: OutputPort) in
+        UVarint(0x000b).write(to: out)
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
@@ -291,7 +320,7 @@ public class Backend {
   public func undo() -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
-        UVarint(0x0009).write(to: out)
+        UVarint(0x000c).write(to: out)
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
@@ -300,7 +329,7 @@ public class Backend {
   public func update(entryWithId id: UVarint, andCommand s: String) -> Future<String, Entry?> {
     return impl.send(
       writeProc: { (out: OutputPort) in
-        UVarint(0x000a).write(to: out)
+        UVarint(0x000d).write(to: out)
         id.write(to: out)
         s.write(to: out)
       },
@@ -308,5 +337,23 @@ public class Backend {
         return Entry?.read(from: inp, using: &buf)
       }
     )
+  }
+
+  public func installCallback(entriesDidChangeCb proc: @escaping (Bool) -> Void) -> Future<String, Void> {
+    return NoiseBackend.installCallback(id: 0, rpc: self.installCallback(internalWithId:andAddr:)) { inp in
+      var buf = Data(count: 8*1024)
+      proc(
+        Bool.read(from: inp, using: &buf)
+      )
+    }
+  }
+
+  public func installCallback(entriesDueCb proc: @escaping ([Entry]) -> Void) -> Future<String, Void> {
+    return NoiseBackend.installCallback(id: 1, rpc: self.installCallback(internalWithId:andAddr:)) { inp in
+      var buf = Data(count: 8*1024)
+      proc(
+        [Entry].read(from: inp, using: &buf)
+      )
+    }
   }
 }

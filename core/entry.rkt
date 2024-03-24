@@ -13,7 +13,7 @@
          threading
          "command.rkt"
          "database.rkt"
-         "notification.rkt"
+         "event.rkt"
          "tag.rkt"
          "undo.rkt")
 
@@ -214,7 +214,7 @@
 
       (begin0 the-entry
         (assign-tags! (entry-id the-entry) tags)
-        (notify 'entries-did-change)))))
+        (entries-did-change)))))
 
 (define (update! id command)
   (call-with-database-transaction
@@ -267,7 +267,7 @@
 
               (begin0 updated-entry
                 (assign-tags! id tags)
-                (notify 'entries-did-change)
+                (entries-did-change)
                 (push-undo! (lambda ()
                               ;; TODO: undo tag changes!
                               (update-one! conn (~> updated-entry
@@ -313,25 +313,25 @@
                                  (set-entry-due-at new-due-at)
                                  (set-entry-next-recurrence-at new-rec-at))))
          (begin0 updated-entry
-           (notify 'entries-did-change)
+           (entries-did-change)
            (push-undo! (lambda ()
                          (call-with-database-connection
                            (lambda (conn)
                              (update-one! conn (~> updated-entry
                                                    (set-entry-due-at old-due-at)
                                                    (set-entry-next-recurrence-at old-rec-at)))
-                             (notify 'entries-did-change))))))]
+                             (entries-did-change))))))]
 
         [else
          (define updated-entry
            (update-one! conn (set-entry-status the-entry 'archived)))
          (begin0 updated-entry
-           (notify 'entries-did-change)
+           (entries-did-change)
            (push-undo! (lambda ()
                          (call-with-database-connection
                            (lambda (conn)
                              (update-one! conn (set-entry-status updated-entry 'pending))
-                             (notify 'entries-did-change))))))]))))
+                             (entries-did-change))))))]))))
 
 (define (snooze-entry! id amount)
   (define the-entry
@@ -343,7 +343,7 @@
                (update-one! conn _)))))
 
   (when the-entry
-    (void (notify 'entries-did-change))))
+    (void (entries-did-change))))
 
 (define (delete-entry! id)
   (define the-entry
@@ -355,7 +355,7 @@
                (update-one! conn _)))))
 
   (when the-entry
-    (notify 'entries-did-change)
+    (entries-did-change)
     (push-undo! (lambda ()
                   (call-with-database-connection
                     (lambda (conn)

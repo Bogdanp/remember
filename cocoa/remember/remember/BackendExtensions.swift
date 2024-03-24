@@ -8,6 +8,4 @@ extension Backend {
   )
 }
 
-extension Entry: Identifiable {
-  
-}
+extension Entry: Identifiable {}

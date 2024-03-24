@@ -50,4 +50,4 @@ artifacts with others.
 
 ## License
 
-    Copyright 2019, 2020 CLEARTYPE SRL.  All rights reserved.
+    Copyright 2019-2024 CLEARTYPE SRL.  All rights reserved.

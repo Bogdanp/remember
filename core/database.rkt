@@ -49,10 +49,12 @@
 
 (define current-db
   (make-parameter
-   (make-db (lambda ()
-              (sqlite3-connect #:mode 'create
-                               #:database (build-application-path "remember.sqlite3")
-                               #:use-place 'os-thread)))))
+   (make-db
+    (lambda ()
+      (sqlite3-connect
+       #:mode 'create
+       #:database (build-application-path "remember.sqlite3")
+       #:use-place 'os-thread)))))
 
 (define current-connection
   (make-parameter #f))

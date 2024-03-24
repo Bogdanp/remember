@@ -5,7 +5,6 @@
          "command.rkt"
          "database.rkt"
          "entry.rkt"
-         "notification.rkt"
          "schema.rkt"
          "undo.rkt")
 
@@ -36,6 +35,9 @@
 (define-rpc (get-pending-entries : (Listof Entry))
   (map entry->Entry (find-pending-entries)))
 
+(define-rpc (get-due-entries : (Listof Entry))
+  (map entry->Entry (find-due-entries)))
+
 (define-rpc (undo)
   (void (undo!)))
 
@@ -45,8 +47,22 @@
 (define-rpc (merge-database-copy [at-path path : String])
   (merge-database-copy! path))
 
-(define-listener (entries-did-change)
-  (eprintf "received entries-did-change~n"))
+(define-callout (entries-due-cb [entries : (Listof Entry)]))
+
+(define scheduler-custodian
+  (make-custodian))
+
+(define-rpc (start-scheduler)
+  (parameterize ([current-custodian scheduler-custodian])
+    (thread
+     (lambda ()
+       (let loop ()
+         (define deadline (+ (current-inexact-milliseconds) 30000))
+         (define due-entries (get-due-entries))
+         (unless (null? due-entries)
+           (entries-due-cb due-entries))
+         (sync (alarm-evt deadline))
+         (loop))))))
 
 (define (main in-fd out-fd)
   (backup-database!)
@@ -61,20 +77,6 @@
                       (trap))])
       (define stop
         (serve in-fd out-fd))
-      (start-scheduler
-       (lambda (entries)
-         (eprintf "entries due: ~s~n" entries)))
       (with-handlers ([exn:break? void])
         (sync never-evt))
       (stop))))
-
-(define (start-scheduler on-change-proc)
-  (thread
-   (lambda ()
-     (let loop ()
-       (define deadline (+ (current-inexact-milliseconds) 30000))
-       (define entries (find-due-entries))
-       (unless (null? entries)
-         (on-change-proc entries))
-       (sync (alarm-evt deadline))
-       (loop)))))
