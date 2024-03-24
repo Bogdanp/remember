@@ -27,8 +27,6 @@
 		43983BDE23B794300064C527 /* UserNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BDD23B794300064C527 /* UserNotifications.swift */; };
 		43983BE223BA19EC0064C527 /* EntryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE123BA19EC0064C527 /* EntryList.swift */; };
 		43983BE423BA279E0064C527 /* EntryListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE323BA279E0064C527 /* EntryListItem.swift */; };
-		439B9CF823CB3D09001F91A2 /* AutoUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439B9CF723CB3D09001F91A2 /* AutoUpdater.swift */; };
-		439B9CFA23CB58BB001F91A2 /* Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439B9CF923CB58BB001F91A2 /* Updates.swift */; };
 		43B8902A269976D6007D29BD /* Snooze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B89029269976D6007D29BD /* Snooze.swift */; };
 		43BB852623DB835500DFDC59 /* StatusItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BB852523DB835500DFDC59 /* StatusItem.swift */; };
 		43D680FD23D71AF900659FCA /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D680FC23D71AF900659FCA /* Onboarding.swift */; };
@@ -65,8 +63,6 @@
 		43983BDD23B794300064C527 /* UserNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotifications.swift; sourceTree = "<group>"; };
 		43983BE123BA19EC0064C527 /* EntryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryList.swift; sourceTree = "<group>"; };
 		43983BE323BA279E0064C527 /* EntryListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryListItem.swift; sourceTree = "<group>"; };
-		439B9CF723CB3D09001F91A2 /* AutoUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoUpdater.swift; sourceTree = "<group>"; };
-		439B9CF923CB58BB001F91A2 /* Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updates.swift; sourceTree = "<group>"; };
 		43A60B9E23BD5ED600160E3E /* remember-core.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "remember-core.entitlements"; sourceTree = "<group>"; };
 		43B89029269976D6007D29BD /* Snooze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snooze.swift; sourceTree = "<group>"; };
 		43BB852523DB835500DFDC59 /* StatusItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItem.swift; sourceTree = "<group>"; };
@@ -125,7 +121,6 @@
 			children = (
 				436BE29423B10D4E00717375 /* AppDelegate.swift */,
 				436BE29823B10D5000717375 /* Assets.xcassets */,
-				439B9CF723CB3D09001F91A2 /* AutoUpdater.swift */,
 				43344AD82BB05FD0000BE145 /* Backend.swift */,
 				43344AD92BB05FD0000BE145 /* BackendExtensions.swift */,
 				43E6B94B23B673EF00F7ACE1 /* BridgingHeader.h */,
@@ -155,7 +150,6 @@
 				43B89029269976D6007D29BD /* Snooze.swift */,
 				43BB852523DB835500DFDC59 /* StatusItem.swift */,
 				43E6B94223B61CAD00F7ACE1 /* Store.swift */,
-				439B9CF923CB58BB001F91A2 /* Updates.swift */,
 				43983BDD23B794300064C527 /* UserNotifications.swift */,
 				433DB90E23B134B40027268A /* VisualEffectBackground.swift */,
 			);
@@ -308,7 +302,6 @@
 			files = (
 				43713C3E23B21CB000E20E48 /* CommandField.swift in Sources */,
 				43E6B95E23B68F4A00F7ACE1 /* Keycode.swift in Sources */,
-				439B9CF823CB3D09001F91A2 /* AutoUpdater.swift in Sources */,
 				4355FC3C23BA73A8000463B6 /* KeyboardShortcutDefaults.swift in Sources */,
 				43983BE423BA279E0064C527 /* EntryListItem.swift in Sources */,
 				43E6B95A23B6775B00F7ACE1 /* DDHotKeyTextField.m in Sources */,
@@ -320,7 +313,6 @@
 				4355FC3A23BA621F000463B6 /* KeyboardShortcutField.swift in Sources */,
 				43344ADB2BB05FD0000BE145 /* BackendExtensions.swift in Sources */,
 				43344ADA2BB05FD0000BE145 /* Backend.swift in Sources */,
-				439B9CFA23CB58BB001F91A2 /* Updates.swift in Sources */,
 				43E6B95C23B6878600F7ACE1 /* Notifications.swift in Sources */,
 				43BB852623DB835500DFDC59 /* StatusItem.swift in Sources */,
 				436BE29723B10D4E00717375 /* ContentView.swift in Sources */,

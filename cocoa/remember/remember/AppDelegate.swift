@@ -18,17 +18,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   private var statusItem: NSStatusItem?
 
-  private var updater: AutoUpdater!
   private var syncer: FolderSyncer!
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
-    updater = AutoUpdater()
-    updater.start(withInterval: 3600 * 4) { changes, version in
-      RunLoop.main.schedule {
-        UpdatesManager.shared.show(withChangelog: changes, andRelease: version)
-      }
-    }
-
     syncer = FolderSyncer()
     syncer.start()
 
