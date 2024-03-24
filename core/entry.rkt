@@ -4,7 +4,7 @@
          deta
          gregor
          gregor/time
-         json
+         noise/serde
          racket/contract/base
          racket/format
          racket/match
@@ -13,14 +13,15 @@
          threading
          "command.rkt"
          "database.rkt"
-         "json.rkt"
          "notification.rkt"
          "tag.rkt"
          "undo.rkt")
 
 (provide
+ (record-out Entry)
  (schema-out entry)
  (contract-out
+  [entry->Entry (-> entry? Entry?)]
   [commit! (-> string? entry?)]
   [update! (-> id/c string? entry?)]
   [archive-entry! (-> id/c (or/c #f entry?))]
@@ -34,6 +35,19 @@
 
 (define recurrence-modifier/c
   (or/c 'hour 'day 'week 'month 'year))
+
+(define-record Entry
+  [id : UVarint]
+  [title : String]
+  [due-in : (Optional String)]
+  [recurs : Bool])
+
+(define (entry->Entry e)
+  (make-Entry
+   #:id (entry-id e)
+   #:title (entry-title e)
+   #:due-in (entry-due-in e)
+   #:recurs (entry-recurs? e)))
 
 (define-schema entry
   #:table "entries"
@@ -50,15 +64,7 @@
 
   #:pre-persist-hook
   (lambda (e)
-    (set-entry-updated-at e (now)))
-
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr e)
-     (hasheq 'id (entry-id e)
-             'title (entry-title e)
-             'due-in (or (entry-due-in e)
-                         (json-null))
-             'recurs? (entry-recurs? e)))])
+    (set-entry-updated-at e (now))))
 
 (define (entry-recurs? e)
   (and (not (sql-null? (entry-next-recurrence-at e)))
@@ -66,7 +72,9 @@
        (not (sql-null? (entry-recurrence-modifier e)))))
 
 (define (entry-recurrence e)
-  (recurrence #f #f (entry-recurrence-delta e) (entry-recurrence-modifier e)))
+  (TokenData.recurrence
+   (entry-recurrence-delta e)
+   (entry-recurrence-modifier e)))
 
 (define (entry-due-in e)
   (and (not (sql-null? (entry-due-at e)))
@@ -133,46 +141,66 @@
                  [rec init-rec]
                  [tags init-tags])
                 ([token (in-list tokens)])
-        (match token
-          [(chunk text span)
+        (match (Token-data token)
+          [#f
            (begin0 (values due rec tags)
-             (display text))]
+             (display (Token-text token)))]
 
-          [(and (relative-time text span delta modifier) r)
-           (define adder (relative-time-adder r))
-           (values (adder (or due (now)))
-                   rec
-                   tags)]
+          [(and (TokenData.relative-time delta modifier) r)
+           (define adder
+             (case modifier
+               [(m) +minutes]
+               [(h) +hours]
+               [(d) +days]
+               [(w) +weeks]
+               [(M) +months]))
+           (values (adder (or due (now)) delta) rec tags)]
 
-          [(named-datetime text span dt)
+          [(TokenData.named-datetime dt)
            (values dt rec tags)]
 
-          [(named-date text span d)
+          [(TokenData.named-date d)
            (define t (if due (->time due) (time 8 0)))
            (values (at-time d t) rec tags)]
 
-          [(and (recurrence text span delta modifier) the-rec)
+          [(and (TokenData.recurrence _delta _modifier) the-rec)
            (values due the-rec tags)]
 
-          [(tag text span name)
+          [(TokenData.tag name)
            (values due rec (cons name tags))]))))
-
 
   (values (get-output-string out)
           due
           rec
           tags))
 
+(define (recurrence-next data due)
+  (match-define (TokenData.recurrence delta modifier)
+    data)
+  (define adder
+    (case modifier
+      [(hour)  +hours]
+      [(day)   +days]
+      [(week)  +weeks]
+      [(month) +months]
+      [(year)  +years]))
+  (let loop ([due due])
+    (define next-due
+      (adder due delta))
+    (cond
+      [(datetime>=? next-due (now)) next-due]
+      [else (loop next-due)])))
+
 (define (commit! command)
   (define-values (title due rec tags)
     (process-command command))
 
   (define-values (next-rec-at rec-delta rec-modifier)
-    (if (and due rec)
-        (values (recurrence-next rec due)
-                (recurrence-delta rec)
-                (recurrence-modifier rec))
-        (values #f #f #f)))
+    (match (and due rec)
+      [(TokenData.recurrence delta modifier)
+       (values (recurrence-next rec due) delta modifier)]
+      [_
+       (values #f #f #f)]))
 
   (call-with-database-transaction
     (lambda (conn)
@@ -223,11 +251,11 @@
                                  #:init-tags (find-tags-by-entry-id conn id)))
 
               (define-values (next-rec-at rec-delta rec-modifier)
-                (if (and due rec)
-                    (values (recurrence-next rec due)
-                            (recurrence-delta rec)
-                            (recurrence-modifier rec))
-                    (values #f #f #f)))
+                (match (and due rec)
+                  [(TokenData.recurrence delta modifier)
+                   (values (recurrence-next rec due) delta modifier)]
+                  [_
+                   (values #f #f #f)]))
 
               (define updated-entry
                 (update-one! conn (~> the-entry

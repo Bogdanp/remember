@@ -1,47 +1,40 @@
-TEMP_DIR=temp
-BUILD_DIR=build
+ARCH=$(shell uname -m)
 
-COCOA_MAN_DIR=cocoa/remember/Resources/manual
-COCOA_CORE_DIR=cocoa/remember/Resources/core/$(shell uname -m)
+APP_SRC=cocoa/remember
+RKT_SRC=core
+RKT_FILES=$(shell find ${RKT_SRC} -name '*.rkt')
+RKT_MAIN_ZO=${RKT_SRC}/compiled/main_rkt.zo
+
+RESOURCES_PATH=${APP_SRC}/res
+RUNTIME_NAME=runtime-${ARCH}
+RUNTIME_PATH=${RESOURCES_PATH}/${RUNTIME_NAME}
+MANUAL_PATH=${RESOURCES_PATH}/manual
+
+CORE_ZO=${RESOURCES_PATH}/core-${ARCH}.zo
 
 .PHONY: all
-all: $(COCOA_CORE_DIR)/bin/remember-core $(COCOA_MAN_DIR)/index.html
-
-
-## Core ################################################################
-
-CORE_SRC_DIR=core
-CORE_OBJ_DIR=core/compiled
-
-$(COCOA_CORE_DIR)/bin/remember-core: $(BUILD_DIR)/bin/remember-core
-	rm -fr $(COCOA_CORE_DIR) && mkdir -p $(COCOA_CORE_DIR)
-	cp -r $(BUILD_DIR)/* $(COCOA_CORE_DIR)/
-
-$(BUILD_DIR)/bin/remember-core: $(TEMP_DIR)/remember-core
-	rm -fr $(BUILD_DIR) && mkdir -p $(BUILD_DIR)
-	raco distribute $(BUILD_DIR) $(TEMP_DIR)/remember-core
-
-$(TEMP_DIR)/remember-core: $(CORE_OBJ_DIR)/main_rkt.zo migrations/*.sql
-	rm -fr $(TEMP_DIR) && mkdir -p $(TEMP_DIR)
-	raco exe -o $(TEMP_DIR)/remember-core core/main.rkt
-
-$(CORE_OBJ_DIR)/main_rkt.zo: core/*.rkt
-
-$(CORE_OBJ_DIR)/%_rkt.zo: core/%.rkt
-	raco make -j $(shell nproc || echo 16) -v $<
-
-
-## Phony ###############################################################
+all: ${CORE_ZO} ${APP_SRC}/remember/Backend.swift
 
 .PHONY: clean
 clean:
-	rm -fr $(CORE_OBJ_DIR) $(COCOA_CORE_DIR) $(BUILD_DIR) $(TEMP_DIR)
+	rm -fr ${RESOURCES_PATH}
 
+${RKT_MAIN_ZO}: ${RKT_FILES}
+	raco make -j 16 -v ${RKT_SRC}/main.rkt
 
-## Manual ##############################################################
+${CORE_ZO}: ${RKT_MAIN_ZO}
+	mkdir -p ${RESOURCES_PATH}
+	rm -fr ${RUNTIME_PATH}
+	raco ctool \
+	  --runtime ${RUNTIME_PATH} \
+	  --runtime-access ${RUNTIME_NAME} \
+	  --mods $@ ${RKT_SRC}/main.rkt
 
-$(COCOA_MAN_DIR)/index.html: manual/*.scrbl
-	raco scribble --html --dest $(COCOA_MAN_DIR) +m manual/index.scrbl
+${APP_SRC}/remember/Backend.swift: ${CORE_ZO}
+	raco noise-serde-codegen ${RKT_SRC}/main.rkt > $@
+
+${MANUAL_PATH}/index.html: manual/*.scrbl
+	raco scribble --html --dest ${MANUAL_PATH} +m manual/index.scrbl
 
 website/manual/index.html: manual/*.scrbl
-	raco scribble --html --dest website/manual +m manual/index.scrbl
+	make -C website manual/index.html

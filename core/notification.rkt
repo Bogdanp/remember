@@ -1,8 +1,7 @@
 #lang racket/base
 
 (require (for-syntax racket/base
-                     syntax/parse/pre)
-         racket/contract/base)
+                     syntax/parse/pre))
 
 (provide
  define-listener

@@ -2,128 +2,47 @@
 
 (require gregor
          gregor/time
-         json
+         noise/serde
          racket/contract/base
-         racket/generic
          racket/match
          racket/port
-         racket/string
-         threading
-         "json.rkt")
+         racket/string)
 
 (provide
- (struct-out location)
- (struct-out span)
- (struct-out token)
- (struct-out chunk)
- (struct-out relative-time)
- relative-time-adder
- (struct-out named-date)
- (struct-out named-datetime)
- (struct-out recurrence)
+ (record-out Location)
+ (record-out Span)
+ (record-out Token)
+ (enum-out TokenData)
  (contract-out
-  [recurrence-next (-> recurrence? datetime-provider? datetime-provider?)])
- (struct-out tag)
- (contract-out
-  [parse-command (-> non-empty-string? (listof token?))]
-  [parse-command/jsexpr (-> non-empty-string? (non-empty-listof jsexpr?))]))
+  [parse-command (-> non-empty-string? (listof Token?))]))
 
-(struct location (line column offset)
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr loc)
-     (list (location-line loc)
-           (location-column loc)
-           (location-offset loc)))])
+(define-record Location
+  [line : UVarint]
+  [column : UVarint]
+  [offset : UVarint])
 
-(struct span (lo hi)
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define/generic ->jsexpr/super ->jsexpr)
-   (define (->jsexpr s)
-     (list (->jsexpr/super (span-lo s))
-           (->jsexpr/super (span-hi s))))])
+(define-record Span
+  [lo : Location]
+  [hi : Location])
 
-(struct token (text span)
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr _)
-     (error '->jsexpr "not implemented for token"))])
+(define-enum TokenData
+  [relative-time
+   {delta : UVarint}
+   {modifier : Symbol}]
+  [named-date
+   {date : (StringConverter iso8601->date date->iso8601)}]
+  [named-datetime
+   {datetime : (StringConverter iso8601->datetime datetime->iso8601)}]
+  [recurrence
+   {delta : UVarint}
+   {modifier : Symbol}]
+  [tag
+   {name : String}])
 
-(define (token->jsexpr t type)
-  (hasheq 'type type
-          'text (token-text t)
-          'span (->jsexpr (token-span t))))
-
-(struct chunk token ()
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr c)
-     (token->jsexpr c "chunk"))])
-
-(struct relative-time token (delta modifier)
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr rd)
-     (~> (token->jsexpr rd "relative-time")
-         (hash-set 'delta (relative-time-delta rd))
-         (hash-set 'modifier (symbol->string (relative-time-modifier rd)))))])
-
-(define ((relative-time-adder r) dp)
-  (define adder
-    (case (relative-time-modifier r)
-      [(m) +minutes]
-      [(h) +hours]
-      [(d) +days]
-      [(w) +weeks]
-      [(M) +months]))
-  (adder dp (relative-time-delta r)))
-
-(struct named-date token (d)
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr t)
-     (~> (token->jsexpr t "named-date")
-         (hash-set 'date (date->iso8601 (named-date-d t)))))])
-
-(struct named-datetime token (dt)
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr t)
-     (~> (token->jsexpr t "named-datetime")
-         (hash-set 'datetime (datetime->iso8601 (named-datetime-dt t)))))])
-
-(struct recurrence token (delta modifier)
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr t)
-     (~> (token->jsexpr t "recurrence")
-         (hash-set 'delta (recurrence-delta t))
-         (hash-set 'modifier (symbol->string (recurrence-modifier t)))))])
-
-(define (recurrence-next r dt)
-  (define adder
-    (case (recurrence-modifier r)
-      [(hour)  +hours]
-      [(day)   +days]
-      [(week)  +weeks]
-      [(month) +months]
-      [(year)  +years]))
-
-  (let loop ([dt dt])
-    (define next-dt
-      (adder dt (recurrence-delta r)))
-
-    (cond
-      [(datetime>=? next-dt (now)) next-dt]
-      [else (loop next-dt)])))
-
-(struct tag token (name)
-  #:transparent
-  #:methods gen:to-jsexpr
-  [(define (->jsexpr t)
-     (~> (token->jsexpr t "tag")
-         (hash-set 'name (tag-name t))))])
+(define-record Token
+  [text : String]
+  [span : Span]
+  [(data #f) : (Optional TokenData)])
 
 (define PREFIX-CHARS '(#\+ #\* #\@ #\#))
 (define RELATIVE-TIME-RE #px"^\\+(0|[1-9][0-9]*)([mhdwM])")
@@ -141,32 +60,40 @@
    (lambda ()
      (port-next-location in))
    (lambda (line col next-offset)
-     (location line col (sub1 next-offset)))))
+     (make-Location
+      #:line line
+      #:column col
+      #:offset (sub1 next-offset)))))
 
 (define (read-tag [in (current-input-port)])
   (define start-loc (port-location in))
   (match (regexp-try-match TAG-RE in)
     [(list text name)
-     (tag (bytes->string/utf-8 text)
-          (span start-loc (port-location in))
-          (bytes->string/utf-8 name))]
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.tag (bytes->string/utf-8 name)))]
 
     [_
-     (chunk (read-string 1 in)
-            (span start-loc (port-location in)))]))
+     (make-Token
+      #:text (read-string 1 in)
+      #:span (Span start-loc (port-location in)))]))
 
 (define (read-relative-time [in (current-input-port)])
   (define start-loc (port-location in))
   (match (regexp-try-match RELATIVE-TIME-RE in)
     [(list text delta modifier)
-     (relative-time (bytes->string/utf-8 text)
-                    (span start-loc (port-location in))
-                    (bytes->number delta)
-                    (or (and modifier (bytes->symbol modifier)) 'd))]
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.relative-time
+              (bytes->number delta)
+              (or (and modifier (bytes->symbol modifier)) 'd)))]
 
     [_
-     (chunk (read-string 1 in)
-            (span start-loc (port-location in)))]))
+     (make-Token
+      #:text (read-string 1 in)
+      #:span (Span start-loc (port-location in)))]))
 
 (define (weekday->date weekday)
   (define d (today))
@@ -190,19 +117,21 @@
   (define start-loc (port-location in))
   (match (regexp-try-match NAMED-DATE-RE in)
     [(list text (or #"tmw" #"tomorrow"))
-     (named-date (bytes->string/utf-8 text)
-                 (span start-loc (port-location in))
-                 (+days (today) 1))]
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.named-date (+days (today) 1)))]
 
     [(list text weekday)
-     (named-date (bytes->string/utf-8 text)
-                 (span start-loc (port-location in))
-                 (weekday->date weekday))]
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.named-date (weekday->date weekday)))]
 
     [_ #f]))
 
 (define (read-named-datetime [in (current-input-port)])
-  (define (make-time hour:bs minute:bs period)
+  (define (make-time hour:bs minute:bs period) ;; noqa
     (time (modulo (+ (bytes->number hour:bs)
                      (case period
                        [(#"am" #f) 0]
@@ -211,28 +140,34 @@
           (or (and minute:bs (bytes->number minute:bs))
               0)))
 
-  (define/match (prepare text hour minute period weekday)
+  (define/match (prepare _text _hour _minute _period _weekday)
     [(text hour minute period #f)
-     (named-datetime (bytes->string/utf-8 text)
-                     (span start-loc (port-location in))
-                     (let ([t (make-time hour minute period)])
-                       (if (time<? t (->time (now)))
-                           (at-time (+days (today) 1) t)
-                           (at-time (today) t))))]
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.named-datetime
+              (let ([t (make-time hour minute period)])
+                (if (time<? t (->time (now)))
+                    (at-time (+days (today) 1) t)
+                    (at-time (today) t)))))]
 
     [(text hour minute period (or #"tmw" #"tomorrow"))
-     (named-datetime (bytes->string/utf-8 text)
-                     (span start-loc (port-location in))
-                     (at-time (+days (today) 1)
-                              (make-time hour minute period)))]
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.named-datetime
+              (at-time (+days (today) 1)
+                       (make-time hour minute period))))]
 
     [(text hour minute period weekday)
-     (named-datetime (bytes->string/utf-8 text)
-                     (span start-loc (port-location in))
-                     (at-time (weekday->date weekday)
-                              (make-time hour minute period)))])
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.named-datetime
+              (at-time (weekday->date weekday)
+                       (make-time hour minute period))))])
 
-  (define start-loc (port-location in))
+  (define start-loc (port-location in)) ;; noqa
   (match (or (regexp-try-match NAMED-DATETIME-RE in)
              (regexp-try-match NAMED-DATETIME/MT-RE in))
     [(list text _ hour _ minute period weekday)
@@ -247,37 +182,40 @@
   (define start-loc (port-location in))
   (or (read-named-datetime in)
       (read-named-date in)
-      (chunk (read-string 1 in)
-             (span start-loc (port-location in)))))
+      (make-Token
+       #:text (read-string 1 in)
+       #:span (Span start-loc (port-location in)))))
 
 (define (read-recurrence [in (current-input-port)])
   (define start-loc (port-location in))
   (match (regexp-try-match RECURRENCE-RE in)
     [(list text modifier #f #f)
-     (recurrence (bytes->string/utf-8 text)
-                 (span start-loc (port-location in))
-                 1
-                 (case modifier
-                   [(#"hourly")  'hour]
-                   [(#"daily")   'day]
-                   [(#"weekly")  'week]
-                   [(#"monthly") 'month]
-                   [(#"yearly")  'year]))]
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.recurrence 1 (->recurrence-modifier modifier)))]
 
     [(list text _ delta modifier)
-     (recurrence (bytes->string/utf-8 text)
-                 (span start-loc (port-location in))
-                 (bytes->number delta)
-                 (case modifier
-                   [(#"hours")  'hour]
-                   [(#"days")   'day]
-                   [(#"weeks")  'week]
-                   [(#"months") 'month]
-                   [(#"years")  'year]))]
+     (make-Token
+      #:text (bytes->string/utf-8 text)
+      #:span (Span start-loc (port-location in))
+      #:data (TokenData.recurrence
+              (bytes->number delta)
+              (->recurrence-modifier modifier)))]
 
     [_
-     (chunk (read-string 1 in)
-            (span start-loc (port-location in)))]))
+     (make-Token
+      #:text (read-string 1 in)
+      #:span (Span start-loc (port-location in)))]))
+
+(define (->recurrence-modifier bs)
+  (case bs
+    [(#"hours"  #"hourly")  'hour]
+    [(#"days"   #"daily" )  'day]
+    [(#"weeks"  #"weekly")  'week]
+    [(#"months" #"monthly") 'month]
+    [(#"years"  #"yearly")  'year]
+    [else (raise-argument-error '->recurrence-modifier "recurrence-modifier-bytes/c" bs)]))
 
 (define (read-chunk [in (current-input-port)])
   (define out (open-output-string))
@@ -286,8 +224,9 @@
     (cond
       [(or (eof-object? c)
            (member c PREFIX-CHARS))
-       (chunk  (get-output-string out)
-               (span start-loc (port-location in)))]
+       (make-Token
+        #:text (get-output-string out)
+        #:span (Span start-loc (port-location in)))]
 
       [else
        (write-char (read-char in) out)
@@ -316,210 +255,254 @@
 (define (parse-command s)
   (call-with-input-string s read-command))
 
-(define (parse-command/jsexpr s)
-  (->jsexpr (parse-command s)))
-
 (module+ test
   (require rackunit)
 
   (check-equal?
-   (parse-command/jsexpr "hello")
-   '(#hasheq((type . "chunk")
-             (text . "hello")
-             (span . ((1 0 0)
-                      (1 5 5))))))
+   (parse-command "hello")
+   (list
+    (make-Token
+     #:text "hello"
+     #:span (Span
+             (Location 1 0 0)
+             (Location 1 5 5)))))
 
   (check-equal?
-   (parse-command/jsexpr "hello +1d there")
-   '(#hasheq((type . "chunk")
-             (text . "hello ")
-             (span . ((1 0 0)
-                      (1 6 6))))
-     #hasheq((type . "relative-time")
-             (text . "+1d")
-             (span . ((1 6 6)
-                      (1 9 9)))
-             (delta . 1)
-             (modifier . "d"))
-     #hasheq((type . "chunk")
-             (text . " there")
-             (span . ((1 9 9)
-                      (1 15 15))))))
+   (parse-command "hello +1d there")
+   (list
+    (make-Token
+     #:text "hello "
+     #:span (Span
+             (Location 1 0 0)
+             (Location 1 6 6)))
+    (make-Token
+     #:text "+1d"
+     #:span (Span
+             (Location 1 6 6)
+             (Location 1 9 9))
+     #:data (TokenData.relative-time 1 'd))
+    (make-Token
+     #:text " there"
+     #:span (Span
+             (Location 1 9 9)
+             (Location 1 15 15)))))
 
   (check-equal?
-   (parse-command/jsexpr "hello + there")
-   '(#hasheq((type . "chunk")
-             (text . "hello ")
-             (span . ((1 0 0)
-                      (1 6 6))))
-     #hasheq((type . "chunk")
-             (text . "+")
-             (span . ((1 6 6)
-                      (1 7 7))))
-     #hasheq((type . "chunk")
-             (text . " there")
-             (span . ((1 7 7)
-                      (1 13 13))))))
+   (parse-command "hello + there")
+   (list
+    (make-Token
+     #:text "hello "
+     #:span (Span
+             (Location 1 0 0)
+             (Location 1 6 6)))
+    (make-Token
+     #:text "+"
+     #:span (Span
+             (Location 1 6 6)
+             (Location 1 7 7)))
+    (make-Token
+     #:text " there"
+     #:span (Span
+             (Location 1 7 7)
+             (Location 1 13 13)))))
 
   (check-equal?
-   (parse-command/jsexpr "buy milk +1d #groceries")
-   '(#hasheq((type . "chunk")
-             (text . "buy milk ")
-             (span . ((1 0 0)
-                      (1 9 9))))
-     #hasheq((type . "relative-time")
-             (text . "+1d")
-             (span . ((1 9 9)
-                      (1 12 12)))
-             (delta . 1)
-             (modifier . "d"))
-     #hasheq((type . "chunk")
-             (text . " ")
-             (span . ((1 12 12)
-                      (1 13 13))) )
-     #hasheq((type . "tag")
-             (text . "#groceries")
-             (span . ((1 13 13)
-                      (1 23 23)))
-             (name . "groceries"))))
+   (parse-command "buy milk +1d #groceries")
+   (list
+    (make-Token
+     #:text "buy milk "
+     #:span (Span
+             (Location 1 0 0)
+             (Location 1 9 9)))
+    (make-Token
+     #:text "+1d"
+     #:span (Span
+             (Location 1 9 9)
+             (Location 1 12 12))
+     #:data (TokenData.relative-time 1 'd))
+    (make-Token
+     #:text " "
+     #:span (Span
+             (Location 1 12 12)
+             (Location 1 13 13)))
+    (make-Token
+     #:text "#groceries"
+     #:span (Span
+             (Location 1 13 13)
+             (Location 1 23 23))
+     #:data (TokenData.tag "groceries"))))
 
   (parameterize ([current-clock (lambda () 0)])
     (check-equal?
-     (parse-command/jsexpr "buy milk @mon #groceries")
-     '(#hasheq((type . "chunk")
-               (text . "buy milk ")
-               (span . ((1 0 0)
-                        (1 9 9))) )
-       #hasheq((type . "named-date")
-               (text . "@mon")
-               (span . ((1 9 9)
-                        (1 13 13)))
-               (date . "1970-01-05"))
-       #hasheq((type . "chunk")
-               (text . " ")
-               (span . ((1 13 13)
-                        (1 14 14))))
-       #hasheq((type . "tag")
-               (text . "#groceries")
-               (span . ((1 14 14)
-                        (1 24 24)))
-               (name . "groceries"))))
+     (parse-command "buy milk @mon #groceries")
+     (list
+      (make-Token
+       #:text "buy milk "
+       #:span (Span
+               (Location 1 0 0)
+               (Location 1 9 9)))
+      (make-Token
+       #:text "@mon"
+       #:span (Span
+               (Location 1 9 9)
+               (Location 1 13 13))
+       #:data (TokenData.named-date
+               (date 1970 1 5)))
+      (make-Token
+       #:text " "
+       #:span (Span
+               (Location 1 13 13)
+               (Location 1 14 14)))
+      (make-Token
+       #:text "#groceries"
+       #:span (Span
+               (Location 1 14 14)
+               (Location 1 24 24))
+       #:data (TokenData.tag "groceries"))))
 
     (check-equal?
-     (parse-command/jsexpr "buy milk @thu #groceries")
-     '(#hasheq((type . "chunk")
-               (text . "buy milk ")
-               (span . ((1 0 0)
-                        (1 9 9))) )
-       #hasheq((type . "named-date")
-               (text . "@thu")
-               (span . ((1 9 9)
-                        (1 13 13)))
-               (date . "1970-01-08"))
-       #hasheq((type . "chunk")
-               (text . " ")
-               (span . ((1 13 13)
-                        (1 14 14))))
-       #hasheq((type . "tag")
-               (text . "#groceries")
-               (span . ((1 14 14)
-                        (1 24 24)))
-               (name . "groceries"))))
+     (parse-command "buy milk @thu #groceries")
+     (list
+      (make-Token
+       #:text "buy milk "
+       #:span (Span
+               (Location 1 0 0)
+               (Location 1 9 9)))
+      (make-Token
+       #:text "@thu"
+       #:span (Span
+               (Location 1 9 9)
+               (Location 1 13 13))
+       #:data (TokenData.named-date
+               (date 1970 1 8)))
+      (make-Token
+       #:text " "
+       #:span (Span
+               (Location 1 13 13)
+               (Location 1 14 14)))
+      (make-Token
+       #:text "#groceries"
+       #:span (Span
+               (Location 1 14 14)
+               (Location 1 24 24))
+       #:data (TokenData.tag "groceries"))))
 
     (check-equal?
-     (parse-command/jsexpr "buy milk @3pm #groceries")
-     '(#hasheq((type . "chunk")
-               (text . "buy milk ")
-               (span . ((1 0 0)
-                        (1 9 9))) )
-       #hasheq((type . "named-datetime")
-               (text . "@3pm ")
-               (span . ((1 9 9)
-                        (1 14 14)))
-               (datetime . "1970-01-01T15:00:00"))
-       #hasheq((type . "tag")
-               (text . "#groceries")
-               (span . ((1 14 14)
-                        (1 24 24)))
-               (name . "groceries"))))
+     (parse-command "buy milk @3pm #groceries")
+     (list
+      (make-Token
+       #:text "buy milk "
+       #:span (Span
+               (Location 1 0 0)
+               (Location 1 9 9)))
+      (make-Token
+       #:text "@3pm "
+       #:span (Span
+               (Location 1 9 9)
+               (Location 1 14 14))
+       #:data (TokenData.named-datetime
+               (datetime 1970 1 1 15)))
+      (make-Token
+       #:text "#groceries"
+       #:span (Span
+               (Location 1 14 14)
+               (Location 1 24 24))
+       #:data (TokenData.tag "groceries"))))
 
     (check-equal?
-     (parse-command/jsexpr "buy milk @3:15pm tmw #groceries")
-     '(#hasheq((type . "chunk")
-               (text . "buy milk ")
-               (span . ((1 0 0)
-                        (1 9 9))) )
-       #hasheq((type . "named-datetime")
-               (text . "@3:15pm tmw")
-               (span . ((1 9 9)
-                        (1 20 20)))
-               (datetime . "1970-01-02T15:15:00"))
-       #hasheq((type . "chunk")
-               (text . " ")
-               (span . ((1 20 20)
-                        (1 21 21))))
-       #hasheq((type . "tag")
-               (text . "#groceries")
-               (span . ((1 21 21)
-                        (1 31 31)))
-               (name . "groceries"))))
+     (parse-command "buy milk @3:15pm tmw #groceries")
+     (list
+      (make-Token
+       #:text "buy milk "
+       #:span (Span
+               (Location 1 0 0)
+               (Location 1 9 9)))
+      (make-Token
+       #:text "@3:15pm tmw"
+       #:span (Span
+               (Location 1 9 9)
+               (Location 1 20 20))
+       #:data (TokenData.named-datetime
+               (datetime 1970 1 2 15 15)))
+      (make-Token
+       #:text " "
+       #:span (Span
+               (Location 1 20 20)
+               (Location 1 21 21)))
+      (make-Token
+       #:text "#groceries"
+       #:span (Span
+               (Location 1 21 21)
+               (Location 1 31 31))
+       #:data (TokenData.tag "groceries"))))
 
     (check-equal?
-     (parse-command/jsexpr "invoice Jim @10am mon *weekly*")
-     '(#hasheq((type . "chunk")
-               (text . "invoice Jim ")
-               (span . ((1 0 0)
-                        (1 12 12))))
-       #hasheq((type . "named-datetime")
-               (text . "@10am mon")
-               (span . ((1 12 12)
-                        (1 21 21)))
-               (datetime . "1970-01-05T10:00:00"))
-       #hasheq((type . "chunk")
-               (text . " ")
-               (span . ((1 21 21)
-                        (1 22 22))))
-       #hasheq((type . "recurrence")
-               (text . "*weekly*")
-               (span . ((1 22 22)
-                        (1 30 30)))
-               (delta . 1)
-               (modifier . "week"))))
+     (parse-command "invoice Jim @10am mon *weekly*")
+     (list
+      (make-Token
+       #:text "invoice Jim "
+       #:span (Span
+               (Location 1 0 0)
+               (Location 1 12 12)))
+      (make-Token
+       #:text "@10am mon"
+       #:span (Span
+               (Location 1 12 12)
+               (Location 1 21 21))
+       #:data (TokenData.named-datetime
+               (datetime 1970 1 5 10)))
+      (make-Token
+       #:text " "
+       #:span (Span
+               (Location 1 21 21)
+               (Location 1 22 22)))
+      (make-Token
+       #:text "*weekly*"
+       #:span (Span
+               (Location 1 22 22)
+               (Location 1 30 30))
+       #:data (TokenData.recurrence 1 'week))))
 
     (check-equal?
-     (parse-command/jsexpr "invoice Jim @10am mon *every 2 weeks*")
-     '(#hasheq((type . "chunk")
-               (text . "invoice Jim ")
-               (span . ((1 0 0)
-                        (1 12 12))))
-       #hasheq((type . "named-datetime")
-               (text . "@10am mon")
-               (span . ((1 12 12)
-                        (1 21 21)))
-               (datetime . "1970-01-05T10:00:00"))
-       #hasheq((type . "chunk")
-               (text . " ")
-               (span . ((1 21 21)
-                        (1 22 22))))
-       #hasheq((type . "recurrence")
-               (text . "*every 2 weeks*")
-               (span . ((1 22 22)
-                        (1 37 37)))
-               (delta . 2)
-               (modifier . "week"))))
+     (parse-command "invoice Jim @10am mon *every 2 weeks*")
+     (list
+      (make-Token
+       #:text "invoice Jim "
+       #:span (Span
+               (Location 1 0 0)
+               (Location 1 12 12)))
+      (make-Token
+       #:text "@10am mon"
+       #:span (Span
+               (Location 1 12 12)
+               (Location 1 21 21))
+       #:data (TokenData.named-datetime
+               (datetime 1970 1 5 10)))
+      (make-Token
+       #:text " "
+       #:span (Span
+               (Location 1 21 21)
+               (Location 1 22 22)))
+      (make-Token
+       #:text "*every 2 weeks*"
+       #:span (Span
+               (Location 1 22 22)
+               (Location 1 37 37))
+       #:data (TokenData.recurrence 2 'week))))
 
     (define-check (check-named-datetime command expected)
-      (define res (parse-command/jsexpr command))
-      (check-equal? (hash-ref (car res) 'datetime #f) expected))
+      (match-define (TokenData.named-datetime datetime)
+        (Token-data (car (parse-command command))))
+      (check-equal? datetime expected))
 
-    (check-named-datetime "@9am" "1970-01-01T09:00:00")
-    (check-named-datetime "@09am" "1970-01-01T09:00:00")
-    (check-named-datetime "@10pm" "1970-01-01T22:00:00")
-    (check-named-datetime "@10:35pm" "1970-01-01T22:35:00")
-    (check-named-datetime "@10:35pm tmw" "1970-01-02T22:35:00")
-    (check-named-datetime "@09" "1970-01-01T09:00:00")
-    (check-named-datetime "@09:59 mon" "1970-01-05T09:59:00")
-    (check-named-datetime "@22" "1970-01-01T22:00:00")
-    (check-named-datetime "@22:35" "1970-01-01T22:35:00")
-    (check-named-datetime "@22:35 tmw" "1970-01-02T22:35:00")
-    (check-named-datetime "@25:59 mon" "1970-01-01T02:00:00")))
+    (check-named-datetime "@9am" (datetime 1970 1 1 9 0 0 0))
+    (check-named-datetime "@09am" (datetime 1970 1 1 9 0 0 0))
+    (check-named-datetime "@10pm" (datetime 1970 1 1 22 0 0 0))
+    (check-named-datetime "@10:35pm" (datetime 1970 1 1 22 35 0 0))
+    (check-named-datetime "@10:35pm tmw" (datetime 1970 1 2 22 35 0 0))
+    (check-named-datetime "@09" (datetime 1970 1 1 9 0 0 0))
+    (check-named-datetime "@09:59 mon" (datetime 1970 1 5 9 59 0 0))
+    (check-named-datetime "@22" (datetime 1970 1 1 22 0 0 0))
+    (check-named-datetime "@22:35" (datetime 1970 1 1 22 35 0 0))
+    (check-named-datetime "@22:35 tmw" (datetime 1970 1 2 22 35 0 0))
+    (check-named-datetime "@25:59 mon" (datetime 1970 1 1 2 0 0 0))))

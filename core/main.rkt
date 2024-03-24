@@ -1,60 +1,80 @@
 #lang racket/base
 
-(require "command.rkt"
+(require noise/backend
+         noise/serde
+         "command.rkt"
          "database.rkt"
          "entry.rkt"
-         "json.rkt"
-         "logging.rkt"
          "notification.rkt"
-         "rpc.rkt"
          "schema.rkt"
-         "server.rkt"
          "undo.rkt")
 
-(define notifications (make-channel))
+(provide
+ main)
 
-(backup-database!)
-(migrate!)
-(register-rpc
- [parse-command parse-command/jsexpr]
- [commit! (compose1 ->jsexpr commit!)]
- [update! (compose1 ->jsexpr update!)]
- [archive-entry! (compose1 unit archive-entry!)]
- [snooze-entry! (compose1 unit snooze-entry!)]
- [delete-entry! (compose1 unit delete-entry!)]
- [find-pending-entries (compose1 ->jsexpr find-pending-entries)]
- [undo! (compose1 unit undo!)]
- create-database-copy!
- [merge-database-copy! (compose1 unit merge-database-copy!)])
+(define-rpc (parse [command s : String] : (Listof Token))
+  (parse-command s))
+
+(define-rpc (commit [command s : String] : Entry)
+  (entry->Entry (commit! s)))
+
+(define-rpc (update [entry-with-id id : UVarint]
+                    [and-command s : String] : (Optional Entry))
+  (define e (update! id s))
+  (and e (entry->Entry e)))
+
+(define-rpc (archive [entry-with-id id : UVarint])
+  (void (archive-entry! id)))
+
+(define-rpc (snooze [entry-with-id id : UVarint]
+                    [for-minutes minutes : UVarint])
+  (void (snooze-entry! id minutes)))
+
+(define-rpc (delete [entry-with-id id : UVarint])
+  (void (delete-entry! id)))
+
+(define-rpc (get-pending-entries : (Listof Entry))
+  (map entry->Entry (find-pending-entries)))
+
+(define-rpc (undo)
+  (void (undo!)))
+
+(define-rpc (create-database-copy : String)
+  (create-database-copy!))
+
+(define-rpc (merge-database-copy [at-path path : String])
+  (merge-database-copy! path))
 
 (define-listener (entries-did-change)
-  (channel-put notifications (hasheq 'type "entries-did-change")))
+  (eprintf "received entries-did-change~n"))
 
-(module+ main
-  (define scheduler
-    (thread
-     (lambda ()
-       (let loop ()
-         (define deadline (+ (current-inexact-milliseconds) 30000))
-         (define entries (find-due-entries))
-         (unless (null? entries)
-           (channel-put notifications (hasheq 'type "entries-due"
-                                              'entries (->jsexpr entries))))
-         (sync (alarm-evt deadline))
-         (loop)))))
+(define (main in-fd out-fd)
+  (backup-database!)
+  (migrate!)
+  (let/cc trap
+    (parameterize ([exit-handler
+                    (lambda (err-or-code)
+                      (when (exn:fail? err-or-code)
+                        ((error-display-handler)
+                         (format "trap: ~a" (exn-message err-or-code))
+                         err-or-code))
+                      (trap))])
+      (define stop
+        (serve in-fd out-fd))
+      (start-scheduler
+       (lambda (entries)
+         (eprintf "entries due: ~s~n" entries)))
+      (with-handlers ([exn:break? void])
+        (sync never-evt))
+      (stop))))
 
-  (define stop-logger
-    (start-logger #:levels '((notifications . debug)
-                             (server . debug))))
-
-  (define in (current-input-port))
-  (define out (current-output-port))
-  (file-stream-buffer-mode in 'none)
-  (file-stream-buffer-mode out 'none)
-  (define-values (server stop-server)
-    (serve in out notifications))
-  (with-handlers ([exn:break?
-                   (lambda ()
-                     (stop-server)
-                     (stop-logger))])
-    (sync/enable-break server)))
+(define (start-scheduler on-change-proc)
+  (thread
+   (lambda ()
+     (let loop ()
+       (define deadline (+ (current-inexact-milliseconds) 30000))
+       (define entries (find-due-entries))
+       (unless (null? entries)
+         (on-change-proc entries))
+       (sync (alarm-evt deadline))
+       (loop)))))

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# On macOS, add this script as an early build phase to sign
+# distributed dylibs. Make sure to disable "User Script Sandboxing"
+# under "Build Settings" > "Build Options" in the Xcode target
+# configuration.
+
+set -euo pipefail
+
+while read -r path; do
+    filename=$(basename "$path")
+    libname=$(echo "$filename" | cut -d. -f1)
+    codesign --remove-signature "$path"
+    codesign \
+        --timestamp \
+        --entitlements="${PROJECT_DIR}/core/dylib.entitlements" \
+        --sign "${EXPANDED_CODE_SIGN_IDENTITY}" \
+        -i "${PRODUCT_BUNDLE_IDENTIFIER}.${libname}" \
+        -o runtime \
+        "$path"
+done < <(find "${PROJECT_DIR}/${PROJECT_NAME}/${PROJECT_NAME}/res" -name '*.dylib')
