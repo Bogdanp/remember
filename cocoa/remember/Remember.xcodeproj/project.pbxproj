@@ -64,19 +64,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		7F2E71DA273F9F9800B396EC /* Embed Core */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 7;
-			files = (
-			);
-			name = "Embed Core";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		43344AD82BB05FD0000BE145 /* Backend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
 		43344AD92BB05FD0000BE145 /* BackendExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendExtensions.swift; sourceTree = "<group>"; };
@@ -262,12 +249,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 436BE2BA23B10D5000717375 /* Build configuration list for PBXNativeTarget "Remember" */;
 			buildPhases = (
-				43A60B9723BD4D7300160E3E /* Codesign Core */,
+				43A60B9723BD4D7300160E3E /* Sign dylibs */,
 				436BE28D23B10D4E00717375 /* Sources */,
 				436BE28E23B10D4E00717375 /* Frameworks */,
 				436BE28F23B10D4E00717375 /* Resources */,
-				4355FC3F23BCC241000463B6 /* ShellScript */,
-				7F2E71DA273F9F9800B396EC /* Embed Core */,
+				4355FC3F23BCC241000463B6 /* Copy LaunchAtLogin Helper */,
 			);
 			buildRules = (
 			);
@@ -329,7 +315,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1530;
 				ORGANIZATIONNAME = "CLEARTYPE SRL";
 				TargetAttributes = {
 					436BE29023B10D4E00717375 = {
@@ -399,24 +385,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4355FC3F23BCC241000463B6 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${BUILT_PRODUCTS_DIR}/LaunchAtLogin_LaunchAtLogin.bundle/Contents/Resources/copy-helper-swiftpm.sh\"\n";
-		};
-		43A60B9723BD4D7300160E3E /* Codesign Core */ = {
+		4355FC3F23BCC241000463B6 /* Copy LaunchAtLogin Helper */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -426,7 +395,26 @@
 			);
 			inputPaths = (
 			);
-			name = "Codesign Core";
+			name = "Copy LaunchAtLogin Helper";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILT_PRODUCTS_DIR}/LaunchAtLogin_LaunchAtLogin.bundle/Contents/Resources/copy-helper-swiftpm.sh\"\n";
+		};
+		43A60B9723BD4D7300160E3E /* Sign dylibs */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Sign dylibs";
 			outputFileListPaths = (
 			);
 			outputPaths = (
