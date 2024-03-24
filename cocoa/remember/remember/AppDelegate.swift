@@ -148,7 +148,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   @objc private func showManualFromStatusItem(_ sender: Any) {
-    if let url = Bundle.main.url(forResource: "manual/index", withExtension: "html") {
+    if let url = Bundle.main.url(forResource: "res/manual/index", withExtension: "html") {
       NSWorkspace.shared.open(url)
     }
   }

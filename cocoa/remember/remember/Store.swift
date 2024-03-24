@@ -26,10 +26,10 @@ class Store: ObservableObject {
       .filter { !$0.isEmpty }
       .receive(on: RunLoop.main)
       .sink { text in
-      Backend.shared.parse(command: text).onComplete { [weak self] ts in
-        self?.tokens = ts
+        Backend.shared.parse(command: text).onComplete { [weak self] ts in
+          self?.tokens = ts
+        }
       }
-    }
 
     self.updatePendingEntries()
     try! Backend.shared.installCallback(entriesDidChangeCb: { [weak self] _ in
