@@ -23,10 +23,7 @@
 		436BE29923B10D5000717375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436BE29823B10D5000717375 /* Assets.xcassets */; };
 		436BE29C23B10D5000717375 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436BE29B23B10D5000717375 /* Preview Assets.xcassets */; };
 		436BE29F23B10D5000717375 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 436BE29D23B10D5000717375 /* Main.storyboard */; };
-		436BE2AB23B10D5000717375 /* rememberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE2AA23B10D5000717375 /* rememberTests.swift */; };
-		436BE2B623B10D5000717375 /* rememberUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE2B523B10D5000717375 /* rememberUITests.swift */; };
 		43713C3E23B21CB000E20E48 /* CommandField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43713C3D23B21CB000E20E48 /* CommandField.swift */; };
-		4385BC5623B4CCB20086A98F /* JSONChunkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */; };
 		43983BDE23B794300064C527 /* UserNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BDD23B794300064C527 /* UserNotifications.swift */; };
 		43983BE223BA19EC0064C527 /* EntryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE123BA19EC0064C527 /* EntryList.swift */; };
 		43983BE423BA279E0064C527 /* EntryListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE323BA279E0064C527 /* EntryListItem.swift */; };
@@ -47,23 +44,6 @@
 		43F199EE2569A40A00259849 /* SwiftyAttributes in Frameworks */ = {isa = PBXBuildFile; productRef = 43F199ED2569A40A00259849 /* SwiftyAttributes */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		436BE2A723B10D5000717375 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 436BE28923B10D4E00717375 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 436BE29023B10D4E00717375;
-			remoteInfo = remember;
-		};
-		436BE2B223B10D5000717375 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 436BE28923B10D4E00717375 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 436BE29023B10D4E00717375;
-			remoteInfo = remember;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		43344AD82BB05FD0000BE145 /* Backend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
 		43344AD92BB05FD0000BE145 /* BackendExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendExtensions.swift; sourceTree = "<group>"; };
@@ -81,14 +61,7 @@
 		436BE29E23B10D5000717375 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		436BE2A023B10D5000717375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		436BE2A123B10D5000717375 /* remember.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = remember.entitlements; sourceTree = "<group>"; };
-		436BE2A623B10D5000717375 /* RememberTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RememberTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		436BE2AA23B10D5000717375 /* rememberTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rememberTests.swift; sourceTree = "<group>"; };
-		436BE2AC23B10D5000717375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		436BE2B123B10D5000717375 /* RememberUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RememberUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		436BE2B523B10D5000717375 /* rememberUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = rememberUITests.swift; sourceTree = "<group>"; };
-		436BE2B723B10D5000717375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		43713C3D23B21CB000E20E48 /* CommandField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandField.swift; sourceTree = "<group>"; };
-		4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONChunkerTests.swift; sourceTree = "<group>"; };
 		43983BDD23B794300064C527 /* UserNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotifications.swift; sourceTree = "<group>"; };
 		43983BE123BA19EC0064C527 /* EntryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryList.swift; sourceTree = "<group>"; };
 		43983BE323BA279E0064C527 /* EntryListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryListItem.swift; sourceTree = "<group>"; };
@@ -126,20 +99,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		436BE2A323B10D5000717375 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		436BE2AE23B10D5000717375 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -149,8 +108,6 @@
 				43E6B94623B6722B00F7ACE1 /* Frameworks */,
 				436BE29223B10D4E00717375 /* Products */,
 				436BE29323B10D4E00717375 /* remember */,
-				436BE2A923B10D5000717375 /* rememberTests */,
-				436BE2B423B10D5000717375 /* rememberUITests */,
 				43344ADC2BB05FE8000BE145 /* res */,
 			);
 			sourceTree = "<group>";
@@ -159,8 +116,6 @@
 			isa = PBXGroup;
 			children = (
 				436BE29123B10D4E00717375 /* Remember.app */,
-				436BE2A623B10D5000717375 /* RememberTests.xctest */,
-				436BE2B123B10D5000717375 /* RememberUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -215,25 +170,6 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		436BE2A923B10D5000717375 /* rememberTests */ = {
-			isa = PBXGroup;
-			children = (
-				436BE2AA23B10D5000717375 /* rememberTests.swift */,
-				4385BC5523B4CCB20086A98F /* JSONChunkerTests.swift */,
-				436BE2AC23B10D5000717375 /* Info.plist */,
-			);
-			path = rememberTests;
-			sourceTree = "<group>";
-		};
-		436BE2B423B10D5000717375 /* rememberUITests */ = {
-			isa = PBXGroup;
-			children = (
-				436BE2B523B10D5000717375 /* rememberUITests.swift */,
-				436BE2B723B10D5000717375 /* Info.plist */,
-			);
-			path = rememberUITests;
-			sourceTree = "<group>";
-		};
 		43E6B94623B6722B00F7ACE1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -271,42 +207,6 @@
 			productReference = 436BE29123B10D4E00717375 /* Remember.app */;
 			productType = "com.apple.product-type.application";
 		};
-		436BE2A523B10D5000717375 /* RememberTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 436BE2BD23B10D5000717375 /* Build configuration list for PBXNativeTarget "RememberTests" */;
-			buildPhases = (
-				436BE2A223B10D5000717375 /* Sources */,
-				436BE2A323B10D5000717375 /* Frameworks */,
-				436BE2A423B10D5000717375 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				436BE2A823B10D5000717375 /* PBXTargetDependency */,
-			);
-			name = RememberTests;
-			productName = rememberTests;
-			productReference = 436BE2A623B10D5000717375 /* RememberTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		436BE2B023B10D5000717375 /* RememberUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 436BE2C023B10D5000717375 /* Build configuration list for PBXNativeTarget "RememberUITests" */;
-			buildPhases = (
-				436BE2AD23B10D5000717375 /* Sources */,
-				436BE2AE23B10D5000717375 /* Frameworks */,
-				436BE2AF23B10D5000717375 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				436BE2B323B10D5000717375 /* PBXTargetDependency */,
-			);
-			name = RememberUITests;
-			productName = rememberUITests;
-			productReference = 436BE2B123B10D5000717375 /* RememberUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -320,14 +220,6 @@
 				TargetAttributes = {
 					436BE29023B10D4E00717375 = {
 						CreatedOnToolsVersion = 11.3;
-					};
-					436BE2A523B10D5000717375 = {
-						CreatedOnToolsVersion = 11.3;
-						TestTargetID = 436BE29023B10D4E00717375;
-					};
-					436BE2B023B10D5000717375 = {
-						CreatedOnToolsVersion = 11.3;
-						TestTargetID = 436BE29023B10D4E00717375;
 					};
 				};
 			};
@@ -350,8 +242,6 @@
 			projectRoot = "";
 			targets = (
 				436BE29023B10D4E00717375 /* Remember */,
-				436BE2A523B10D5000717375 /* RememberTests */,
-				436BE2B023B10D5000717375 /* RememberUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -365,20 +255,6 @@
 				43344ADD2BB05FE8000BE145 /* res in Resources */,
 				436BE29C23B10D5000717375 /* Preview Assets.xcassets in Resources */,
 				436BE29923B10D5000717375 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		436BE2A423B10D5000717375 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		436BE2AF23B10D5000717375 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,37 +334,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		436BE2A223B10D5000717375 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				4385BC5623B4CCB20086A98F /* JSONChunkerTests.swift in Sources */,
-				436BE2AB23B10D5000717375 /* rememberTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		436BE2AD23B10D5000717375 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				436BE2B623B10D5000717375 /* rememberUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		436BE2A823B10D5000717375 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 436BE29023B10D4E00717375 /* Remember */;
-			targetProxy = 436BE2A723B10D5000717375 /* PBXContainerItemProxy */;
-		};
-		436BE2B323B10D5000717375 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 436BE29023B10D4E00717375 /* Remember */;
-			targetProxy = 436BE2B223B10D5000717375 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		436BE29D23B10D5000717375 /* Main.storyboard */ = {
@@ -687,96 +533,6 @@
 			};
 			name = Release;
 		};
-		436BE2BE23B10D5000717375 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = H3YE679B58;
-				INFOPLIST_FILE = rememberTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = io.defn.rememberTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Remember.app/Contents/MacOS/Remember";
-			};
-			name = Debug;
-		};
-		436BE2BF23B10D5000717375 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = H3YE679B58;
-				INFOPLIST_FILE = rememberTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_BUNDLE_IDENTIFIER = io.defn.rememberTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Remember.app/Contents/MacOS/Remember";
-			};
-			name = Release;
-		};
-		436BE2C123B10D5000717375 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = H3YE679B58;
-				INFOPLIST_FILE = rememberUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.defn.rememberUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = remember;
-			};
-			name = Debug;
-		};
-		436BE2C223B10D5000717375 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_TEAM = H3YE679B58;
-				INFOPLIST_FILE = rememberUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.defn.rememberUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = remember;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -794,24 +550,6 @@
 			buildConfigurations = (
 				436BE2BB23B10D5000717375 /* Debug */,
 				436BE2BC23B10D5000717375 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		436BE2BD23B10D5000717375 /* Build configuration list for PBXNativeTarget "RememberTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				436BE2BE23B10D5000717375 /* Debug */,
-				436BE2BF23B10D5000717375 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		436BE2C023B10D5000717375 /* Build configuration list for PBXNativeTarget "RememberUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				436BE2C123B10D5000717375 /* Debug */,
-				436BE2C223B10D5000717375 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
