@@ -49,10 +49,13 @@
 
 (define-callout (entries-due-cb [entries : (Listof Entry)]))
 
+(define-rpc (start-scheduler)
+  (void (do-start-scheduler)))
+
 (define scheduler-custodian
   (make-custodian))
 
-(define-rpc (start-scheduler)
+(define (do-start-scheduler)
   (parameterize ([current-custodian scheduler-custodian])
     (thread
      (lambda ()

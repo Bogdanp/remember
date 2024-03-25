@@ -64,8 +64,8 @@
     (λ () (proc (db-conn the-db)))))
 
 (define (call-with-database-transaction proc
-                   #:db [the-db (current-db)]
-                   #:isolation [isolation #f])
+          #:db [the-db (current-db)]
+          #:isolation [isolation #f])
   (cond
     [(current-connection)
      => (lambda (conn)
