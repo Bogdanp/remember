@@ -8,7 +8,6 @@
          racket/contract/base
          racket/format
          racket/match
-         racket/sequence
          racket/string
          threading
          "command.rkt"
@@ -367,11 +366,11 @@
 (define (find-pending-entries)
   (call-with-database-connection
     (lambda (conn)
-      (sequence->list (in-entities conn
-                                   (~> pending-entries
-                                       (order-by ([(datetime e.due-at)]))))))))
+      (~> pending-entries
+          (order-by ([(datetime e.due-at)]))
+          (query-entities conn _)))))
 
 (define (find-due-entries)
   (call-with-database-connection
     (lambda (conn)
-      (sequence->list (in-entities conn due-entries)))))
+      (query-entities conn due-entries))))
