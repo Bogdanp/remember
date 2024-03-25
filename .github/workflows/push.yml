@@ -31,6 +31,8 @@ jobs:
           raco pkg install -D --batch --auto ../../sandbox/noise/Racket/noise-serde-lib/
       - name: Install core
         run: raco pkg install -D --batch --auto --name remember core/
+      - name: Run tests
+        run: raco test core/
       - name: Build manual
         run: make cocoa/remember/res/manual/index.html
       - name: Build core

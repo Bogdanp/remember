@@ -7,9 +7,9 @@
 (provide
  call-with-empty-database)
 
-(define (call-with-empty-database f)
+(define (call-with-empty-database proc)
   (parameterize ([current-db (make-db
                               (lambda ()
                                 (sqlite3-connect #:database 'memory)))])
     (migrate!)
-    (f)))
+    (proc)))
