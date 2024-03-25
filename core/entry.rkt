@@ -79,52 +79,54 @@
    (entry-recurrence-modifier e)))
 
 (define (entry-due-in e)
-  (and (not (sql-null? (entry-due-at e)))
-       (let* ([t (now)]
-              [due (entry-due-at e)]
-              [delta (seconds-between t due)])
-         (cond
-           [(<= delta 0)
-            "past due"]
+  (cond
+    [(sql-null? (entry-due-at e)) #f]
+    [else
+     (define t (now))
+     (define due (entry-due-at e))
+     (define delta (seconds-between t due))
+     (cond
+       [(<= delta 0)
+        "past due"]
 
-           [(>= delta (* 7 86400))
-            (~a "due on " (if (= (->year due)
-                                 (->year (now)))
-                              (~t due "MMM dd")
-                              (~t due "MMM dd, yyyy")))]
+       [(>= delta (* 7 86400))
+        (~a "due on " (if (= (->year due)
+                             (->year (now)))
+                          (~t due "MMM dd")
+                          (~t due "MMM dd, yyyy")))]
 
-           [(or (> (days-between t due) 1)
-                (date=? (->date (+days t 2))
-                        (->date due)))
-            (~a "due in " (format-delta (add1 (days-between t due)) "day" "days"))]
+       [(or (> (days-between t due) 1)
+            (date=? (->date (+days t 2))
+                    (->date due)))
+        (~a "due in " (format-delta (add1 (days-between t due)) "day" "days"))]
 
-           [(date=? (->date (+days t 1))
-                    (->date due))
-            (cond
-              [(>= (->hours due) 23) "due tomorrow night"]
-              [(>= (->hours due) 17) "due tomorrow evening"]
-              [(>= (->hours due) 12) "due tomorrow afternoon"]
-              [(>= (->hours due) 11) "due at noon tomorrow"]
-              [(>= (->hours due) 5)  "due tomorrow morning"]
-              [else                  "due tonight"])]
+       [(date=? (->date (+days t 1))
+                (->date due))
+        (cond
+          [(>= (->hours due) 23) "due tomorrow night"]
+          [(>= (->hours due) 17) "due tomorrow evening"]
+          [(>= (->hours due) 12) "due tomorrow afternoon"]
+          [(>= (->hours due) 11) "due at noon tomorrow"]
+          [(>= (->hours due) 5)  "due tomorrow morning"]
+          [else                  "due tonight"])]
 
-           [(>= delta (* 3600 4))
-            (cond
-              [(>= (->hours due) 23) "due tonight"]
-              [(>= (->hours due) 17) "due this evening"]
-              [(>= (->hours due) 12) "due this afternoon"]
-              [(>= (->hours due) 11) "due at noon"]
-              [(>= (->hours due) 5)  "due this morning"]
-              [else                  "due today"])]
+       [(>= delta (* 3600 4))
+        (cond
+          [(>= (->hours due) 23) "due tonight"]
+          [(>= (->hours due) 17) "due this evening"]
+          [(>= (->hours due) 12) "due this afternoon"]
+          [(>= (->hours due) 11) "due at noon"]
+          [(>= (->hours due) 5)  "due this morning"]
+          [else                  "due today"])]
 
-           [(>= delta 3600)
-            (~a "due in " (format-delta (add1 (hours-between t due)) "hour" "hours"))]
+       [(>= delta 3600)
+        (~a "due in " (format-delta (add1 (hours-between t due)) "hour" "hours"))]
 
-           [(>= delta 60)
-            (~a "due in " (format-delta (add1 (minutes-between t due)) "minute" "minutes"))]
+       [(>= delta 60)
+        (~a "due in " (format-delta (add1 (minutes-between t due)) "minute" "minutes"))]
 
-           [else
-            "due in under a minute"]))))
+       [else
+        "due in under a minute"])]))
 
 (define (format-delta d singular plural)
   (format "~a ~a" d (if (= d 1)
@@ -207,12 +209,12 @@
   (call-with-database-transaction
     (lambda (conn)
       (define the-entry
-        (insert-one! conn
-                     (make-entry #:title title
-                                 #:due-at (or due sql-null)
-                                 #:next-recurrence-at (or next-rec-at sql-null)
-                                 #:recurrence-delta (or rec-delta sql-null)
-                                 #:recurrence-modifier (or rec-modifier sql-null))))
+        (~> (make-entry #:title title
+                        #:due-at (or due sql-null)
+                        #:next-recurrence-at (or next-rec-at sql-null)
+                        #:recurrence-delta (or rec-delta sql-null)
+                        #:recurrence-modifier (or rec-modifier sql-null))
+            (insert-one! conn _)))
 
       (begin0 the-entry
         (assign-tags! (entry-id the-entry) tags)
@@ -260,24 +262,28 @@
                    (values #f #f #f)]))
 
               (define updated-entry
-                (update-one! conn (~> the-entry
-                                      (set-entry-title title)
-                                      (set-entry-due-at (or due sql-null))
-                                      (set-entry-next-recurrence-at (or next-rec-at sql-null))
-                                      (set-entry-recurrence-delta (or rec-delta sql-null))
-                                      (set-entry-recurrence-modifier (or rec-modifier sql-null)))))
+                (~> the-entry
+                    (set-entry-title title)
+                    (set-entry-due-at (or due sql-null))
+                    (set-entry-next-recurrence-at (or next-rec-at sql-null))
+                    (set-entry-recurrence-delta (or rec-delta sql-null))
+                    (set-entry-recurrence-modifier (or rec-modifier sql-null))
+                    (update-one! conn _)))
 
               (begin0 updated-entry
                 (assign-tags! id tags)
                 (entries-did-change)
-                (push-undo! (lambda ()
-                              ;; TODO: undo tag changes!
-                              (update-one! conn (~> updated-entry
-                                                    (set-entry-title (entry-title the-entry))
-                                                    (set-entry-due-at (or (entry-due-at the-entry) sql-null))
-                                                    (set-entry-next-recurrence-at (or (entry-next-recurrence-at the-entry) sql-null))
-                                                    (set-entry-recurrence-delta (or (entry-recurrence-delta the-entry) sql-null))
-                                                    (set-entry-recurrence-modifier (or (entry-recurrence-modifier the-entry) sql-null))))))))]
+                (push-undo!
+                 (lambda ()
+                   ;; TODO: undo tag changes!
+                   (~> updated-entry
+                       (set-entry-title (entry-title the-entry))
+                       (set-entry-due-at (or (entry-due-at the-entry) sql-null))
+                       (set-entry-next-recurrence-at (or (entry-next-recurrence-at the-entry) sql-null))
+                       (set-entry-recurrence-delta (or (entry-recurrence-delta the-entry) sql-null))
+                       (set-entry-recurrence-modifier (or (entry-recurrence-modifier the-entry) sql-null))
+                       (update-one! conn _))
+                   (entries-did-change)))))]
         [else #f]))))
 
 (define pending-entries
@@ -294,8 +300,9 @@
   (call-with-database-transaction
     (lambda (conn)
       (define the-entry
-        (lookup conn (~> (from entry #:as e)
-                         (where (= e.id ,id)))))
+        (~> (from entry #:as e)
+            (where (= e.id ,id))
+            (lookup conn _)))
 
       (cond
         [(not the-entry)]
@@ -309,31 +316,34 @@
                (recurrence-next rec (entry-next-recurrence-at the-entry))))
          (define old-rec-at (entry-next-recurrence-at the-entry))
          (define new-rec-at (recurrence-next rec new-due-at))
-
          (define updated-entry
-           (update-one! conn (~> the-entry
-                                 (set-entry-due-at new-due-at)
-                                 (set-entry-next-recurrence-at new-rec-at))))
+           (~> the-entry
+               (set-entry-due-at new-due-at)
+               (set-entry-next-recurrence-at new-rec-at)
+               (update-one! conn _)))
          (begin0 updated-entry
            (entries-did-change)
-           (push-undo! (lambda ()
-                         (call-with-database-connection
-                           (lambda (conn)
-                             (update-one! conn (~> updated-entry
-                                                   (set-entry-due-at old-due-at)
-                                                   (set-entry-next-recurrence-at old-rec-at)))
-                             (entries-did-change))))))]
+           (push-undo!
+            (lambda ()
+              (call-with-database-connection
+                (lambda (conn)
+                  (~> updated-entry
+                      (set-entry-due-at old-due-at)
+                      (set-entry-next-recurrence-at old-rec-at)
+                      (update-one! conn _))))
+              (entries-did-change))))]
 
         [else
          (define updated-entry
            (update-one! conn (set-entry-status the-entry 'archived)))
          (begin0 updated-entry
            (entries-did-change)
-           (push-undo! (lambda ()
-                         (call-with-database-connection
-                           (lambda (conn)
-                             (update-one! conn (set-entry-status updated-entry 'pending))
-                             (entries-did-change))))))]))))
+           (push-undo!
+            (lambda ()
+              (call-with-database-connection
+                (lambda (conn)
+                  (update-one! conn (set-entry-status updated-entry 'pending))))
+              (entries-did-change))))]))))
 
 (define (snooze-entry! id amount)
   (define the-entry
@@ -358,10 +368,12 @@
 
   (when the-entry
     (entries-did-change)
-    (push-undo! (lambda ()
-                  (call-with-database-connection
-                    (lambda (conn)
-                      (update-one! conn (set-entry-status the-entry 'pending))))))))
+    (push-undo!
+     (lambda ()
+       (call-with-database-connection
+         (lambda (conn)
+           (update-one! conn (set-entry-status the-entry 'pending))))
+       (entries-did-change)))))
 
 (define (find-pending-entries)
   (call-with-database-connection
