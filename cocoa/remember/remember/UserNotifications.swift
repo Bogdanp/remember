@@ -11,6 +11,11 @@ import NoiseSerde
 import UserNotifications
 import os
 
+fileprivate let logger = Logger(
+  subsystem: "io.defn.remember",
+  category: "UserNotifications"
+)
+
 enum UserNotificationInfo: String {
   case entryId
 }
@@ -61,7 +66,7 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
     let center = UNUserNotificationCenter.current()
     center.requestAuthorization(options: [.alert, .badge, .sound], completionHandler: { granted, err in
       if !granted {
-        os_log("alert acess not granted", type: .error)
+        logger.error("Alert access not granted.")
         return
       }
 
@@ -87,7 +92,7 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
       try! Backend.shared.installCallback(entriesDueCb: { entries in
         for entry in entries {
           if !self.addPending(byId: entry.id, withDeadline: .now() + .seconds(15 * 60)) {
-            os_log("notification for entry %d ignored", entry.id)
+            logger.debug("Notification for entry \(entry.id) ignored.")
             continue
           }
 
@@ -105,7 +110,7 @@ class UserNotificationsManager: NSObject, UNUserNotificationCenterDelegate {
 
           center.add(request) { error in
             if let err = error {
-              os_log("failed to add notification: %s", type: .error, "\(err)")
+              logger.error("Failed to add notification: \(err)")
             }
           }
         }

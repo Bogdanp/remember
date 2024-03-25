@@ -9,6 +9,11 @@
 import Foundation
 import os
 
+fileprivate let logger = Logger(
+  subsystem: "io.defn.remember",
+  category: "FolderSyncer"
+)
+
 class FolderSyncer {
   private var timer: Timer?
 
@@ -37,12 +42,12 @@ class FolderSyncer {
             self.performMerge(from: path)
             self.performSave(to: path, from: tempURL)
           } else {
-            os_log("failed to acquire security access to %s", type: .error, "\(path)")
+            logger.error("Failed to acquire security access to \(path).")
           }
         }
       }
     } catch {
-      os_log("failed to load sync folder: %s", type: .error, "\(error)")
+      logger.error("Failed to load sync folder: \(error)")
     }
   }
 
@@ -71,7 +76,7 @@ class FolderSyncer {
         try Backend.shared.mergeDatabaseCopy(atPath: destPath.absoluteString).wait()
       }
     } catch {
-      os_log("failed to perform database merge: %s", type: .error, "\(error)")
+      logger.error("Failed to perform database merge; \(error)")
     }
   }
 
@@ -86,7 +91,7 @@ class FolderSyncer {
 
       try manager.moveItem(at: sourceURL, to: destURL)
     } catch {
-      os_log("failed to save database to sync folder: %s", type: .error, "\(error)")
+      logger.error("Failed to save database to sync folder: \(error)")
     }
   }
 
@@ -115,7 +120,7 @@ class FolderSyncer {
 
       return latestEntry
     } catch {
-      os_log("failed to find latest database file: %s", type: .error, "\(error)")
+      logger.error("Failed to find latest database file: \(error)")
       return nil
     }
   }
