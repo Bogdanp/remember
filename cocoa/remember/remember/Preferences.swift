@@ -85,8 +85,8 @@ private struct GeneralPreferencesView : View {
           .padding([.top, .bottom], 10)
           Preference("Sync:") {
             VStack(alignment: .leading, spacing: nil) {
-              if self.store.syncFolder != nil {
-                Text(self.store.syncFolder!.relativePath)
+              if let url = self.store.syncFolder {
+                Text(url.relativePath)
                   .foregroundColor(.secondary)
               }
 
@@ -111,6 +111,11 @@ private struct GeneralPreferencesView : View {
                     self.store.syncFolder = nil
                   }, label: {
                     Text("Stop Syncing")
+                  })
+                  Button(action: {
+                    Notifications.didRequestSync()
+                  }, label: {
+                    Text("Sync")
                   })
                 }
               }

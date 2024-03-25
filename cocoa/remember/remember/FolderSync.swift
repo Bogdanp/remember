@@ -29,6 +29,10 @@ class FolderSyncer {
       self?.sync()
     }
     sync()
+
+    Notifications.observeDidRequestSync { [weak self] in
+      self?.timer?.fire()
+    }
   }
 
   private func sync() {

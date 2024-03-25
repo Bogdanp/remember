@@ -28,6 +28,18 @@ struct Notifications {
     }
   }
 
+  static func didRequestSync() {
+    NotificationCenter.default.post(
+      name: .didRequestSync,
+      object: nil)
+  }
+
+  static func observeDidRequestSync(withCompletionHandler handler: @escaping () -> Void) {
+    observe(.didRequestSync) { notification in
+      handler()
+    }
+  }
+
   static func willHideWindow() {
     NotificationCenter.default.post(
       name: .willHideWindow,
@@ -85,6 +97,7 @@ struct Notifications {
 
 extension Notification.Name {
   static let didToggleStatusItem = Notification.Name("io.defn.remember.didToggleStatusItem")
+  static let didRequestSync = Notification.Name("io.defn.remember.didRequestSync")
   static let willHideWindow = Notification.Name("io.defn.remember.willHideWindow")
   static let willArchiveEntry = Notification.Name("io.defn.remember.willArchiveEntry")
   static let willSelectEntry = Notification.Name("io.defn.remember.willSelectEntry")
