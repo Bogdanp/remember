@@ -11,6 +11,9 @@
 (provide
  main)
 
+(define-rpc (ping : String)
+  "pong")
+
 (define-rpc (parse [command s : String] : (Listof Token))
   (parse-command s))
 

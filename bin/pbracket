@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Helper to run Racket in cross-compilation mode with a portable
+# bytecode target. Expects the PBRACKET_ROOT environment variable to
+# be set before running.
+
+set -euo pipefail
+
+RACKET_DIR="${PBRACKET_ROOT}/racket"
+BUILD_DIR="${RACKET_DIR}/src/build/cs/c"
+COMPILED_DIR="${BUILD_DIR}/compiled"
+
+racket \
+	--cross-compiler tpb64l "$BUILD_DIR" \
+	-MCR "$COMPILED_DIR": \
+	-G "${RACKET_DIR}/etc" \
+	-X "${RACKET_DIR}/collects" \
+  "$@"
