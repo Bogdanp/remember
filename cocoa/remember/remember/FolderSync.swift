@@ -17,13 +17,16 @@ fileprivate let logger = Logger(
 class FolderSyncer {
   private var timer: Timer?
 
-  func start() {
+  func start(withFrequency frequency: TimeInterval = 15 * 60) {
     if let t = timer {
       t.invalidate()
     }
 
-    timer = Timer.scheduledTimer(withTimeInterval: 15 * 60, repeats: true) { _ in
-      self.sync()
+    timer = Timer.scheduledTimer(
+      withTimeInterval: frequency,
+      repeats: true
+    ) { [weak self] _ in
+      self?.sync()
     }
     sync()
   }
@@ -132,7 +135,11 @@ class FolderSyncDefaults {
   static func load() throws -> URL? {
     return try UserDefaults.standard.data(forKey: KEY).flatMap { d in
       var isStale = false
-      let url = try URL(resolvingBookmarkData: d, options: [.withSecurityScope, .withoutUI], relativeTo: nil, bookmarkDataIsStale: &isStale)
+      let url = try URL(
+        resolvingBookmarkData: d,
+        options: [.withSecurityScope, .withoutUI],
+        relativeTo: nil,
+        bookmarkDataIsStale: &isStale)
       if isStale {
         return nil
       }
@@ -142,7 +149,10 @@ class FolderSyncDefaults {
   }
 
   static func save(path: URL) throws {
-    let bookmark = try path.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+    let bookmark = try path.bookmarkData(
+      options: .withSecurityScope,
+      includingResourceValuesForKeys: nil,
+      relativeTo: nil)
     UserDefaults.standard.setValue(bookmark, forKey: KEY)
   }
 
