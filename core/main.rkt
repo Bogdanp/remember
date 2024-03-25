@@ -68,6 +68,7 @@
          (loop))))))
 
 (define (main in-fd out-fd)
+  (module-cache-clear!)
   (backup-database!)
   (migrate!)
   (let/cc trap
