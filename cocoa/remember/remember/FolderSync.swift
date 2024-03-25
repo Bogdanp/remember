@@ -17,7 +17,7 @@ fileprivate let logger = Logger(
 class FolderSyncer {
   private var timer: Timer?
 
-  func start(withFrequency frequency: TimeInterval = 15 * 60) {
+  func start(withFrequency frequency: TimeInterval = 5 * 60) {
     if let t = timer {
       t.invalidate()
     }
@@ -34,6 +34,7 @@ class FolderSyncer {
   private func sync() {
     do {
       if let path = try FolderSyncDefaults.load() {
+        logger.debug("Initiating sync to \(path).")
         Backend.shared.createDatabaseCopy().onComplete { [weak self] tempPath in
           guard let self else { return }
           guard let tempURL = URL(string: tempPath) else { return }
