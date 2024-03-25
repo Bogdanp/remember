@@ -30,9 +30,11 @@ jobs:
             git clone --depth 1 --branch racket-8.12 https://github.com/Bogdanp/Noise ../../sandbox/Noise
           raco pkg install -D --batch --auto ../../sandbox/noise/Racket/noise-serde-lib/
       - name: Install core
-        run: raco pkg install -D --batch --auto --name remember core/
+        run: |
+          raco pkg install -D --batch --auto --name remember core/
+          raco pkg install -D --batch --auto --name remember-test tests/
       - name: Run tests
-        run: raco test core/
+        run: raco test tests/
       - name: Build manual
         run: make cocoa/remember/res/manual/index.html
       - name: Build core
