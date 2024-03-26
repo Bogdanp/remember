@@ -290,12 +290,6 @@
   (~> (from entry #:as e)
       (where (= e.status "pending"))))
 
-(define due-entries
-  (~> pending-entries
-      (where (and (not (is e.due-at null))
-                  (< (datetime e.due-at)
-                     (datetime "now" "localtime"))))))
-
 (define (archive-entry! id)
   (call-with-database-transaction
     (lambda (conn)
@@ -385,4 +379,8 @@
 (define (find-due-entries)
   (call-with-database-connection
     (lambda (conn)
-      (query-entities conn due-entries))))
+      (~> pending-entries
+          (where (and (not (is e.due-at null))
+                      (< (unixepoch e.due-at)
+                         ,(current-seconds))))
+          (query-entities conn _)))))
