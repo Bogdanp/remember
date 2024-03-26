@@ -11,18 +11,16 @@ fileprivate let logger = Logger(
 class Store: ObservableObject {
   @Published var entries = [Entry]()
 
-  private var timer: Timer!
+  private var timer: Timer?
 
   init() {
-    timer = Timer(timeInterval: 60, repeats: true) { [weak self] _ in
-      RunLoop.main.schedule {
-        self?.loadEntries()
-      }
-    }
+    loadEntries()
     scheduleLoadEntries()
 
     Backend.shared.installCallback(entriesDidChangeCb: { [weak self] _ in
-      self?.scheduleLoadEntries()
+      RunLoop.main.schedule {
+        self?.scheduleLoadEntries()
+      }
     }).onComplete {
       _ = Backend.shared.markReadyForChanges()
     }
@@ -53,7 +51,13 @@ class Store: ObservableObject {
   }
 
   private func scheduleLoadEntries() {
-    timer.fire()
+    assert(Thread.current.isMainThread)
+    if let timer = self.timer {
+      timer.fire()
+    }
+    timer = Timer(timeInterval: 60, repeats: true) { [weak self] _ in
+      self?.loadEntries()
+    }
   }
 
   private func loadEntries() {

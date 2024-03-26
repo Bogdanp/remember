@@ -336,7 +336,9 @@
             (lambda ()
               (call-with-database-connection
                 (lambda (conn)
-                  (update-one! conn (set-entry-status updated-entry 'pending))))
+                  (~> updated-entry
+                      (set-entry-status 'pending)
+                      (update-one! conn _))))
               (entries-did-change))))]))))
 
 (define (snooze-entry! id amount)

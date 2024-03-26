@@ -1,3 +1,4 @@
+import BackgroundTasks
 import Foundation
 import NoiseSerde
 import UserNotifications
@@ -23,6 +24,43 @@ class NotificationsManager: NSObject {
         logger.error("Did not receive authorization to send notifications: \(error)")
         return
       }
+    }
+
+    BGTaskScheduler.shared.register(
+      forTaskWithIdentifier: "io.defn.remember-ios.NotificationsManager.refresh",
+      using: .main) { [weak self] task in
+        self?.handleRefresh(task)
+      }
+
+    scheduleRefresh()
+  }
+
+  private func scheduleRefresh() {
+    let request = BGProcessingTaskRequest(identifier: "io.defn.remember-ios.NotificationsManager.refresh")
+    request.earliestBeginDate = Date(timeIntervalSinceNow: 5*60)
+
+    do {
+      try BGTaskScheduler.shared.submit(request)
+    } catch {
+      logger.error("Failed to schedule refresh: \(error)")
+    }
+  }
+
+  private func handleRefresh(_ task: BGTask) {
+    scheduleRefresh()
+
+    let future = Backend.shared.getDueEntries()
+    future.onComplete { entries in
+      RunLoop.main.schedule {
+        entries.forEach {
+          self.notify(of: $0)
+        }
+        task.setTaskCompleted(success: true)
+      }
+    }
+
+    task.expirationHandler = {
+      future.cancel()
     }
   }
 

@@ -34,6 +34,7 @@
 		43344B032BB15DFA000BE145 /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
 		43344B052BB15E5A000BE145 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		4335AF382BB299F000B59BFB /* NotificationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsManager.swift; sourceTree = "<group>"; };
+		4335AF3A2BB2EBC700B59BFB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +71,7 @@
 		43344AE92BB15A52000BE145 /* remember-ios */ = {
 			isa = PBXGroup;
 			children = (
+				4335AF3A2BB2EBC700B59BFB /* Info.plist */,
 				43344AEE2BB15A52000BE145 /* Assets.xcassets */,
 				43344B012BB15D85000BE145 /* Backend.swift */,
 				43344AFF2BB15D34000BE145 /* BackendExtensions.swift */,
@@ -313,6 +315,7 @@
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "remember-ios/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Remember;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -345,6 +348,7 @@
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "remember-ios/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Remember;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
