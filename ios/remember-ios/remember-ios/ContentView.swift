@@ -6,7 +6,10 @@ struct ContentView: View {
   @State var presentSheet = false
 
   var body: some View {
-    VStack {
+    VStack(alignment: .leading) {
+      Text("Remember")
+        .font(.title)
+        .fontWeight(.bold)
       List {
         ForEach(store.entries) { entry in
           HStack {
@@ -19,19 +22,24 @@ struct ContentView: View {
             }
           }.swipeActions {
             Button(action: {
-              _ = Backend.shared.archive(entryWithId: entry.id)
+              store.archive(entry: entry)
             }, label: {
               Image(systemName: "checkmark.circle")
             }).tint(.accentColor)
             Button(action: {
-              _ = Backend.shared.delete(entryWithId: entry.id)
+              store.delete(entry: entry)
             }, label: {
               Image(systemName: "trash.slash.fill")
             }).tint(.red)
           }
-        }
+        }.listRowInsets(EdgeInsets())
+      }
+      .listStyle(.plain)
+      .onShake { _ in
+        _ = Backend.shared.undo()
       }
       HStack {
+        Spacer()
         Button(action: {
           presentSheet.toggle()
         }, label: {
@@ -39,8 +47,8 @@ struct ContentView: View {
             .font(.system(size: 24))
         }).sheet(isPresented: $presentSheet, content: {
           CommandView()
-            .padding()
         })
+        Spacer()
       }
     }
     .padding()
@@ -50,19 +58,28 @@ struct ContentView: View {
 struct CommandView: View {
   @Environment(\.dismiss) private var dismiss
 
-  @State var command = ""
+  @State private var command = ""
+  @FocusState private var focused
 
   var body: some View {
-    VStack {
-      TextField(text: $command, label: { Text("Remember...") })
-      Button(action: {
-        if command != "" {
-          _ = Backend.shared.commit(command: command)
+    NavigationView {
+      VStack(alignment: .leading) {
+        TextField("Remember...", text: $command)
+          .focused($focused)
+        Spacer()
+      }
+      .padding()
+      .toolbar {
+        ToolbarItem {
+          Button("Done") {
+            Backend.shared.commit(command: command).onComplete { _ in
+              dismiss()
+            }
+          }
         }
-        dismiss()
-      }, label: {
-        Text("Save")
-      })
+      }
+    }.onAppear {
+      focused = true
     }
   }
 }

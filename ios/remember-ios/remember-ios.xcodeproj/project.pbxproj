@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		43216C9B2BB1AEA900C10780 /* DeviceShakeViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43216C9A2BB1AEA900C10780 /* DeviceShakeViewModifier.swift */; };
 		43344AEB2BB15A52000BE145 /* Remember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43344AEA2BB15A52000BE145 /* Remember.swift */; };
 		43344AED2BB15A52000BE145 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43344AEC2BB15A52000BE145 /* ContentView.swift */; };
 		43344AEF2BB15A52000BE145 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 43344AEE2BB15A52000BE145 /* Assets.xcassets */; };
@@ -18,9 +19,11 @@
 		43344B022BB15D85000BE145 /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43344B012BB15D85000BE145 /* Backend.swift */; };
 		43344B042BB15DFA000BE145 /* res in Resources */ = {isa = PBXBuildFile; fileRef = 43344B032BB15DFA000BE145 /* res */; };
 		43344B062BB15E5A000BE145 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43344B052BB15E5A000BE145 /* Store.swift */; };
+		4335AF392BB299F000B59BFB /* NotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4335AF382BB299F000B59BFB /* NotificationsManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		43216C9A2BB1AEA900C10780 /* DeviceShakeViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceShakeViewModifier.swift; sourceTree = "<group>"; };
 		43344AE72BB15A52000BE145 /* remember-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "remember-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		43344AEA2BB15A52000BE145 /* Remember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Remember.swift; sourceTree = "<group>"; };
 		43344AEC2BB15A52000BE145 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -30,6 +33,7 @@
 		43344B012BB15D85000BE145 /* Backend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
 		43344B032BB15DFA000BE145 /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
 		43344B052BB15E5A000BE145 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		4335AF382BB299F000B59BFB /* NotificationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,9 +74,11 @@
 				43344B012BB15D85000BE145 /* Backend.swift */,
 				43344AFF2BB15D34000BE145 /* BackendExtensions.swift */,
 				43344AEC2BB15A52000BE145 /* ContentView.swift */,
-				43344B052BB15E5A000BE145 /* Store.swift */,
+				43216C9A2BB1AEA900C10780 /* DeviceShakeViewModifier.swift */,
+				4335AF382BB299F000B59BFB /* NotificationsManager.swift */,
 				43344AF02BB15A52000BE145 /* Preview Content */,
 				43344AEA2BB15A52000BE145 /* Remember.swift */,
+				43344B052BB15E5A000BE145 /* Store.swift */,
 			);
 			path = "remember-ios";
 			sourceTree = "<group>";
@@ -165,7 +171,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				43344B062BB15E5A000BE145 /* Store.swift in Sources */,
+				4335AF392BB299F000B59BFB /* NotificationsManager.swift in Sources */,
 				43344B022BB15D85000BE145 /* Backend.swift in Sources */,
+				43216C9B2BB1AEA900C10780 /* DeviceShakeViewModifier.swift in Sources */,
 				43344AED2BB15A52000BE145 /* ContentView.swift in Sources */,
 				43344B002BB15D34000BE145 /* BackendExtensions.swift in Sources */,
 				43344AEB2BB15A52000BE145 /* Remember.swift in Sources */,
@@ -305,6 +313,8 @@
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Remember;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -335,6 +345,8 @@
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Remember;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

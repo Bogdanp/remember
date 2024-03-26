@@ -8,4 +8,8 @@ extension Backend {
   )
 }
 
-extension Entry: Identifiable {}
+extension Entry: Identifiable {
+  var notificationId: String {
+    "io.defn.remember-ios.Entry.\(id)"
+  }
+}
