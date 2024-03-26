@@ -297,10 +297,21 @@ public class Backend {
     )
   }
 
-  public func snooze(entryWithId id: UVarint, forMinutes minutes: UVarint) -> Future<String, Void> {
+  public func ping() -> Future<String, String> {
     return impl.send(
       writeProc: { (out: OutputPort) in
         UVarint(0x000a).write(to: out)
+      },
+      readProc: { (inp: InputPort, buf: inout Data) -> String in
+        return String.read(from: inp, using: &buf)
+      }
+    )
+  }
+
+  public func snooze(entryWithId id: UVarint, forMinutes minutes: UVarint) -> Future<String, Void> {
+    return impl.send(
+      writeProc: { (out: OutputPort) in
+        UVarint(0x000b).write(to: out)
         id.write(to: out)
         minutes.write(to: out)
       },
@@ -311,7 +322,7 @@ public class Backend {
   public func startScheduler() -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
-        UVarint(0x000b).write(to: out)
+        UVarint(0x000c).write(to: out)
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
@@ -320,7 +331,7 @@ public class Backend {
   public func undo() -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
-        UVarint(0x000c).write(to: out)
+        UVarint(0x000d).write(to: out)
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
@@ -329,7 +340,7 @@ public class Backend {
   public func update(entryWithId id: UVarint, andCommand s: String) -> Future<String, Entry?> {
     return impl.send(
       writeProc: { (out: OutputPort) in
-        UVarint(0x000d).write(to: out)
+        UVarint(0x000e).write(to: out)
         id.write(to: out)
         s.write(to: out)
       },
