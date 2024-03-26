@@ -17,6 +17,7 @@ all: ${CORE_ZO} ${APP_SRC}/remember/Backend.swift
 
 .PHONY: clean
 clean:
+	find core -type d -name compiled | xargs rm -fr
 	rm -fr ${RESOURCES_PATH}
 
 ${RKT_MAIN_ZO}: ${RKT_FILES}
