@@ -8,6 +8,7 @@
          racket/contract/base
          racket/format
          racket/match
+         racket/math
          racket/string
          threading
          "command.rkt"
@@ -38,6 +39,7 @@
 (define-record Entry
   [id : UVarint]
   [title : String]
+  [due-at : (Optional UVarint)]
   [due-in : (Optional String)]
   [recurs : Bool])
 
@@ -45,6 +47,9 @@
   (make-Entry
    #:id (entry-id e)
    #:title (entry-title e)
+   #:due-at (let ([due-at (entry-due-at e)])
+              (and (not (sql-null? due-at))
+                   (exact-floor (->posix due-at))))
    #:due-in (entry-due-in e)
    #:recurs (entry-recurs? e)))
 
@@ -351,7 +356,7 @@
                (update-one! conn _)))))
 
   (when the-entry
-    (void (entries-did-change))))
+    (entries-did-change)))
 
 (define (delete-entry! id)
   (define the-entry
@@ -383,6 +388,6 @@
     (lambda (conn)
       (~> pending-entries
           (where (and (not (is e.due-at null))
-                      (< (unixepoch e.due-at)
-                         ,(current-seconds))))
+                      (<= (unixepoch e.due-at)
+                          ,(current-seconds))))
           (query-entities conn _)))))

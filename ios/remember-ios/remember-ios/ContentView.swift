@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+  @Environment(\.scenePhase) var scenePhase
   @ObservedObject var store = Store()
 
   @State var presentSheet = false
@@ -24,12 +25,12 @@ struct ContentView: View {
             Button(action: {
               store.archive(entry: entry)
             }, label: {
-              Image(systemName: "checkmark.circle")
+              Label("Archive", systemImage: "checkmark.circle")
             }).tint(.accentColor)
-            Button(action: {
+            Button(role: .destructive, action: {
               store.delete(entry: entry)
             }, label: {
-              Image(systemName: "trash.slash.fill")
+              Label("Delete", systemImage: "trash.slash.fill")
             }).tint(.red)
           }
         }.listRowInsets(EdgeInsets())
@@ -52,6 +53,14 @@ struct ContentView: View {
       }
     }
     .padding()
+    .onChange(of: scenePhase) {
+      switch scenePhase {
+      case .background:
+        NotificationsManager.shared.scheduleRefresh()
+      default:
+        NotificationsManager.shared.unscheduleRefresh()
+      }
+    }
   }
 }
 

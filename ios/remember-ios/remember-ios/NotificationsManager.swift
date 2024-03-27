@@ -14,6 +14,8 @@ class NotificationsManager: NSObject {
 
   private var entries = [String: Entry]()
 
+  private static let refreshIdentifier = "io.defn.remember-ios.NotificationsManager.refresh"
+
   override init() {
     super.init()
 
@@ -25,25 +27,45 @@ class NotificationsManager: NSObject {
         return
       }
     }
+  }
 
+  func registerTasks() {
+    logger.debug("Registering refresh task.")
     BGTaskScheduler.shared.register(
-      forTaskWithIdentifier: "io.defn.remember-ios.NotificationsManager.refresh",
+      forTaskWithIdentifier: Self.refreshIdentifier,
       using: .main) { [weak self] task in
         self?.handleRefresh(task)
       }
-
-    scheduleRefresh()
   }
 
-  private func scheduleRefresh() {
-    let request = BGProcessingTaskRequest(identifier: "io.defn.remember-ios.NotificationsManager.refresh")
-    request.earliestBeginDate = Date(timeIntervalSinceNow: 5*60)
+  func scheduleRefresh() {
+    logger.debug("Preparing to schedule refresh.")
+    Backend.shared.getPendingEntries().onComplete { entries in
+      let request = BGProcessingTaskRequest(identifier: Self.refreshIdentifier)
+      var deadline: TimeInterval? = nil
+      for entry in entries {
+        if let dueAt = entry.dueAt {
+          deadline = TimeInterval(dueAt)
+          break
+        }
+      }
+      guard let deadline = deadline else {
+        logger.warning("No pending tasks, not scheduling refresh.")
+        return
+      }
+      request.earliestBeginDate = Date(timeIntervalSince1970: deadline)
+      logger.debug("Scheduling refresh at \(request.earliestBeginDate!.ISO8601Format()).")
 
-    do {
-      try BGTaskScheduler.shared.submit(request)
-    } catch {
-      logger.error("Failed to schedule refresh: \(error)")
+      do {
+        try BGTaskScheduler.shared.submit(request)
+      } catch {
+        logger.error("Failed to schedule refresh: \(error)")
+      }
     }
+  }
+
+  func unscheduleRefresh() {
+    BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: Self.refreshIdentifier)
   }
 
   private func handleRefresh(_ task: BGTask) {
