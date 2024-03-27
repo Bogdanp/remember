@@ -21,7 +21,15 @@ struct ContentView: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
             }
-          }.swipeActions {
+          }
+          .swipeActions(edge: .leading) {
+            Button(action: {
+              store.snooze(entry: entry)
+            }, label: {
+              Label("Snooze", systemImage: "bell.slash.fill")
+            }).tint(.secondary)
+          }
+          .swipeActions(edge: .trailing) {
             Button(action: {
               store.archive(entry: entry)
             }, label: {
@@ -33,9 +41,12 @@ struct ContentView: View {
               Label("Delete", systemImage: "trash.slash.fill")
             }).tint(.red)
           }
-        }.listRowInsets(EdgeInsets())
+        }
       }
       .listStyle(.plain)
+      .refreshable {
+        store.scheduleLoadEntries()
+      }
       .onShake { _ in
         _ = Backend.shared.undo()
       }

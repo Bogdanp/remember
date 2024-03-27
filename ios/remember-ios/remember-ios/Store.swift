@@ -50,7 +50,13 @@ class Store: ObservableObject {
     }
   }
 
-  private func scheduleLoadEntries() {
+  func snooze(entry: Entry) {
+    Backend.shared.snooze(entryWithId: entry.id, forMinutes: 15).onComplete {
+      NotificationsManager.shared.removePendingNotification(for: entry)
+    }
+  }
+
+  func scheduleLoadEntries() {
     assert(Thread.current.isMainThread)
     if let timer = self.timer {
       timer.fire()
