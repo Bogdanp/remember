@@ -4,66 +4,43 @@ struct ContentView: View {
   @Environment(\.scenePhase) var scenePhase
   @ObservedObject var store = Store()
 
+  @State var tab = "home"
+  @State var bgTab = "home"
   @State var presentSheet = false
 
   var body: some View {
-    VStack(alignment: .leading) {
-      Text("Remember")
-        .font(.title)
-        .fontWeight(.bold)
-      List {
-        ForEach(store.entries) { entry in
-          HStack {
-            Text(entry.title)
-            Spacer()
-            if let dueIn = entry.dueIn {
-              Text(dueIn)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            }
-          }
-          .swipeActions(edge: .leading) {
-            Button(action: {
-              store.snooze(entry: entry)
-            }, label: {
-              Label("Snooze", systemImage: "bell.slash.fill")
-            }).tint(.secondary)
-          }
-          .swipeActions(edge: .trailing) {
-            Button(action: {
-              store.archive(entry: entry)
-            }, label: {
-              Label("Archive", systemImage: "checkmark.circle")
-            }).tint(.accentColor)
-            Button(role: .destructive, action: {
-              store.delete(entry: entry)
-            }, label: {
-              Label("Delete", systemImage: "trash.slash.fill")
-            }).tint(.red)
-          }
+    TabView(selection: $tab) {
+      RemindersView(store: store)
+        .tabItem {
+          Image(systemName: "house.fill")
         }
-      }
-      .listStyle(.plain)
-      .refreshable {
-        store.scheduleLoadEntries()
-      }
-      .onShake { _ in
-        _ = Backend.shared.undo()
-      }
-      HStack {
-        Spacer()
-        Button(action: {
-          presentSheet.toggle()
-        }, label: {
-          Image(systemName: "plus.app")
-            .font(.system(size: 24))
-        }).sheet(isPresented: $presentSheet, content: {
-          CommandView()
-        })
-        Spacer()
+        .tag("home")
+
+      Text("")
+        .tabItem {
+          Image(systemName: "plus.app.fill")
+        }
+        .tag("new-reminder")
+
+      Text("")
+        .tabItem {
+          Image(systemName: "gearshape.fill")
+        }
+        .tag("settings")
+    }
+    .sheet(isPresented: $presentSheet, onDismiss: {
+      tab = bgTab
+    }, content: {
+      CommandView()
+    })
+    .onChange(of: tab) {
+      if tab == "new-reminder" {
+        presentSheet = true
+        tab = bgTab
+      } else {
+        bgTab = tab
       }
     }
-    .padding()
     .onChange(of: scenePhase) {
       switch scenePhase {
       case .background:
@@ -71,35 +48,6 @@ struct ContentView: View {
       default:
         NotificationsManager.shared.unscheduleRefresh()
       }
-    }
-  }
-}
-
-struct CommandView: View {
-  @Environment(\.dismiss) private var dismiss
-
-  @State private var command = ""
-  @FocusState private var focused
-
-  var body: some View {
-    NavigationView {
-      VStack(alignment: .leading) {
-        TextField("Remember...", text: $command)
-          .focused($focused)
-        Spacer()
-      }
-      .padding()
-      .toolbar {
-        ToolbarItem {
-          Button("Done") {
-            Backend.shared.commit(command: command).onComplete { _ in
-              dismiss()
-            }
-          }
-        }
-      }
-    }.onAppear {
-      focused = true
     }
   }
 }
