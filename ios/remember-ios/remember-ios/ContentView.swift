@@ -44,8 +44,12 @@ struct ContentView: View {
     .onChange(of: scenePhase) {
       switch scenePhase {
       case .background:
+        FolderSyncer.shared.invalidate()
         NotificationsManager.shared.scheduleRefresh()
-      default:
+      case .inactive:
+        FolderSyncer.shared.invalidate()
+      case .active:
+        FolderSyncer.shared.scheduleSync()
         NotificationsManager.shared.unscheduleRefresh()
       }
     }

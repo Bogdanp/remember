@@ -8,6 +8,7 @@ struct Remember: App {
 
   init() {
     NotificationsManager.shared.registerTasks()
+    FolderSyncer.shared.registerTasks()
   }
 
   var body: some Scene {

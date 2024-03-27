@@ -5,6 +5,7 @@
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
 		<string>io.defn.remember-ios.NotificationsManager.refresh</string>
+		<string>io.defn.remember-ios.FolderSyncer.refresh</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

@@ -1,3 +1,4 @@
+import BackgroundTasks
 import Foundation
 import os
 
@@ -8,6 +9,8 @@ fileprivate let logger = Logger(
 
 class FolderSyncer {
   static let shared = FolderSyncer()
+
+  static private let refreshIdentifier = "io.defn.remember-ios.FolderSyncer.refresh"
 
   init() {
     sync()
@@ -23,6 +26,42 @@ class FolderSyncer {
     let id = UUID().uuidString
     UserDefaults.standard.set(id, forKey: "sync.id")
     return id
+  }
+
+  func registerTasks() {
+    logger.debug("Registering refresh task.")
+    BGTaskScheduler.shared.register(
+      forTaskWithIdentifier: Self.refreshIdentifier,
+      using: .main) { [weak self] task in
+        self?.handleRefresh(task)
+      }
+  }
+
+  func scheduleRefresh() {
+    logger.debug("Preparing to schedule refresh.")
+    let request = BGProcessingTaskRequest(identifier: Self.refreshIdentifier)
+    let deadline = Date(timeIntervalSinceNow: 30*60)
+    request.earliestBeginDate = deadline
+    logger.debug("Scheduling refresh at \(deadline.ISO8601Format()).")
+    do {
+      try BGTaskScheduler.shared.submit(request)
+    } catch {
+      logger.error("Failed to schedule refresh: \(error)")
+    }
+  }
+
+  func unscheduleRefresh() {
+    BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: Self.refreshIdentifier)
+  }
+
+  private func handleRefresh(_ task: BGTask) {
+    scheduleRefresh()
+    sync()
+    NotificationsManager.shared.scheduleRefresh()
+  }
+
+  func invalidate() {
+    timer?.invalidate()
   }
 
   func scheduleSync() {
