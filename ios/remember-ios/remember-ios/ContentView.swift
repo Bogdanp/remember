@@ -22,7 +22,7 @@ struct ContentView: View {
         }
         .tag("new-reminder")
 
-      Text("")
+      SettingsView()
         .tabItem {
           Image(systemName: "gearshape.fill")
         }

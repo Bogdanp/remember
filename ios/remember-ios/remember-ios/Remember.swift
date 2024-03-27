@@ -3,7 +3,8 @@ import UIKit
 
 @main
 struct Remember: App {
-  private var notifications = NotificationsManager.shared
+  private let notifications = NotificationsManager.shared
+  private let syncer = FolderSyncer.shared
 
   init() {
     NotificationsManager.shared.registerTasks()

@@ -22,6 +22,9 @@
 		4335AF392BB299F000B59BFB /* NotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4335AF382BB299F000B59BFB /* NotificationsManager.swift */; };
 		43F920FE2BB404AE00C5F06D /* CommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F920FD2BB404AE00C5F06D /* CommandView.swift */; };
 		43F921002BB40B9000C5F06D /* RemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F920FF2BB40B9000C5F06D /* RemindersView.swift */; };
+		43F921022BB4377700C5F06D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F921012BB4377700C5F06D /* SettingsView.swift */; };
+		43F921042BB43AAD00C5F06D /* SettingsSyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F921032BB43AAD00C5F06D /* SettingsSyncView.swift */; };
+		43F921062BB44BFF00C5F06D /* FolderSyncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F921052BB44BFF00C5F06D /* FolderSyncer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +42,9 @@
 		4335AF3A2BB2EBC700B59BFB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		43F920FD2BB404AE00C5F06D /* CommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandView.swift; sourceTree = "<group>"; };
 		43F920FF2BB40B9000C5F06D /* RemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersView.swift; sourceTree = "<group>"; };
+		43F921012BB4377700C5F06D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		43F921032BB43AAD00C5F06D /* SettingsSyncView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSyncView.swift; sourceTree = "<group>"; };
+		43F921052BB44BFF00C5F06D /* FolderSyncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSyncer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +92,9 @@
 				43344AF02BB15A52000BE145 /* Preview Content */,
 				43344AEA2BB15A52000BE145 /* Remember.swift */,
 				43F920FF2BB40B9000C5F06D /* RemindersView.swift */,
+				43F921032BB43AAD00C5F06D /* SettingsSyncView.swift */,
+				43F921052BB44BFF00C5F06D /* FolderSyncer.swift */,
+				43F921012BB4377700C5F06D /* SettingsView.swift */,
 				43344B052BB15E5A000BE145 /* Store.swift */,
 			);
 			path = "remember-ios";
@@ -183,8 +192,11 @@
 				43344B022BB15D85000BE145 /* Backend.swift in Sources */,
 				43216C9B2BB1AEA900C10780 /* DeviceShakeViewModifier.swift in Sources */,
 				43344AED2BB15A52000BE145 /* ContentView.swift in Sources */,
+				43F921022BB4377700C5F06D /* SettingsView.swift in Sources */,
 				43344B002BB15D34000BE145 /* BackendExtensions.swift in Sources */,
 				43F920FE2BB404AE00C5F06D /* CommandView.swift in Sources */,
+				43F921042BB43AAD00C5F06D /* SettingsSyncView.swift in Sources */,
+				43F921062BB44BFF00C5F06D /* FolderSyncer.swift in Sources */,
 				43344AEB2BB15A52000BE145 /* Remember.swift in Sources */,
 				43F921002BB40B9000C5F06D /* RemindersView.swift in Sources */,
 			);
