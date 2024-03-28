@@ -66,17 +66,20 @@ public enum TokenData: Readable, Writable {
 public struct Entry: Readable, Writable {
   public let id: UVarint
   public let title: String
+  public let dueAt: UVarint?
   public let dueIn: String?
   public let recurs: Bool
 
   public init(
     id: UVarint,
     title: String,
+    dueAt: UVarint?,
     dueIn: String?,
     recurs: Bool
   ) {
     self.id = id
     self.title = title
+    self.dueAt = dueAt
     self.dueIn = dueIn
     self.recurs = recurs
   }
@@ -85,6 +88,7 @@ public struct Entry: Readable, Writable {
     return Entry(
       id: UVarint.read(from: inp, using: &buf),
       title: String.read(from: inp, using: &buf),
+      dueAt: UVarint?.read(from: inp, using: &buf),
       dueIn: String?.read(from: inp, using: &buf),
       recurs: Bool.read(from: inp, using: &buf)
     )
@@ -93,6 +97,7 @@ public struct Entry: Readable, Writable {
   public func write(to out: OutputPort) {
     id.write(to: out)
     title.write(to: out)
+    dueAt.write(to: out)
     dueIn.write(to: out)
     recurs.write(to: out)
   }
