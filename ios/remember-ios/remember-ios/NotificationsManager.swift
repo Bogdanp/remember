@@ -74,9 +74,7 @@ class NotificationsManager: NSObject {
     let future = Backend.shared.getDueEntries()
     future.onComplete { entries in
       RunLoop.main.schedule {
-        entries.forEach {
-          self.notify(of: $0)
-        }
+        self.notify(ofEntries: entries)
         task.setTaskCompleted(success: true)
       }
     }
@@ -93,25 +91,24 @@ class NotificationsManager: NSObject {
     center.removePendingNotificationRequests(withIdentifiers: [entry.notificationId])
   }
 
-  func notify(of entry: Entry) {
+  func notify(ofEntries entries: [Entry]) {
     assert(Thread.current.isMainThread)
-    if entries.contains(where: { $0.key == entry.notificationId }) {
-      return
+    self.entries.removeAll(keepingCapacity: true)
+    for entry in entries {
+      self.entries[entry.notificationId] = entry
+      let content = UNMutableNotificationContent()
+      content.title = "Remember"
+      content.body = entry.title
+      content.badge = NSNumber(value: entries.count)
+      let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 15, repeats: false)
+      let request = UNNotificationRequest(
+        identifier: entry.notificationId,
+        content: content,
+        trigger: trigger)
+      UNUserNotificationCenter
+        .current()
+        .add(request) { _ in }
     }
-
-    entries[entry.notificationId] = entry
-    let content = UNMutableNotificationContent()
-    content.title = "Remember"
-    content.body = entry.title
-    content.badge = NSNumber(value: entries.count)
-    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 15, repeats: false)
-    let request = UNNotificationRequest(
-      identifier: entry.notificationId,
-      content: content,
-      trigger: trigger)
-    UNUserNotificationCenter
-      .current()
-      .add(request) { _ in }
   }
 
   func setBadgeCount(_ count: Int) {

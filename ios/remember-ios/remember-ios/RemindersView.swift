@@ -42,7 +42,9 @@ struct RemindersView: View {
       }
       .listStyle(.plain)
       .refreshable {
-        store.scheduleLoadEntries()
+        FolderSyncer.shared.sync {
+          store.loadEntries()
+        }
       }
       .onShake { _ in
         _ = Backend.shared.undo()

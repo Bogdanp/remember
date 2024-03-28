@@ -56,8 +56,10 @@ class FolderSyncer {
 
   private func handleRefresh(_ task: BGTask) {
     scheduleRefresh()
-    sync()
-    NotificationsManager.shared.scheduleRefresh()
+    sync() {
+      NotificationsManager.shared.scheduleRefresh()
+      task.setTaskCompleted(success: true)
+    }
   }
 
   func invalidate() {
@@ -66,15 +68,15 @@ class FolderSyncer {
 
   func scheduleSync() {
     timer?.invalidate()
-    timer = Timer(
-      timeInterval: 5*60,
+    timer = Timer.scheduledTimer(
+      withTimeInterval: 5*60,
       repeats: true
     ) { [weak self] _ in
       self?.sync()
     }
   }
 
-  private func sync() {
+  func sync(withCompletionHandler completionHandler: @escaping () -> Void = { }) {
     do {
       if let path = try FolderSyncDefaults.load() {
         logger.debug("Initiating sync to \(path).")
@@ -91,10 +93,15 @@ class FolderSyncer {
           } else {
             logger.error("Failed to acquire security access to \(path).")
           }
+          completionHandler()
         }
+      } else {
+        logger.debug("No sync folder. Doing nothing.")
+        completionHandler()
       }
     } catch {
       logger.error("Failed to load sync folder: \(error)")
+      completionHandler()
     }
   }
 

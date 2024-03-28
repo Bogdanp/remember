@@ -388,6 +388,6 @@
     (lambda (conn)
       (~> pending-entries
           (where (and (not (is e.due-at null))
-                      (<= (unixepoch e.due-at)
-                          ,(current-seconds))))
+                      (<= (datetime e.due-at)
+                          (datetime "now" "localtime"))))
           (query-entities conn _)))))

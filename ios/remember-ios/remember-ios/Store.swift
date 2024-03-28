@@ -15,23 +15,19 @@ class Store: ObservableObject {
 
   init() {
     loadEntries()
-    scheduleLoadEntries()
 
     Backend.shared.installCallback(entriesDidChangeCb: { [weak self] _ in
-      RunLoop.main.schedule {
-        self?.scheduleLoadEntries()
-      }
+      logger.debug("Entries changed.")
+      self?.loadEntries()
     }).onComplete {
       _ = Backend.shared.markReadyForChanges()
     }
 
     Backend.shared.installCallback(entriesDueCb: { [weak self] entries in
+      logger.debug("Have \(entries.count) due entries.")
       RunLoop.main.schedule {
-        guard let self else { return }
-        self.scheduleLoadEntries()
-        entries.forEach { entry in
-          NotificationsManager.shared.notify(of: entry)
-        }
+        self?.loadEntries()
+        NotificationsManager.shared.notify(ofEntries: entries)
       }
     }).onComplete {
       _ = Backend.shared.startScheduler()
@@ -56,22 +52,31 @@ class Store: ObservableObject {
     }
   }
 
+  func invalidate() {
+    assert(Thread.current.isMainThread)
+    logger.debug("Invalidating timer.")
+    timer?.invalidate()
+  }
+
   func scheduleLoadEntries() {
     assert(Thread.current.isMainThread)
-    if let timer = self.timer {
-      timer.fire()
-    }
-    timer = Timer(timeInterval: 60, repeats: true) { [weak self] _ in
+    logger.debug("Scheduling entry load timer.")
+    timer?.invalidate()
+    timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+      logger.debug("Entry load timer fired.")
       self?.loadEntries()
     }
   }
 
-  private func loadEntries() {
+  func loadEntries() {
+    logger.debug("Loading entries.")
     Backend.shared.getPendingEntries().onComplete { [weak self] entries in
-      self?.entries = entries
-    }
-    Backend.shared.getDueEntries().onComplete { entries in
-      NotificationsManager.shared.setBadgeCount(entries.count)
+      RunLoop.main.schedule {
+        self?.entries = entries
+        Backend.shared.getDueEntries().onComplete { entries in
+          NotificationsManager.shared.setBadgeCount(entries.count)
+        }
+      }
     }
   }
 }
