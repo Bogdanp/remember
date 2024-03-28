@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+HERE="$(dirname "$0")"
+"$HERE/pbracket" -N raco -U -l- raco "$@"

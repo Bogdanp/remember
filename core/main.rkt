@@ -1,15 +1,20 @@
 #lang racket/base
 
-(require noise/backend
+(require gregor
+         noise/backend
          noise/serde
          "command.rkt"
          "database.rkt"
          "entry.rkt"
          "schema.rkt"
+         "timezone.rkt"
          "undo.rkt")
 
 (provide
  main)
+
+(define-rpc (ping : String)
+  "pong")
 
 (define-rpc (parse [command s : String] : (Listof Token))
   (parse-command s))
@@ -68,6 +73,7 @@
          (loop))))))
 
 (define (main in-fd out-fd)
+  (current-timezone (get-current-system-timezone))
   (module-cache-clear!)
   (backup-database!)
   (migrate!)
