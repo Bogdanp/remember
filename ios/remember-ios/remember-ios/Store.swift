@@ -52,6 +52,17 @@ class Store: ObservableObject {
     }
   }
 
+  func update(
+    entry: Entry,
+    withCommand command: String,
+    andCompletionHandler completionHandler: @escaping () -> Void = { }
+  ) {
+    Backend.shared.update(entryWithId: entry.id, andCommand: command).onComplete { _ in
+      NotificationsManager.shared.removePendingNotification(for: entry)
+      completionHandler()
+    }
+  }
+
   func invalidate() {
     assert(Thread.current.isMainThread)
     logger.debug("Invalidating timer.")

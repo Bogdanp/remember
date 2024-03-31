@@ -20,6 +20,7 @@
 		43344B042BB15DFA000BE145 /* res in Resources */ = {isa = PBXBuildFile; fileRef = 43344B032BB15DFA000BE145 /* res */; };
 		43344B062BB15E5A000BE145 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43344B052BB15E5A000BE145 /* Store.swift */; };
 		4335AF392BB299F000B59BFB /* NotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4335AF382BB299F000B59BFB /* NotificationsManager.swift */; };
+		4340EE862BB9839A00CBB7B1 /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4340EE852BB9839A00CBB7B1 /* ReminderDetailView.swift */; };
 		43F920FE2BB404AE00C5F06D /* CommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F920FD2BB404AE00C5F06D /* CommandView.swift */; };
 		43F921002BB40B9000C5F06D /* RemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F920FF2BB40B9000C5F06D /* RemindersView.swift */; };
 		43F921022BB4377700C5F06D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F921012BB4377700C5F06D /* SettingsView.swift */; };
@@ -40,6 +41,7 @@
 		43344B052BB15E5A000BE145 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		4335AF382BB299F000B59BFB /* NotificationsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsManager.swift; sourceTree = "<group>"; };
 		4335AF3A2BB2EBC700B59BFB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4340EE852BB9839A00CBB7B1 /* ReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDetailView.swift; sourceTree = "<group>"; };
 		43F920FD2BB404AE00C5F06D /* CommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandView.swift; sourceTree = "<group>"; };
 		43F920FF2BB40B9000C5F06D /* RemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersView.swift; sourceTree = "<group>"; };
 		43F921012BB4377700C5F06D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -87,13 +89,14 @@
 				43F920FD2BB404AE00C5F06D /* CommandView.swift */,
 				43344AEC2BB15A52000BE145 /* ContentView.swift */,
 				43216C9A2BB1AEA900C10780 /* DeviceShakeViewModifier.swift */,
+				43F921052BB44BFF00C5F06D /* FolderSyncer.swift */,
 				4335AF3A2BB2EBC700B59BFB /* Info.plist */,
 				4335AF382BB299F000B59BFB /* NotificationsManager.swift */,
 				43344AF02BB15A52000BE145 /* Preview Content */,
 				43344AEA2BB15A52000BE145 /* Remember.swift */,
+				4340EE852BB9839A00CBB7B1 /* ReminderDetailView.swift */,
 				43F920FF2BB40B9000C5F06D /* RemindersView.swift */,
 				43F921032BB43AAD00C5F06D /* SettingsSyncView.swift */,
-				43F921052BB44BFF00C5F06D /* FolderSyncer.swift */,
 				43F921012BB4377700C5F06D /* SettingsView.swift */,
 				43344B052BB15E5A000BE145 /* Store.swift */,
 			);
@@ -187,6 +190,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4340EE862BB9839A00CBB7B1 /* ReminderDetailView.swift in Sources */,
 				43344B062BB15E5A000BE145 /* Store.swift in Sources */,
 				4335AF392BB299F000B59BFB /* NotificationsManager.swift in Sources */,
 				43344B022BB15D85000BE145 /* Backend.swift in Sources */,

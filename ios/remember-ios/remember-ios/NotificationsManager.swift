@@ -93,6 +93,7 @@ class NotificationsManager: NSObject {
 
   func notify(ofEntries entries: [Entry]) {
     assert(Thread.current.isMainThread)
+    self.entries.forEach({ removePendingNotification(for: $0.value) })
     self.entries.removeAll(keepingCapacity: true)
     for entry in entries {
       self.entries[entry.notificationId] = entry
