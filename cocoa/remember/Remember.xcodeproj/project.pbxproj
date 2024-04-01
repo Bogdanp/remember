@@ -39,7 +39,6 @@
 		43E6B95E23B68F4A00F7ACE1 /* Keycode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E6B95D23B68F4A00F7ACE1 /* Keycode.swift */; };
 		43F0F39923DAF59000D3D97C /* FolderSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43F0F39823DAF59000D3D97C /* FolderSync.swift */; };
 		43F199DF2569A18100259849 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 43F199DE2569A18100259849 /* LaunchAtLogin */; };
-		43F199EE2569A40A00259849 /* SwiftyAttributes in Frameworks */ = {isa = PBXBuildFile; productRef = 43F199ED2569A40A00259849 /* SwiftyAttributes */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,7 +89,6 @@
 				43344AD52BB05F79000BE145 /* NoiseBackend in Frameworks */,
 				43F199DF2569A18100259849 /* LaunchAtLogin in Frameworks */,
 				43344AD72BB05F79000BE145 /* NoiseSerde in Frameworks */,
-				43F199EE2569A40A00259849 /* SwiftyAttributes in Frameworks */,
 				43344AD32BB05F79000BE145 /* Noise in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -192,7 +190,6 @@
 			name = Remember;
 			packageProductDependencies = (
 				43F199DE2569A18100259849 /* LaunchAtLogin */,
-				43F199ED2569A40A00259849 /* SwiftyAttributes */,
 				43344AD22BB05F79000BE145 /* Noise */,
 				43344AD42BB05F79000BE145 /* NoiseBackend */,
 				43344AD62BB05F79000BE145 /* NoiseSerde */,
@@ -228,7 +225,6 @@
 			mainGroup = 436BE28823B10D4E00717375;
 			packageReferences = (
 				43F199DD2569A18100259849 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */,
-				43F199EC2569A40A00259849 /* XCRemoteSwiftPackageReference "SwiftyAttributes" */,
 				43344AD12BB05F79000BE145 /* XCLocalSwiftPackageReference "../../../../sandbox/Noise" */,
 			);
 			productRefGroup = 436BE29223B10D4E00717375 /* Products */;
@@ -564,14 +560,6 @@
 				minimumVersion = 4.0.0;
 			};
 		};
-		43F199EC2569A40A00259849 /* XCRemoteSwiftPackageReference "SwiftyAttributes" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/eddiekaiger/SwiftyAttributes";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.2.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -591,11 +579,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 43F199DD2569A18100259849 /* XCRemoteSwiftPackageReference "LaunchAtLogin" */;
 			productName = LaunchAtLogin;
-		};
-		43F199ED2569A40A00259849 /* SwiftyAttributes */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 43F199EC2569A40A00259849 /* XCRemoteSwiftPackageReference "SwiftyAttributes" */;
-			productName = SwiftyAttributes;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
