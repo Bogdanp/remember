@@ -10,9 +10,36 @@ struct CommandField: UIViewRepresentable {
   }
 
   func makeUIView(context: Context) -> CommandTextField {
+    let toolbar = UIToolbar()
+    toolbar.barStyle = .default
+    toolbar.items = [
+      UIBarButtonItem(
+        title: "@",
+        style: .plain,
+        target: context.coordinator,
+        action: #selector(Coordinator.didPressToolbarAtButton(sender:))
+      ),
+      UIBarButtonItem(
+        title: "+",
+        style: .plain,
+        target: context.coordinator,
+        action: #selector(Coordinator.didPressToolbarPlusButton(sender:))
+      ),
+      UIBarButtonItem(
+        title: "*",
+        style: .plain,
+        target: context.coordinator,
+        action: #selector(Coordinator.didPressToolbarTimesButton(sender:))
+      ),
+    ]
+    toolbar.isTranslucent = true
+    toolbar.translatesAutoresizingMaskIntoConstraints = false
+    toolbar.sizeToFit()
+
     let field = CommandTextField()
     field.allowsEditingTextAttributes = true
     field.backgroundColor = UIColor.clear
+    field.inputAccessoryView = toolbar
     field.placeholder = "Remember..."
     field.text = text
     field.addTarget(
@@ -52,7 +79,7 @@ struct CommandField: UIViewRepresentable {
     }
 
     func highlight(textField field: UITextField) {
-      guard let text = field.text else { return }
+      guard let text = field.text, text != "" else { return }
       guard let tokens = try? Backend.shared.parse(command: text).wait() else { return }
       let string = NSMutableAttributedString(string: text)
       for token in tokens {
@@ -61,6 +88,18 @@ struct CommandField: UIViewRepresentable {
           range: token.range)
       }
       field.attributedText = string
+    }
+
+    @objc func didPressToolbarAtButton(sender: Any) {
+      text += "@"
+    }
+
+    @objc func didPressToolbarTimesButton(sender: Any) {
+      text += "*"
+    }
+
+    @objc func didPressToolbarPlusButton(sender: Any) {
+      text += "+"
     }
 
     @objc func textFieldDidChange(sender: UITextField) {
