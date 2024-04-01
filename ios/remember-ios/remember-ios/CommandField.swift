@@ -81,13 +81,16 @@ struct CommandField: UIViewRepresentable {
     func highlight(textField field: UITextField) {
       guard let text = field.text, text != "" else { return }
       guard let tokens = try? Backend.shared.parse(command: text).wait() else { return }
-      let string = NSMutableAttributedString(string: text)
+      let attributedText = NSMutableAttributedString(string: text)
+      attributedText.beginEditing()
       for token in tokens {
-        string.setAttributes(
-          [NSAttributedString.Key.foregroundColor: UIColor(token.color)],
+        attributedText.addAttribute(
+          .foregroundColor,
+          value: UIColor(token.color),
           range: token.range)
       }
-      field.attributedText = string
+      attributedText.endEditing()
+      field.attributedText = attributedText
     }
 
     @objc func didPressToolbarAtButton(sender: Any) {
