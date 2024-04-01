@@ -9,8 +9,9 @@ struct CommandView: View {
   var body: some View {
     NavigationView {
       VStack(alignment: .leading) {
-        TextField("Remember...", text: $command)
+        CommandField($command)
           .focused($focused)
+          .frame(width: nil, height: 48)
         Spacer()
       }
       .padding()
