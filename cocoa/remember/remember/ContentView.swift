@@ -19,8 +19,7 @@ struct ContentView: View {
           .resizable()
           .frame(width: 32, height: 32, alignment: .leading)
 
-        CommandField($store.command,
-                     tokens: $store.tokens) {
+        CommandField($store.command) {
           switch $0 {
           case .update(_):
             self.store.hideEntries()

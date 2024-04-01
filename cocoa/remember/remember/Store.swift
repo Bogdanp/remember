@@ -6,31 +6,17 @@
 //  Copyright © 2019-2024 CLEARTYPE SRL. All rights reserved.
 //
 
-import Combine
 import Foundation
 import NoiseSerde
 
 class Store: ObservableObject {
-  private var parseCancellable: AnyCancellable? = nil
-
-  @Published var command = NSAttributedString(string: "")
-  @Published var tokens = [Token]()
+  @Published var command = ""
   @Published var entries = [Entry]()
   @Published var entriesVisible = false
   @Published var currentEntry: Entry? = nil
   @Published var editingEntryWithId: UVarint? = nil
 
   init() {
-    self.parseCancellable = $command
-      .map(\.string)
-      .filter { !$0.isEmpty }
-      .receive(on: RunLoop.main)
-      .sink { text in
-        Backend.shared.parse(command: text).onComplete { [weak self] ts in
-          self?.tokens = ts
-        }
-      }
-
     self.updatePendingEntries()
     try! Backend.shared.installCallback(entriesDidChangeCb: { [weak self] _ in
       DispatchQueue.main.async {
@@ -61,12 +47,11 @@ class Store: ObservableObject {
 
   func clear() {
     hideEntries()
-    if command.string.isEmpty {
+    if command.isEmpty {
       Notifications.willHideWindow()
     }
 
-    command = NSAttributedString(string: "")
-    tokens = []
+    command = ""
     editingEntryWithId = nil
   }
 
@@ -153,14 +138,14 @@ class Store: ObservableObject {
 
   func editCurrentEntry() {
     if let currentEntry = self.currentEntry {
-      command = NSAttributedString(string: currentEntry.title)
+      command = currentEntry.title
       editingEntryWithId = currentEntry.id
     }
   }
 
   func stopEditing() {
     if editingEntryWithId != nil {
-      command = NSAttributedString(string: "")
+      command = ""
       editingEntryWithId = nil
     }
   }

@@ -8,7 +8,6 @@
 
 import Foundation
 import SwiftUI
-import SwiftyAttributes
 
 enum CommandAction {
   case update(String)
@@ -24,16 +23,13 @@ enum CommandAction {
 struct CommandField: NSViewRepresentable {
   typealias NSViewType = NSTextField
 
-  @Binding var text: NSAttributedString
-  @Binding var tokens: [Token]
+  @Binding var text: String
 
   private let action: (CommandAction) -> Void
 
-  init(_ text: Binding<NSAttributedString>,
-       tokens: Binding<[Token]>,
+  init(_ text: Binding<String>,
        action theAction: @escaping (CommandAction) -> Void) {
     _text = text
-    _tokens = tokens
     action = theAction
   }
 
@@ -42,6 +38,7 @@ struct CommandField: NSViewRepresentable {
     field.allowsEditingTextAttributes = true
     field.backgroundColor = NSColor.clear
     field.delegate = context.coordinator
+    field.font = .systemFont(ofSize: 24)
     field.isBordered = false
     field.focusRingType = .none
     field.placeholderString = "Remember"
@@ -54,50 +51,7 @@ struct CommandField: NSViewRepresentable {
   }
 
   func updateNSView(_ nsView: NSViewType, context: NSViewRepresentableContext<CommandField>) {
-    let systemFont = NSFont.systemFont(ofSize: 24)
-    var attributedText = "".withFont(systemFont)
-    for token in tokens {
-      switch token.data {
-      case nil:
-        attributedText += token.text
-          .withFont(systemFont)
-          .withTextColor(NSColor.textColor)
-      case .relativeTime(_, _):
-        attributedText += token.text
-          .withFont(systemFont)
-          .withTextColor(NSColor.systemBlue)
-      case .namedDatetime(_):
-        attributedText += token.text
-          .withFont(systemFont)
-          .withTextColor(NSColor.systemBlue)
-      case .namedDate(_):
-        attributedText += token.text
-          .withFont(systemFont)
-          .withTextColor(NSColor.systemBlue)
-      case .recurrence(_, _):
-        attributedText += token.text
-          .withFont(systemFont)
-          .withTextColor(NSColor.systemGreen)
-      case .tag(_):
-        attributedText += token.text
-          .withFont(systemFont)
-          .withTextColor(NSColor.systemPink)
-      }
-    }
-
-    nsView.font = systemFont
-    if attributedText.string == text.string {
-      nsView.attributedStringValue = attributedText
-    } else {
-      nsView.attributedStringValue = text.withFont(systemFont)
-    }
-
-    // Become the first responder as soon as the window becomes visible.  Doing this before has no effect.
-    // As usual, hacky, but it seems to work.  This seems to be the norm with SwiftUI.
-    if nsView.window != nil && !context.coordinator.didBecomeFirstResponder {
-      nsView.becomeFirstResponder()
-      context.coordinator.didBecomeFirstResponder = true
-    }
+    nsView.stringValue = text
   }
 
   func makeCoordinator() -> Coordinator {
@@ -110,15 +64,16 @@ struct CommandField: NSViewRepresentable {
 
   final class Coordinator: NSObject, NSTextFieldDelegate {
     private var action: (CommandAction) -> Void
-    private var setter: (NSAttributedString) -> Void
+    private var setter: (String) -> Void
+    private var timer: Timer?
 
     var didBecomeFirstResponder = false
 
-    init(action theAction: @escaping (CommandAction) -> Void,
-         setter theSetter: @escaping (NSAttributedString) -> Void) {
+    init(action: @escaping (CommandAction) -> Void,
+         setter: @escaping (String) -> Void) {
 
-      action = theAction
-      setter = theSetter
+      self.action = action
+      self.setter = setter
     }
 
     func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
@@ -151,10 +106,37 @@ struct CommandField: NSViewRepresentable {
       }
     }
 
+    func scheduleHighlight(ofTextField field: NSTextField) {
+      timer?.invalidate()
+      timer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: false) { [weak self] _ in
+        self?.highlight(textField: field)
+      }
+    }
+
+    func highlight(textField field: NSTextField) {
+      guard !field.stringValue.isEmpty else { return }
+      guard let tokens = try? Backend.shared.parse(command: field.stringValue).wait() else { return }
+      let systemFont = NSFont.systemFont(ofSize: 24)
+      let attributedText = NSMutableAttributedString(string: field.stringValue)
+      attributedText.beginEditing()
+      attributedText.setAttributes(
+        [NSAttributedString.Key.font: systemFont],
+        range: NSRange(location: 0, length: attributedText.length))
+      for token in tokens {
+        attributedText.addAttribute(
+          .foregroundColor,
+          value: NSColor(token.color),
+          range: token.range)
+      }
+      attributedText.endEditing()
+      field.attributedStringValue = attributedText
+    }
+
     func controlTextDidChange(_ aNotification: Notification) {
       if let textField = aNotification.object as? NSTextField {
-        setter(textField.attributedStringValue)
+        setter(textField.stringValue)
         action(.update(textField.stringValue))
+        scheduleHighlight(ofTextField: textField)
       }
     }
   }
