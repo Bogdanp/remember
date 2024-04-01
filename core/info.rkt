@@ -1,6 +1,6 @@
 #lang info
 
-(define version "2024.03.24")
+(define version "2024.04.01")
 (define collection "remember")
 (define deps  '("base"
                 "db-lib"
