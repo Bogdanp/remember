@@ -18,20 +18,23 @@ class FolderSyncer {
   private var timer: Timer?
 
   func start(withFrequency frequency: TimeInterval = 5 * 60) {
-    if let t = timer {
-      t.invalidate()
-    }
+    scheduleSync(withFrequency: frequency)
+    sync()
 
+    Notifications.observeDidRequestSync { [weak self] in
+      guard let self else { return }
+      self.scheduleSync(withFrequency: frequency)
+      self.sync()
+    }
+  }
+
+  private func scheduleSync(withFrequency frequency: TimeInterval) {
+    timer?.invalidate()
     timer = Timer.scheduledTimer(
       withTimeInterval: frequency,
       repeats: true
     ) { [weak self] _ in
       self?.sync()
-    }
-    sync()
-
-    Notifications.observeDidRequestSync { [weak self] in
-      self?.timer?.fire()
     }
   }
 
