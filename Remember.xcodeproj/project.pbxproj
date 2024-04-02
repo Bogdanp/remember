@@ -25,7 +25,6 @@
 		436140442BBBE79400CCC38B /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140152BBBE74500CCC38B /* ReminderDetailView.swift */; };
 		436140452BBBE79400CCC38B /* FolderSyncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140192BBBE74500CCC38B /* FolderSyncer.swift */; };
 		436140462BBBE79400CCC38B /* BackendExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140162BBBE74500CCC38B /* BackendExtensions.swift */; };
-		436140472BBBE79400CCC38B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140072BBBE68700CCC38B /* ContentView.swift */; };
 		436140482BBBE79400CCC38B /* DeviceShakeViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140142BBBE74500CCC38B /* DeviceShakeViewModifier.swift */; };
 		436140492BBBE79400CCC38B /* Remember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140302BBBE78200CCC38B /* Remember.swift */; };
 		4361404A2BBBE79400CCC38B /* CommandField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140182BBBE74500CCC38B /* CommandField.swift */; };
@@ -71,7 +70,6 @@
 		4355FC3B23BA73A8000463B6 /* KeyboardShortcutDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutDefaults.swift; sourceTree = "<group>"; };
 		4355FC3D23BA7B3A000463B6 /* KeyboardShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcut.swift; sourceTree = "<group>"; };
 		436140032BBBE68700CCC38B /* Remember iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Remember iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		436140072BBBE68700CCC38B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		436140092BBBE68700CCC38B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4361400C2BBBE68700CCC38B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		436140112BBBE70400CCC38B /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
@@ -155,14 +153,13 @@
 				436140162BBBE74500CCC38B /* BackendExtensions.swift */,
 				436140182BBBE74500CCC38B /* CommandField.swift */,
 				4361401D2BBBE74500CCC38B /* CommandView.swift */,
-				436140072BBBE68700CCC38B /* ContentView.swift */,
 				4361401F2BBBE74500CCC38B /* ContentView.swift */,
 				436140142BBBE74500CCC38B /* DeviceShakeViewModifier.swift */,
 				436140192BBBE74500CCC38B /* FolderSyncer.swift */,
 				436140582BBBE86400CCC38B /* Info.plist */,
 				4361401B2BBBE74500CCC38B /* NotificationsManager.swift */,
-				436140302BBBE78200CCC38B /* Remember.swift */,
 				4361400B2BBBE68700CCC38B /* Preview Content */,
+				436140302BBBE78200CCC38B /* Remember.swift */,
 				436140152BBBE74500CCC38B /* ReminderDetailView.swift */,
 				4361401E2BBBE74500CCC38B /* RemindersView.swift */,
 				436140112BBBE70400CCC38B /* res */,
@@ -445,7 +442,6 @@
 				436140442BBBE79400CCC38B /* ReminderDetailView.swift in Sources */,
 				436140452BBBE79400CCC38B /* FolderSyncer.swift in Sources */,
 				436140462BBBE79400CCC38B /* BackendExtensions.swift in Sources */,
-				436140472BBBE79400CCC38B /* ContentView.swift in Sources */,
 				436140482BBBE79400CCC38B /* DeviceShakeViewModifier.swift in Sources */,
 				436140492BBBE79400CCC38B /* Remember.swift in Sources */,
 				4361404A2BBBE79400CCC38B /* CommandField.swift in Sources */,
