@@ -35,7 +35,8 @@ artifacts with others.
 
 ### Requirements
 
-* [Racket 8.1 CS](https://racket-lang.org/)
+* [Racket 8.12 CS](https://racket-lang.org/)
+* [Noise](https://github.com/Bogdanp/Noise)
 * macOS Catalina
 * Xcode 12+
 
