@@ -46,7 +46,7 @@ artifacts with others.
 ### Building
 
     $ make
-    $ $(cd cocoa/remember && xcodebuild)
+    $ xcodebuild
 
 ## License
 

@@ -17,7 +17,28 @@
 		4355FC3A23BA621F000463B6 /* KeyboardShortcutField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355FC3923BA621F000463B6 /* KeyboardShortcutField.swift */; };
 		4355FC3C23BA73A8000463B6 /* KeyboardShortcutDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355FC3B23BA73A8000463B6 /* KeyboardShortcutDefaults.swift */; };
 		4355FC3E23BA7B3A000463B6 /* KeyboardShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4355FC3D23BA7B3A000463B6 /* KeyboardShortcut.swift */; };
-		43613FFE2BBBE61C00CCC38B /* res in Resources */ = {isa = PBXBuildFile; fileRef = 43613FFD2BBBE61C00CCC38B /* res */; };
+		4361400A2BBBE68700CCC38B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436140092BBBE68700CCC38B /* Assets.xcassets */; };
+		4361400D2BBBE68700CCC38B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4361400C2BBBE68700CCC38B /* Preview Assets.xcassets */; };
+		436140412BBBE79400CCC38B /* Backend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4361401C2BBBE74500CCC38B /* Backend.swift */; };
+		436140422BBBE79400CCC38B /* RemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4361401E2BBBE74500CCC38B /* RemindersView.swift */; };
+		436140432BBBE79400CCC38B /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4361401A2BBBE74500CCC38B /* Store.swift */; };
+		436140442BBBE79400CCC38B /* ReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140152BBBE74500CCC38B /* ReminderDetailView.swift */; };
+		436140452BBBE79400CCC38B /* FolderSyncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140192BBBE74500CCC38B /* FolderSyncer.swift */; };
+		436140462BBBE79400CCC38B /* BackendExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140162BBBE74500CCC38B /* BackendExtensions.swift */; };
+		436140472BBBE79400CCC38B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140072BBBE68700CCC38B /* ContentView.swift */; };
+		436140482BBBE79400CCC38B /* DeviceShakeViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140142BBBE74500CCC38B /* DeviceShakeViewModifier.swift */; };
+		436140492BBBE79400CCC38B /* Remember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140302BBBE78200CCC38B /* Remember.swift */; };
+		4361404A2BBBE79400CCC38B /* CommandField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140182BBBE74500CCC38B /* CommandField.swift */; };
+		4361404B2BBBE79400CCC38B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140132BBBE74500CCC38B /* SettingsView.swift */; };
+		4361404C2BBBE79400CCC38B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4361401F2BBBE74500CCC38B /* ContentView.swift */; };
+		4361404D2BBBE79400CCC38B /* SettingsSyncView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436140172BBBE74500CCC38B /* SettingsSyncView.swift */; };
+		4361404E2BBBE79400CCC38B /* CommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4361401D2BBBE74500CCC38B /* CommandView.swift */; };
+		4361404F2BBBE79400CCC38B /* NotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4361401B2BBBE74500CCC38B /* NotificationsManager.swift */; };
+		436140512BBBE7BE00CCC38B /* res in Resources */ = {isa = PBXBuildFile; fileRef = 436140112BBBE70400CCC38B /* res */; };
+		436140532BBBE7C500CCC38B /* Noise in Frameworks */ = {isa = PBXBuildFile; productRef = 436140522BBBE7C500CCC38B /* Noise */; };
+		436140552BBBE7C500CCC38B /* NoiseBackend in Frameworks */ = {isa = PBXBuildFile; productRef = 436140542BBBE7C500CCC38B /* NoiseBackend */; };
+		436140572BBBE7C500CCC38B /* NoiseSerde in Frameworks */ = {isa = PBXBuildFile; productRef = 436140562BBBE7C500CCC38B /* NoiseSerde */; };
+		4361405C2BBBEB9D00CCC38B /* res in Resources */ = {isa = PBXBuildFile; fileRef = 4361405B2BBBEB9D00CCC38B /* res */; };
 		436BE29523B10D4E00717375 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE29423B10D4E00717375 /* AppDelegate.swift */; };
 		436BE29723B10D4E00717375 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436BE29623B10D4E00717375 /* ContentView.swift */; };
 		436BE29923B10D5000717375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436BE29823B10D5000717375 /* Assets.xcassets */; };
@@ -49,7 +70,27 @@
 		4355FC3923BA621F000463B6 /* KeyboardShortcutField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutField.swift; sourceTree = "<group>"; };
 		4355FC3B23BA73A8000463B6 /* KeyboardShortcutDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutDefaults.swift; sourceTree = "<group>"; };
 		4355FC3D23BA7B3A000463B6 /* KeyboardShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcut.swift; sourceTree = "<group>"; };
-		43613FFD2BBBE61C00CCC38B /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
+		436140032BBBE68700CCC38B /* Remember iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Remember iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		436140072BBBE68700CCC38B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		436140092BBBE68700CCC38B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4361400C2BBBE68700CCC38B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		436140112BBBE70400CCC38B /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
+		436140132BBBE74500CCC38B /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		436140142BBBE74500CCC38B /* DeviceShakeViewModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceShakeViewModifier.swift; sourceTree = "<group>"; };
+		436140152BBBE74500CCC38B /* ReminderDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReminderDetailView.swift; sourceTree = "<group>"; };
+		436140162BBBE74500CCC38B /* BackendExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendExtensions.swift; sourceTree = "<group>"; };
+		436140172BBBE74500CCC38B /* SettingsSyncView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsSyncView.swift; sourceTree = "<group>"; };
+		436140182BBBE74500CCC38B /* CommandField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandField.swift; sourceTree = "<group>"; };
+		436140192BBBE74500CCC38B /* FolderSyncer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FolderSyncer.swift; sourceTree = "<group>"; };
+		4361401A2BBBE74500CCC38B /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		4361401B2BBBE74500CCC38B /* NotificationsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsManager.swift; sourceTree = "<group>"; };
+		4361401C2BBBE74500CCC38B /* Backend.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Backend.swift; sourceTree = "<group>"; };
+		4361401D2BBBE74500CCC38B /* CommandView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandView.swift; sourceTree = "<group>"; };
+		4361401E2BBBE74500CCC38B /* RemindersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RemindersView.swift; sourceTree = "<group>"; };
+		4361401F2BBBE74500CCC38B /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		436140302BBBE78200CCC38B /* Remember.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Remember.swift; path = "remember-ios/Remember.swift"; sourceTree = SOURCE_ROOT; };
+		436140582BBBE86400CCC38B /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4361405B2BBBEB9D00CCC38B /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
 		436BE29123B10D4E00717375 /* Remember.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Remember.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		436BE29423B10D4E00717375 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		436BE29623B10D4E00717375 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -81,6 +122,16 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		436140002BBBE68700CCC38B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				436140572BBBE7C500CCC38B /* NoiseSerde in Frameworks */,
+				436140552BBBE7C500CCC38B /* NoiseBackend in Frameworks */,
+				436140532BBBE7C500CCC38B /* Noise in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		436BE28E23B10D4E00717375 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -96,12 +147,47 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		436140042BBBE68700CCC38B /* remember-ios */ = {
+			isa = PBXGroup;
+			children = (
+				436140092BBBE68700CCC38B /* Assets.xcassets */,
+				4361401C2BBBE74500CCC38B /* Backend.swift */,
+				436140162BBBE74500CCC38B /* BackendExtensions.swift */,
+				436140182BBBE74500CCC38B /* CommandField.swift */,
+				4361401D2BBBE74500CCC38B /* CommandView.swift */,
+				436140072BBBE68700CCC38B /* ContentView.swift */,
+				4361401F2BBBE74500CCC38B /* ContentView.swift */,
+				436140142BBBE74500CCC38B /* DeviceShakeViewModifier.swift */,
+				436140192BBBE74500CCC38B /* FolderSyncer.swift */,
+				436140582BBBE86400CCC38B /* Info.plist */,
+				4361401B2BBBE74500CCC38B /* NotificationsManager.swift */,
+				436140302BBBE78200CCC38B /* Remember.swift */,
+				4361400B2BBBE68700CCC38B /* Preview Content */,
+				436140152BBBE74500CCC38B /* ReminderDetailView.swift */,
+				4361401E2BBBE74500CCC38B /* RemindersView.swift */,
+				436140112BBBE70400CCC38B /* res */,
+				436140172BBBE74500CCC38B /* SettingsSyncView.swift */,
+				436140132BBBE74500CCC38B /* SettingsView.swift */,
+				4361401A2BBBE74500CCC38B /* Store.swift */,
+			);
+			path = "remember-ios";
+			sourceTree = "<group>";
+		};
+		4361400B2BBBE68700CCC38B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				4361400C2BBBE68700CCC38B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 		436BE28823B10D4E00717375 = {
 			isa = PBXGroup;
 			children = (
 				43E6B94623B6722B00F7ACE1 /* Frameworks */,
 				436BE29223B10D4E00717375 /* Products */,
 				436BE29323B10D4E00717375 /* remember */,
+				436140042BBBE68700CCC38B /* remember-ios */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,6 +195,7 @@
 			isa = PBXGroup;
 			children = (
 				436BE29123B10D4E00717375 /* Remember.app */,
+				436140032BBBE68700CCC38B /* Remember iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -144,7 +231,7 @@
 				436BE29A23B10D5000717375 /* Preview Content */,
 				43A60B9E23BD5ED600160E3E /* remember-core.entitlements */,
 				436BE2A123B10D5000717375 /* remember.entitlements */,
-				43613FFD2BBBE61C00CCC38B /* res */,
+				4361405B2BBBEB9D00CCC38B /* res */,
 				43B89029269976D6007D29BD /* Snooze.swift */,
 				43BB852523DB835500DFDC59 /* StatusItem.swift */,
 				43E6B94223B61CAD00F7ACE1 /* Store.swift */,
@@ -173,6 +260,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		436140022BBBE68700CCC38B /* Remember iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4361400E2BBBE68700CCC38B /* Build configuration list for PBXNativeTarget "Remember iOS" */;
+			buildPhases = (
+				4361405A2BBBE8D500CCC38B /* Remove dylibs */,
+				43613FFF2BBBE68700CCC38B /* Sources */,
+				436140002BBBE68700CCC38B /* Frameworks */,
+				436140012BBBE68700CCC38B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Remember iOS";
+			packageProductDependencies = (
+				436140522BBBE7C500CCC38B /* Noise */,
+				436140542BBBE7C500CCC38B /* NoiseBackend */,
+				436140562BBBE7C500CCC38B /* NoiseSerde */,
+			);
+			productName = "remember-ios";
+			productReference = 436140032BBBE68700CCC38B /* Remember iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 		436BE29023B10D4E00717375 /* Remember */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 436BE2BA23B10D5000717375 /* Build configuration list for PBXNativeTarget "Remember" */;
@@ -205,10 +315,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastSwiftUpdateCheck = 1250;
+				LastSwiftUpdateCheck = 1530;
 				LastUpgradeCheck = 1530;
 				ORGANIZATIONNAME = "CLEARTYPE SRL";
 				TargetAttributes = {
+					436140022BBBE68700CCC38B = {
+						CreatedOnToolsVersion = 15.3;
+					};
 					436BE29023B10D4E00717375 = {
 						CreatedOnToolsVersion = 11.3;
 					};
@@ -232,19 +345,30 @@
 			projectRoot = "";
 			targets = (
 				436BE29023B10D4E00717375 /* Remember */,
+				436140022BBBE68700CCC38B /* Remember iOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		436140012BBBE68700CCC38B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				436140512BBBE7BE00CCC38B /* res in Resources */,
+				4361400D2BBBE68700CCC38B /* Preview Assets.xcassets in Resources */,
+				4361400A2BBBE68700CCC38B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		436BE28F23B10D4E00717375 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				436BE29F23B10D5000717375 /* Main.storyboard in Resources */,
-				43613FFE2BBBE61C00CCC38B /* res in Resources */,
-				436BE29C23B10D5000717375 /* Preview Assets.xcassets in Resources */,
 				436BE29923B10D5000717375 /* Assets.xcassets in Resources */,
+				436BE29F23B10D5000717375 /* Main.storyboard in Resources */,
+				436BE29C23B10D5000717375 /* Preview Assets.xcassets in Resources */,
+				4361405C2BBBEB9D00CCC38B /* res in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +394,25 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${BUILT_PRODUCTS_DIR}/LaunchAtLogin_LaunchAtLogin.bundle/Contents/Resources/copy-helper-swiftpm.sh\"\n";
 		};
+		4361405A2BBBE8D500CCC38B /* Remove dylibs */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Remove dylibs";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./bin/remove-dylibs\n";
+		};
 		43A60B9723BD4D7300160E3E /* Sign dylibs */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -292,6 +435,28 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		43613FFF2BBBE68700CCC38B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				436140412BBBE79400CCC38B /* Backend.swift in Sources */,
+				436140422BBBE79400CCC38B /* RemindersView.swift in Sources */,
+				436140432BBBE79400CCC38B /* Store.swift in Sources */,
+				436140442BBBE79400CCC38B /* ReminderDetailView.swift in Sources */,
+				436140452BBBE79400CCC38B /* FolderSyncer.swift in Sources */,
+				436140462BBBE79400CCC38B /* BackendExtensions.swift in Sources */,
+				436140472BBBE79400CCC38B /* ContentView.swift in Sources */,
+				436140482BBBE79400CCC38B /* DeviceShakeViewModifier.swift in Sources */,
+				436140492BBBE79400CCC38B /* Remember.swift in Sources */,
+				4361404A2BBBE79400CCC38B /* CommandField.swift in Sources */,
+				4361404B2BBBE79400CCC38B /* SettingsView.swift in Sources */,
+				4361404C2BBBE79400CCC38B /* ContentView.swift in Sources */,
+				4361404D2BBBE79400CCC38B /* SettingsSyncView.swift in Sources */,
+				4361404E2BBBE79400CCC38B /* CommandView.swift in Sources */,
+				4361404F2BBBE79400CCC38B /* NotificationsManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		436BE28D23B10D4E00717375 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -336,6 +501,86 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		4361400F2BBBE68700CCC38B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"remember-ios/Preview Content\"";
+				DEVELOPMENT_TEAM = H3YE679B58;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Remember-iOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Remember;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.defn.remember-ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		436140102BBBE68700CCC38B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"remember-ios/Preview Content\"";
+				DEVELOPMENT_TEAM = H3YE679B58;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Remember-iOS/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Remember;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.defn.remember-ios";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		436BE2B823B10D5000717375 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -524,6 +769,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4361400E2BBBE68700CCC38B /* Build configuration list for PBXNativeTarget "Remember iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4361400F2BBBE68700CCC38B /* Debug */,
+				436140102BBBE68700CCC38B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		436BE28C23B10D4E00717375 /* Build configuration list for PBXProject "Remember" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -573,6 +827,21 @@
 		};
 		43344AD62BB05F79000BE145 /* NoiseSerde */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = NoiseSerde;
+		};
+		436140522BBBE7C500CCC38B /* Noise */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43344AD12BB05F79000BE145 /* XCLocalSwiftPackageReference "../../sandbox/Noise" */;
+			productName = Noise;
+		};
+		436140542BBBE7C500CCC38B /* NoiseBackend */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43344AD12BB05F79000BE145 /* XCLocalSwiftPackageReference "../../sandbox/Noise" */;
+			productName = NoiseBackend;
+		};
+		436140562BBBE7C500CCC38B /* NoiseSerde */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 43344AD12BB05F79000BE145 /* XCLocalSwiftPackageReference "../../sandbox/Noise" */;
 			productName = NoiseSerde;
 		};
 		43F199DE2569A18100259849 /* LaunchAtLogin */ = {

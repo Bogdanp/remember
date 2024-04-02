@@ -18,4 +18,4 @@ while read -r path; do
         -i "${PRODUCT_BUNDLE_IDENTIFIER}.${libname}" \
         -o runtime \
         "$path"
-done < <(find "${PROJECT_DIR}/${PROJECT_NAME}/${PROJECT_NAME}/res" -name '*.dylib')
+done < <(find "${PROJECT_DIR}/remember/res" -name '*.dylib')

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+find "${PROJECT_DIR}/remember-ios/res" -name "*.dylib" -exec rm \{\} \;

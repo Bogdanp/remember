@@ -1,4 +1,4 @@
-APP_SRC=ios/remember-ios
+APP_SRC=remember-ios
 RKT_SRC=core
 RKT_FILES=$(shell find ${RKT_SRC} -name '*.rkt')
 RKT_MAIN_ZO=${RKT_SRC}/compiled/main_rkt.zo
@@ -11,7 +11,7 @@ MANUAL_PATH=${RESOURCES_PATH}/manual
 CORE_ZO=${RESOURCES_PATH}/core.zo
 
 .PHONY: all
-all: ${CORE_ZO} ${APP_SRC}/remember-ios/Backend.swift
+all: ${CORE_ZO} ${APP_SRC}/Backend.swift
 
 .PHONY: clean
 clean:
@@ -28,7 +28,7 @@ ${CORE_ZO}: ${RKT_MAIN_ZO}
 	  --runtime-access ${RUNTIME_NAME} \
 	  --mods $@ ${RKT_SRC}/main.rkt
 
-${APP_SRC}/remember-ios/Backend.swift: ${CORE_ZO}
+${APP_SRC}/Backend.swift: ${CORE_ZO}
 	./bin/pbraco noise-serde-codegen ${RKT_SRC}/main.rkt > $@
 
 ${MANUAL_PATH}/index.html: manual/*.scrbl
