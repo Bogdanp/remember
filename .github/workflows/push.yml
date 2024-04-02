@@ -36,20 +36,20 @@ jobs:
       - name: Run tests
         run: raco test tests/
       - name: Build manual
-        run: make cocoa/remember/res/manual/index.html
+        run: make remember/res/manual/index.html
       - name: Build core
         run: make
       - name: Show your work
-        run: find cocoa/remember/res
+        run: find remember/res
       - name: Upload manual
         uses: actions/upload-artifact@v4
         with:
           name: manual-${{ matrix.platform }}
-          path: cocoa/remember/res/manual/
+          path: remember/res/manual/
       - name: Upload core
         uses: actions/upload-artifact@v4
         with:
           name: core-${{ matrix.platform }}
           path: |
-            cocoa/remember/res/core-${{ matrix.platform }}.zo
-            cocoa/remember/res/runtime-${{ matrix.platform }}/
+            remember/res/core-${{ matrix.platform }}.zo
+            remember/res/runtime-${{ matrix.platform }}/
