@@ -1,6 +1,6 @@
 ARCH=$(shell uname -m)
 
-APP_SRC=cocoa/remember
+APP_SRC=remember
 RKT_SRC=core
 RKT_FILES=$(shell find ${RKT_SRC} -name '*.rkt')
 RKT_MAIN_ZO=${RKT_SRC}/compiled/main_rkt.zo
@@ -13,7 +13,7 @@ MANUAL_PATH=${RESOURCES_PATH}/manual
 CORE_ZO=${RESOURCES_PATH}/core-${ARCH}.zo
 
 .PHONY: all
-all: ${CORE_ZO} ${APP_SRC}/remember/Backend.swift
+all: ${CORE_ZO} ${APP_SRC}/Backend.swift
 
 .PHONY: clean
 clean:
@@ -31,7 +31,7 @@ ${CORE_ZO}: ${RKT_MAIN_ZO}
 	  --runtime-access ${RUNTIME_NAME} \
 	  --mods $@ ${RKT_SRC}/main.rkt
 
-${APP_SRC}/remember/Backend.swift: ${CORE_ZO}
+${APP_SRC}/Backend.swift: ${CORE_ZO}
 	raco noise-serde-codegen ${RKT_SRC}/main.rkt > $@
 
 ${MANUAL_PATH}/index.html: manual/*.scrbl

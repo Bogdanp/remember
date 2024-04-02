@@ -1,0 +1,8 @@
+CREATE TABLE entries(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL,
+  status TEXT NOT NULL,
+  due_at TEXT,
+  created_at TEXT NOT NULL
+);
