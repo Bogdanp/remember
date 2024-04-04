@@ -205,6 +205,10 @@ public class Backend {
     )
   }
 
+  public func archive(entryWithId id: UVarint) async throws -> Void {
+    return try await FutureUtil.asyncify(archive(entryWithId: id))
+  }
+
   public func commit(command s: String) -> Future<String, Entry> {
     return impl.send(
       writeProc: { (out: OutputPort) in
@@ -215,6 +219,10 @@ public class Backend {
         return Entry.read(from: inp, using: &buf)
       }
     )
+  }
+
+  public func commit(command s: String) async throws -> Entry {
+    return try await FutureUtil.asyncify(commit(command: s))
   }
 
   public func createDatabaseCopy() -> Future<String, String> {
@@ -228,6 +236,10 @@ public class Backend {
     )
   }
 
+  public func createDatabaseCopy() async throws -> String {
+    return try await FutureUtil.asyncify(createDatabaseCopy())
+  }
+
   public func delete(entryWithId id: UVarint) -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
@@ -236,6 +248,10 @@ public class Backend {
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
+  }
+
+  public func delete(entryWithId id: UVarint) async throws -> Void {
+    return try await FutureUtil.asyncify(delete(entryWithId: id))
   }
 
   public func getDueEntries() -> Future<String, [Entry]> {
@@ -249,6 +265,10 @@ public class Backend {
     )
   }
 
+  public func getDueEntries() async throws -> [Entry] {
+    return try await FutureUtil.asyncify(getDueEntries())
+  }
+
   public func getPendingEntries() -> Future<String, [Entry]> {
     return impl.send(
       writeProc: { (out: OutputPort) in
@@ -258,6 +278,10 @@ public class Backend {
         return [Entry].read(from: inp, using: &buf)
       }
     )
+  }
+
+  public func getPendingEntries() async throws -> [Entry] {
+    return try await FutureUtil.asyncify(getPendingEntries())
   }
 
   public func installCallback(internalWithId id: UVarint, andAddr addr: Varint) -> Future<String, Void> {
@@ -271,6 +295,10 @@ public class Backend {
     )
   }
 
+  public func installCallback(internalWithId id: UVarint, andAddr addr: Varint) async throws -> Void {
+    return try await FutureUtil.asyncify(installCallback(internalWithId: id, andAddr: addr))
+  }
+
   public func markReadyForChanges() -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
@@ -278,6 +306,10 @@ public class Backend {
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
+  }
+
+  public func markReadyForChanges() async throws -> Void {
+    return try await FutureUtil.asyncify(markReadyForChanges())
   }
 
   public func mergeDatabaseCopy(atPath path: String) -> Future<String, Void> {
@@ -288,6 +320,10 @@ public class Backend {
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
+  }
+
+  public func mergeDatabaseCopy(atPath path: String) async throws -> Void {
+    return try await FutureUtil.asyncify(mergeDatabaseCopy(atPath: path))
   }
 
   public func parse(command s: String) -> Future<String, [Token]> {
@@ -302,6 +338,10 @@ public class Backend {
     )
   }
 
+  public func parse(command s: String) async throws -> [Token] {
+    return try await FutureUtil.asyncify(parse(command: s))
+  }
+
   public func ping() -> Future<String, String> {
     return impl.send(
       writeProc: { (out: OutputPort) in
@@ -311,6 +351,10 @@ public class Backend {
         return String.read(from: inp, using: &buf)
       }
     )
+  }
+
+  public func ping() async throws -> String {
+    return try await FutureUtil.asyncify(ping())
   }
 
   public func snooze(entryWithId id: UVarint, forMinutes minutes: UVarint) -> Future<String, Void> {
@@ -324,6 +368,10 @@ public class Backend {
     )
   }
 
+  public func snooze(entryWithId id: UVarint, forMinutes minutes: UVarint) async throws -> Void {
+    return try await FutureUtil.asyncify(snooze(entryWithId: id, forMinutes: minutes))
+  }
+
   public func startScheduler() -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
@@ -333,6 +381,10 @@ public class Backend {
     )
   }
 
+  public func startScheduler() async throws -> Void {
+    return try await FutureUtil.asyncify(startScheduler())
+  }
+
   public func undo() -> Future<String, Void> {
     return impl.send(
       writeProc: { (out: OutputPort) in
@@ -340,6 +392,10 @@ public class Backend {
       },
       readProc: { (inp: InputPort, buf: inout Data) -> Void in }
     )
+  }
+
+  public func undo() async throws -> Void {
+    return try await FutureUtil.asyncify(undo())
   }
 
   public func update(entryWithId id: UVarint, andCommand s: String) -> Future<String, Entry?> {
@@ -353,6 +409,10 @@ public class Backend {
         return Entry?.read(from: inp, using: &buf)
       }
     )
+  }
+
+  public func update(entryWithId id: UVarint, andCommand s: String) async throws -> Entry? {
+    return try await FutureUtil.asyncify(update(entryWithId: id, andCommand: s))
   }
 
   public func installCallback(entriesDidChangeCb proc: @escaping (Bool) -> Void) -> Future<String, Void> {

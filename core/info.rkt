@@ -6,5 +6,5 @@
                 "db-lib"
                 "deta-lib"
                 "gregor-lib"
-                "noise-serde-lib"
+                ["noise-serde-lib" #:version "0.7"]
                 "threading-lib"))
