@@ -33,18 +33,19 @@ class NotificationsManager: NSObject {
     logger.debug("Registering refresh task.")
     BGTaskScheduler.shared.register(
       forTaskWithIdentifier: Self.refreshIdentifier,
-      using: .main) { [weak self] task in
-        self?.handleRefresh(task)
+      using: nil) { [weak self] task in
+        self?.handleRefresh(task as! BGAppRefreshTask)
       }
   }
 
   func scheduleRefresh() {
     logger.debug("Preparing to schedule refresh.")
     Backend.shared.getPendingEntries().onComplete { entries in
-      let request = BGProcessingTaskRequest(identifier: Self.refreshIdentifier)
+      let now = UVarint(Date().timeIntervalSince1970)
+      let request = BGAppRefreshTaskRequest(identifier: Self.refreshIdentifier)
       var deadline: TimeInterval? = nil
       for entry in entries {
-        if let dueAt = entry.dueAt {
+        if let dueAt = entry.dueAt, dueAt >= now {
           deadline = TimeInterval(dueAt)
           break
         }
@@ -68,7 +69,7 @@ class NotificationsManager: NSObject {
     BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: Self.refreshIdentifier)
   }
 
-  private func handleRefresh(_ task: BGTask) {
+  private func handleRefresh(_ task: BGAppRefreshTask) {
     scheduleRefresh()
 
     let future = Backend.shared.getDueEntries()
@@ -81,6 +82,7 @@ class NotificationsManager: NSObject {
 
     task.expirationHandler = {
       future.cancel()
+      task.setTaskCompleted(success: false)
     }
   }
 

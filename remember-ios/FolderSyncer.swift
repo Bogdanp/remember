@@ -32,15 +32,16 @@ class FolderSyncer {
     logger.debug("Registering refresh task.")
     BGTaskScheduler.shared.register(
       forTaskWithIdentifier: Self.refreshIdentifier,
-      using: .main) { [weak self] task in
-        self?.handleRefresh(task)
+      using: nil) { [weak self] task in
+        logger.debug("Handling refresh.")
+        self?.handleRefresh(task as! BGAppRefreshTask)
       }
   }
 
   func scheduleRefresh() {
     logger.debug("Preparing to schedule refresh.")
-    let request = BGProcessingTaskRequest(identifier: Self.refreshIdentifier)
-    let deadline = Date(timeIntervalSinceNow: 30*60)
+    let request = BGAppRefreshTaskRequest(identifier: Self.refreshIdentifier)
+    let deadline = Date(timeIntervalSinceNow: 5*60)
     request.earliestBeginDate = deadline
     logger.debug("Scheduling refresh at \(deadline.ISO8601Format()).")
     do {
@@ -51,10 +52,14 @@ class FolderSyncer {
   }
 
   func unscheduleRefresh() {
+    logger.debug("Cancelling scheduled refresh tasks.")
     BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: Self.refreshIdentifier)
   }
 
-  private func handleRefresh(_ task: BGTask) {
+  private func handleRefresh(_ task: BGAppRefreshTask) {
+    task.expirationHandler = {
+      task.setTaskCompleted(success: false)
+    }
     scheduleRefresh()
     sync() {
       NotificationsManager.shared.scheduleRefresh()
