@@ -47,6 +47,7 @@
 		43983BDE23B794300064C527 /* UserNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BDD23B794300064C527 /* UserNotifications.swift */; };
 		43983BE223BA19EC0064C527 /* EntryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE123BA19EC0064C527 /* EntryList.swift */; };
 		43983BE423BA279E0064C527 /* EntryListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE323BA279E0064C527 /* EntryListItem.swift */; };
+		43AC35652BBE881D0095D2FB /* AddReminderIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43AC35642BBE881D0095D2FB /* AddReminderIntent.swift */; };
 		43B8902A269976D6007D29BD /* Snooze.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B89029269976D6007D29BD /* Snooze.swift */; };
 		43BB852623DB835500DFDC59 /* StatusItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BB852523DB835500DFDC59 /* StatusItem.swift */; };
 		43D680FD23D71AF900659FCA /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D680FC23D71AF900659FCA /* Onboarding.swift */; };
@@ -102,6 +103,7 @@
 		43983BE123BA19EC0064C527 /* EntryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryList.swift; sourceTree = "<group>"; };
 		43983BE323BA279E0064C527 /* EntryListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryListItem.swift; sourceTree = "<group>"; };
 		43A60B9E23BD5ED600160E3E /* remember-core.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "remember-core.entitlements"; sourceTree = "<group>"; };
+		43AC35642BBE881D0095D2FB /* AddReminderIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReminderIntent.swift; sourceTree = "<group>"; };
 		43B89029269976D6007D29BD /* Snooze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snooze.swift; sourceTree = "<group>"; };
 		43BB852523DB835500DFDC59 /* StatusItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusItem.swift; sourceTree = "<group>"; };
 		43D680FC23D71AF900659FCA /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
@@ -148,6 +150,7 @@
 		436140042BBBE68700CCC38B /* remember-ios */ = {
 			isa = PBXGroup;
 			children = (
+				43AC35642BBE881D0095D2FB /* AddReminderIntent.swift */,
 				436140092BBBE68700CCC38B /* Assets.xcassets */,
 				4361401C2BBBE74500CCC38B /* Backend.swift */,
 				436140162BBBE74500CCC38B /* BackendExtensions.swift */,
@@ -441,6 +444,7 @@
 				436140432BBBE79400CCC38B /* Store.swift in Sources */,
 				436140442BBBE79400CCC38B /* ReminderDetailView.swift in Sources */,
 				436140452BBBE79400CCC38B /* FolderSyncer.swift in Sources */,
+				43AC35652BBE881D0095D2FB /* AddReminderIntent.swift in Sources */,
 				436140462BBBE79400CCC38B /* BackendExtensions.swift in Sources */,
 				436140482BBBE79400CCC38B /* DeviceShakeViewModifier.swift in Sources */,
 				436140492BBBE79400CCC38B /* Remember.swift in Sources */,
