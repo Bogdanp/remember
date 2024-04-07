@@ -1,0 +1,74 @@
+#!/usr/bin/env racket
+#lang racket/base
+
+(require file/unzip
+         (prefix-in http: net/http-easy)
+         racket/file
+         racket/path
+         threading)
+
+(define current-token
+  (make-parameter (getenv "GH_TOKEN")))
+(define here
+  (path-only (syntax-source #'here)))
+(define res-path
+  (normalize-path (build-path here 'up "remember" "res")))
+
+(define get
+  (make-keyword-procedure
+   (lambda (kws kw-args path . args)
+     (keyword-apply
+      http:get
+      kws kw-args
+      #:auth (http:bearer-auth (current-token))
+      (if (not (regexp-match? #rx"^https://" path))
+          (format "https://api.github.com/~a" path)
+          path)
+      args))))
+
+(define (get-artifacts-by-name run-id)
+  (define data
+    (http:response-json
+     (get (format "repos/Bogdanp/remember/actions/runs/~a/artifacts" run-id))))
+  (for/hash ([elt-data (in-list (hash-ref data 'artifacts))])
+    (values (hash-ref elt-data 'name) elt-data)))
+
+(define (download-archive uri dst-path)
+  (define res #f)
+  (dynamic-wind
+    (lambda ()
+      (set! res (get #:stream? #t uri)))
+    (lambda ()
+      (call-with-unzip
+        (http:response-output res)
+        (lambda (src-path)
+          (for ([filename (in-list (directory-list src-path))])
+            (copy-directory/files
+             (build-path src-path filename)
+             (build-path dst-path filename))))))
+    (lambda ()
+      (http:response-close! res))))
+
+(module+ main
+  (require racket/cmdline)
+  (define run-id
+    (command-line
+     #:args [run-id]
+     run-id))
+  (unless (current-token)
+    (eprintf "error: GH_TOKEN environment variable not set~n")
+    (exit 1))
+  (define artifacts-by-name
+    (get-artifacts-by-name run-id))
+  (delete-directory/files #:must-exist? #f res-path)
+  (make-directory* (build-path res-path "manual"))
+  (for ([(name dst-path) (in-hash
+                          (hash
+                           "core-arm64"   res-path
+                           "core-x86_64"  res-path
+                           "manual-arm64" (build-path res-path "manual")))])
+    (define uri
+      (~> (hash-ref artifacts-by-name name)
+          (hash-ref 'archive_download_url)))
+    (eprintf "Downloading ~a...~n" name)
+    (download-archive uri dst-path)))
