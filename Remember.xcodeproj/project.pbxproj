@@ -43,6 +43,7 @@
 		436BE29923B10D5000717375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436BE29823B10D5000717375 /* Assets.xcassets */; };
 		436BE29C23B10D5000717375 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 436BE29B23B10D5000717375 /* Preview Assets.xcassets */; };
 		436BE29F23B10D5000717375 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 436BE29D23B10D5000717375 /* Main.storyboard */; };
+		436C19C52BC3B77200B3593E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 436C19C42BC3B77000B3593E /* PrivacyInfo.xcprivacy */; };
 		43713C3E23B21CB000E20E48 /* CommandField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43713C3D23B21CB000E20E48 /* CommandField.swift */; };
 		43983BDE23B794300064C527 /* UserNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BDD23B794300064C527 /* UserNotifications.swift */; };
 		43983BE223BA19EC0064C527 /* EntryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43983BE123BA19EC0064C527 /* EntryList.swift */; };
@@ -98,6 +99,7 @@
 		436BE29E23B10D5000717375 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		436BE2A023B10D5000717375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		436BE2A123B10D5000717375 /* remember.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = remember.entitlements; sourceTree = "<group>"; };
+		436C19C42BC3B77000B3593E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		43713C3D23B21CB000E20E48 /* CommandField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommandField.swift; sourceTree = "<group>"; };
 		43983BDD23B794300064C527 /* UserNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotifications.swift; sourceTree = "<group>"; };
 		43983BE123BA19EC0064C527 /* EntryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryList.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 				436140582BBBE86400CCC38B /* Info.plist */,
 				4361401B2BBBE74500CCC38B /* NotificationsManager.swift */,
 				4361400B2BBBE68700CCC38B /* Preview Content */,
+				436C19C42BC3B77000B3593E /* PrivacyInfo.xcprivacy */,
 				436140302BBBE78200CCC38B /* Remember.swift */,
 				436140152BBBE74500CCC38B /* ReminderDetailView.swift */,
 				4361401E2BBBE74500CCC38B /* RemindersView.swift */,
@@ -357,6 +360,7 @@
 			files = (
 				436140512BBBE7BE00CCC38B /* res in Resources */,
 				4361400D2BBBE68700CCC38B /* Preview Assets.xcassets in Resources */,
+				436C19C52BC3B77200B3593E /* PrivacyInfo.xcprivacy in Resources */,
 				4361400A2BBBE68700CCC38B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
