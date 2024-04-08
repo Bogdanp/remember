@@ -14,7 +14,7 @@ class NotificationsManager: NSObject {
 
   private var entries = [String: Entry]()
 
-  private static let refreshIdentifier = "io.defn.remember-ios.NotificationsManager.refresh"
+  private static let refreshIdentifier = "io.defn.remember.NotificationsManager.refresh"
 
   override init() {
     super.init()

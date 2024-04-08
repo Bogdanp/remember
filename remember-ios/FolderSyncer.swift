@@ -10,7 +10,7 @@ fileprivate let logger = Logger(
 class FolderSyncer {
   static let shared = FolderSyncer()
 
-  static private let refreshIdentifier = "io.defn.remember-ios.FolderSyncer.refresh"
+  static private let refreshIdentifier = "io.defn.remember.FolderSyncer.refresh"
 
   init() {
     sync()

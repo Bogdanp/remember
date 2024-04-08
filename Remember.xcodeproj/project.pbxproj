@@ -509,7 +509,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20240407;
 				DEVELOPMENT_ASSET_PATHS = "\"remember-ios/Preview Content\"";
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_PREVIEWS = YES;
@@ -530,8 +530,8 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.defn.remember-ios";
+				MARKETING_VERSION = 2024.04.07;
+				PRODUCT_BUNDLE_IDENTIFIER = io.defn.remember;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -553,7 +553,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 20240407;
 				DEVELOPMENT_ASSET_PATHS = "\"remember-ios/Preview Content\"";
 				DEVELOPMENT_TEAM = H3YE679B58;
 				ENABLE_PREVIEWS = YES;
@@ -574,8 +574,8 @@
 					"@executable_path/Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "io.defn.remember-ios";
+				MARKETING_VERSION = 2024.04.07;
+				PRODUCT_BUNDLE_IDENTIFIER = io.defn.remember;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

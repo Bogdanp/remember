@@ -2,13 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>BGTaskSchedulerPermittedIdentifiers</key>
 	<array>
-		<string>io.defn.remember-ios.NotificationsManager.refresh</string>
-		<string>io.defn.remember-ios.FolderSyncer.refresh</string>
+		<string>io.defn.remember.NotificationsManager.refresh</string>
+		<string>io.defn.remember.FolderSyncer.refresh</string>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>ReminderIntent</string>
