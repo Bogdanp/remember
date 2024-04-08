@@ -13,6 +13,11 @@ struct SettingsView: View {
         })
 
         Section(content: {
+          Button(action: {
+            UIApplication.shared.open(URL(string: "https://remember.defn.io/manual/")!)
+          }, label: {
+            Text("Manual")
+          })
           HStack {
             Text("Version")
             Spacer()
