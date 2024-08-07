@@ -91,11 +91,14 @@ class NotificationsManager: NSObject {
     entries.removeValue(forKey: entry.notificationId)
     let center = UNUserNotificationCenter.current()
     center.removePendingNotificationRequests(withIdentifiers: [entry.notificationId])
+    center.setBadgeCount(entries.count)
   }
 
   func notify(ofEntries entries: [Entry]) {
     assert(Thread.current.isMainThread)
-    self.entries.forEach({ removePendingNotification(for: $0.value) })
+    let center = UNUserNotificationCenter.current()
+    center.removePendingNotificationRequests(withIdentifiers: self.entries.map { $1.notificationId })
+    center.setBadgeCount(0)
     self.entries.removeAll(keepingCapacity: true)
     for entry in entries {
       self.entries[entry.notificationId] = entry
@@ -112,12 +115,7 @@ class NotificationsManager: NSObject {
         .current()
         .add(request) { _ in }
     }
-  }
-
-  func setBadgeCount(_ count: Int) {
-    UNUserNotificationCenter
-      .current()
-      .setBadgeCount(count)
+    center.setBadgeCount(entries.count)
   }
 }
 

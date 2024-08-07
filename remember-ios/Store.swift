@@ -85,7 +85,7 @@ class Store: ObservableObject {
       RunLoop.main.schedule {
         self?.entries = entries
         Backend.shared.getDueEntries().onComplete { entries in
-          NotificationsManager.shared.setBadgeCount(entries.count)
+          NotificationsManager.shared.notify(ofEntries: entries)
         }
       }
     }
